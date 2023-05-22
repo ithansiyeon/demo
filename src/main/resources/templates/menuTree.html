@@ -1,0 +1,42 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <title>Menu Tree</title>
+    <style>
+        ul, ol, li { list-style:none; margin:0; padding:0; }
+        ul.myMenu {}
+        ul.myMenu > li { display:inline-block; width:100px; padding:5px 10px; background:#eee; text-align:center; position:relative; }
+        ul.myMenu > li ul.submenu { /* display:none;*/ position:absolute; top:30px; left:0; }
+        ul.myMenu > li ul.submenu > li { display:inline-block; width:100px; padding:5px 10px; background:#eee; text-align:center; }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="myMenu">
+            <li th:each="topLevelMenu : ${topLevelMenus}">
+                <a href="#" th:text="${topLevelMenu.name}" th:attr="data-menuId=${topLevelMenu.id}" onclick="toggleChildMenus(this)"></a>
+                <ul class="submenu" th:id="'childMenu-'+${topLevelMenu.id}" style="display: none;">
+                    <li th:each="childMenu : ${childMenusMap[topLevelMenu.id]}" th:text="${childMenu.name}"></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <script>
+        var topLevelMenu = /*[[${topLevelMenu}]]*/[];
+        function toggleChildMenus(element) {
+            var menuId = element.getAttribute("data-menuId");
+            var childMenusElement = document.getElementById("childMenu-"+menuId);
+
+            if(childMenusElement.style.display === "none") {
+                childMenusElement.style.display = "block";
+            } else {
+                childMenusElement.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
