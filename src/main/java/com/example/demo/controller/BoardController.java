@@ -12,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static java.util.stream.Collectors.toList;
-
 @Controller
 @RequiredArgsConstructor
 public class BoardController {
@@ -33,4 +31,9 @@ public class BoardController {
         model.addAttribute("count",pageList.getTotalElements());
         return "board/lists";
     }
+
+//    @GetMapping("/board/excel")
+//    public String boardExcel(Model model) {
+//        return "board/excel";
+//    }
 }

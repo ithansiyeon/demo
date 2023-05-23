@@ -18,20 +18,28 @@
     <div class="py-5 text-center">
         <h2>스프링 부트 게시판</h2>
     </div>
-    <span style="float: right" th:text="'총 개수 : ' + ${count}"></span>
-
-    <table class="table">
+    <table style="display: none">
         <tr>
-            <th>글 번호</th>
-            <th>글쓴이</th>
-            <th>글 제목</th>
+            <td><button class="btn btn-primary float-end" data-bs-toggle="modal" th:attr="onclick=|popUp()|">엑셀업로드</button></td>
         </tr>
-        <tr th:each="board: ${boardList}">
-            <td href="detail.html" th:text="${board.id}" th:href="@{/board/{detailId}(detailId=${board.id})}">글 번호</td>
-            <td th:text="${board.writer}">글쓴이</td>
-            <td th:text="${board.name}">글 제목</td>
+        <tr>
+            <td><span style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
         </tr>
     </table>
+</div>
+
+<table class="table table-bordered">
+    <tr>
+        <th>글 번호</th>
+        <th>글쓴이</th>
+        <th>글 제목</th>
+    </tr>
+    <tr th:each="board: ${boardList}">
+        <td href="detail.html" th:text="${board.id}" th:href="@{/board/{detailId}(detailId=${board.id})}">글 번호</td>
+        <td th:text="${board.writer}">글쓴이</td>
+        <td th:text="${board.name}">글 제목</td>
+    </tr>
+</table>
 </div>
 
 <!-- 페이징 -->
@@ -57,18 +65,21 @@
             </li>
             <!-- 이전으로 이동 -->
             <li th:classappend="${boardList.first} ? 'disabled'" class="page-item">
-                <a class="page-link" th:href="${boardList.first} ? '#' : @{/board?(page=${number}-1)}" aria-label="Previous">
+                <a class="page-link" th:href="${boardList.first} ? '#' : @{/board?(page=${number}-1)}"
+                   aria-label="Previous">
                     <span aria-hidden="true">&lt;</span>
                     <span class="sr-only">Previous</span>
                 </a>
             </li>
             <!-- 특정 페이지로 이동 -->
-            <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == number} ? 'active'" class="page-item">
+            <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == number} ? 'active'"
+                class="page-item">
                 <a th:text="${page}" class="page-link" th:href="@{/board?(page=${page})}"></a>
             </li>
             <!-- 다음으로 이동 -->
             <li th:classappend="${boardList.last} ? 'disabled'" class="page-item">
-                <a class="page-link" th:href="${boardList.last} ? '#' : @{/board?(page=${number + 1})}" aria-label="Next">
+                <a class="page-link" th:href="${boardList.last} ? '#' : @{/board?(page=${number + 1})}"
+                   aria-label="Next">
                     <span aria-hidden="true">&gt;</span>
                     <span class="sr-only">Next</span>
                 </a>
@@ -83,3 +94,28 @@
         </ul>
     </nav>
 </div>
+<!-- Moa Modal-->
+<div class="modal fade" id="moaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to test</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                test
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function popUp() {
+        pop = window.open("/excel", "pop", "width=570, height=420, scrollbars=yes");
+    }
+</script>

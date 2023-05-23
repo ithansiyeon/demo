@@ -6,21 +6,41 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-  messages:
-    basename: messages
+  security:
+    user:
+      name: user
+      password: 1111
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql: true
-        default_batch_fetch_size: 100
-  security:
-    user:
-      name: user
-      password: 1111
+        use_sql_comments: true
+#        show_sql: true
 logging.level:
   org.hibernate.SQL: debug
+#spring:
+#  datasource:
+#    url: jdbc:h2:tcp://localhost/~/querydsl
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+#  messages:
+#    basename: messages
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        default_batch_fetch_size: 100
+#  security:
+#    user:
+#      name: user
+#      password: 1111
+#logging.level:
+#  org.hibernate.SQL: debug
 #logging:
 #  level:
 #      root: info
