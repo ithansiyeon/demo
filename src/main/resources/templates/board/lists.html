@@ -5,12 +5,24 @@
     <title>게시판</title>
     <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
+    <script src="../jquery/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.js"></script>
 </head>
 <style>
     .pagination {
         justify-content: center;
     }
 
+    @font-face {
+        font-family: 'SUITE-Regular';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'SUITE-Regular';
+    }
 </style>
 <body>
 
@@ -18,18 +30,27 @@
     <div class="py-5 text-center">
         <h2>스프링 부트 게시판</h2>
     </div>
-    <table style="display: none">
+    <table class="float-end">
         <tr>
-            <td><button class="btn btn-primary float-end" data-bs-toggle="modal" th:attr="onclick=|popUp()|">엑셀업로드</button></td>
+            <td>
+                <button class="btn btn-primary float-end" data-bs-toggle="modal" th:attr="onclick=|popUp()|">엑셀업로드
+                </button>
+            </td>
+            <td>
+                <!-- 모달 버튼 -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    모달 열기
+                </button>
+            </td>
         </tr>
         <tr>
-            <td><span style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
+            <td colspan="2"><span style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
         </tr>
     </table>
 </div>
 
 <table class="table table-bordered">
-    <tr>
+    <tr style="text-align: center;" class="table-active">
         <th>글 번호</th>
         <th>글쓴이</th>
         <th>글 제목</th>
@@ -38,6 +59,9 @@
         <td href="detail.html" th:text="${board.id}" th:href="@{/board/{detailId}(detailId=${board.id})}">글 번호</td>
         <td th:text="${board.writer}">글쓴이</td>
         <td th:text="${board.name}">글 제목</td>
+    </tr>
+    <tr th:if="${boardList.isEmpty()}" style="text-align: center">
+        <td colspan="3">데이터가 없습니다.</td>
     </tr>
 </table>
 </div>
@@ -94,21 +118,20 @@
         </ul>
     </nav>
 </div>
-<!-- Moa Modal-->
-<div class="modal fade" id="moaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- 모달 -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to test</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">x</span>
-                </button>
+                <h5 class="modal-title" id="exampleModalLabel">모달 제목</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                test
+                <!-- iframe 내부에 보여줄 콘텐츠 -->
+                <iframe src="" frameborder="0"></iframe>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" type="button" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
             </div>
         </div>
     </div>
@@ -116,6 +139,10 @@
 </body>
 <script>
     function popUp() {
-        pop = window.open("/excel", "pop", "width=570, height=420, scrollbars=yes");
+        var popupX = (document.body.offsetWidth / 2) - (200 / 2);
+        // 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
+        var popupY= (window.screen.height / 2) - (300 / 2);
+        // 만들 팝업창 상하 크기의 1/2 만큼 보정값으로 빼주었음
+        window.open("/board/excel", "pop", "width=400, height=200, scrollbars=yes left="+ popupX + ", top="+ popupY);
     }
 </script>

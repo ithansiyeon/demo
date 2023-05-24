@@ -20,13 +20,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.addFilterBefore(new MyFilter1(ms, memberService), UsernamePasswordAuthenticationFilter.class)
+        http
+                .addFilterBefore(new MyFilter1(ms, memberService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/user").hasRole("USER")
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated(); //인증이 되어야 한다.
-        ;
         http.formLogin();
+        http.headers().frameOptions().sameOrigin();
         return http.build();
     }
 }
