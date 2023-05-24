@@ -1,10 +1,12 @@
 package com.example.demo.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,7 @@ public class ExcelUtil {
         workbook.close();
         return data;
     }
+
     public static Object getCellValue(Cell cell) {
         if (cell.getCellType() == CellType.STRING) {
             return cell.getStringCellValue();
@@ -51,28 +54,10 @@ public class ExcelUtil {
         }
         return voList;
     }
+
     public static <T> T convertToVO(Map<String, Object> map, Class<T> voClass) {
-        T vo;
-        try {
-            vo = voClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create instance of VO class: " + voClass.getName(), e);
-        }
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String fieldName = entry.getKey();
-            Object fieldValue = entry.getValue();
-            setFieldValue(vo, fieldName, fieldValue);
-        }
-        return vo;
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(map, voClass);
     }
-    private static <T> void setFieldValue(T vo, String fieldName, Object fieldValue) {
-        try {
-            Class<?> voClass = vo.getClass();
-            java.lang.reflect.Field field = voClass.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(vo, fieldValue);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to set value for field " + fieldName + " in VO class: " + vo.getClass().getName(), e);
-        }
-    }
+
 }

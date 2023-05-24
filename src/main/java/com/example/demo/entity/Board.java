@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString(of = {"id","name","writer"})
 public class Board {
@@ -20,8 +20,5 @@ public class Board {
         this.name = name;
         this.writer = writer;
         this.content = content;
-    }
-
-    public Board() {
     }
 }
