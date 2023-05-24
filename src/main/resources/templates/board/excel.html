@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Excel</title>
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
     <script src="../jquery/jquery-3.7.0.min.js"></script>
     <script type="text/javascript" src="../js/bootstrap.js"></script>
 </head>
@@ -22,13 +20,37 @@
     }
 </style>
 <body>
-<form th:action="@{/board/excel}" method="post" enctype="multipart/form-data">
+<form id="uploadForm" enctype="multipart/form-data" style="margin: 20px;">
     <input type="file" name="file" id="file">
     <div class="row" style="margin-top: 50px;">
         <div class="col">
-            <input th:type="submit" value="제출"></button>
+            <input type="button" id="uploadButton" value="제출">
         </div>
     </div>
 </form>
 </body>
+<script>
+    $(document).ready(function() {
+        $('#uploadButton').click(function() {
+            var formData = new FormData($('#uploadForm')[0]);
+            $.ajax({
+                type: "POST",
+                url: "/board/excel",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log(response.success);
+                    if (response.success === true) {
+                        window.opener.location.href = '/board';
+                        window.close();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
 </html>
