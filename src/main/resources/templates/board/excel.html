@@ -30,8 +30,8 @@
 </form>
 </body>
 <script>
-    $(document).ready(function() {
-        $('#uploadButton').click(function() {
+    $(document).ready(function () {
+        $('#uploadButton').click(function () {
             var formData = new FormData($('#uploadForm')[0]);
             $.ajax({
                 type: "POST",
@@ -39,14 +39,14 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     console.log(response.success);
                     if (response.success === true) {
                         window.opener.location.href = '/board';
                         window.close();
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error(error);
                 }
             });

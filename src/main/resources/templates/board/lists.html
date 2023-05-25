@@ -42,6 +42,11 @@
                     모달 열기
                 </button>
             </td>
+            <td>
+                <form action="/board/download" method="get">
+                    <button class="btn btn-primary" type="submit">엑셀 템플릿 다운로드</button>
+                </form>
+            </td>
         </tr>
         <tr>
             <td colspan="2"><span style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>

@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.dto.BoardDto;
 import com.example.demo.entity.Board;
 import com.example.demo.service.BoardService;
+import com.example.demo.utils.ExcelUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
@@ -17,19 +19,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.demo.utils.ExcelUtil.convertToVOList;
-import static com.example.demo.utils.ExcelUtil.readExcel;
+import static com.example.demo.utils.ExcelUtil.*;
 
 @Controller
 @RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
+    private final ExcelUtil excelUtil = new ExcelUtil();
+
     private static int cnt = 0;
 
     @GetMapping("/board")
@@ -67,6 +69,12 @@ public class BoardController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/board/download")
+    public void ExcelDownload(HttpServletResponse response) throws Exception {
+        List<BoardDto> boardList = boardService.getBoardList();
+        oneSheetExcelFile(boardList, BoardDto.class, response, "test");
     }
 
 }

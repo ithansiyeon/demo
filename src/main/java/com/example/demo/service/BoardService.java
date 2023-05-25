@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.BoardDto;
 import com.example.demo.entity.Board;
 import com.example.demo.repository.BoardRepository;
 import jakarta.persistence.EntityManager;
@@ -8,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +41,9 @@ public class BoardService {
 //            em.merge(board);
 //        }
         boardRepository.save(board);
+    }
+
+    public List<BoardDto> getBoardList() {
+        return boardRepository.findAll().stream().map(BoardDto::new).collect(Collectors.toList());
     }
 }

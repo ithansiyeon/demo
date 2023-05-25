@@ -1,18 +1,28 @@
 package com.example.demo.dto;
 
 import com.example.demo.entity.Board;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.Builder;
+import com.example.demo.excel.annotation.ExcelColumn;
+import com.example.demo.excel.style.DefaultBodyStyle;
+import com.example.demo.excel.style.DefaultExcelCellStyle;
+import com.example.demo.excel.style.DefaultHeaderStyle;
+import com.example.demo.excel.style.ExcelColumnStyle;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@DefaultHeaderStyle(
+        style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BLUE_HEADER")
+)
+@DefaultBodyStyle(
+        style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BODY")
+)
 public class BoardDto {
+    @ExcelColumn(headerName = "id")
     Long id;
+    @ExcelColumn(headerName = "name")
     String name;
+    @ExcelColumn(headerName = "writer")
     String writer;
 
     public BoardDto(Board board) {
