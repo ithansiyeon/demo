@@ -1,11 +1,13 @@
 package com.example.demo.dto;
 
 import com.example.demo.entity.Board;
+import com.example.demo.excel.annotation.DefaultBodyStyle;
+import com.example.demo.excel.annotation.DefaultHeaderStyle;
 import com.example.demo.excel.annotation.ExcelColumn;
-import com.example.demo.excel.style.DefaultBodyStyle;
+import com.example.demo.excel.annotation.ExcelColumnStyle;
 import com.example.demo.excel.style.DefaultExcelCellStyle;
-import com.example.demo.excel.style.DefaultHeaderStyle;
-import com.example.demo.excel.style.ExcelColumnStyle;
+import com.example.demo.excel.style.custom.PinkHeaderStyle;
+import com.example.demo.excel.style.custom.BlueBodyStyle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +20,7 @@ import lombok.Setter;
         style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BODY")
 )
 public class BoardDto {
-    @ExcelColumn(headerName = "id")
+    @ExcelColumn(headerName = "id", headerStyle = @ExcelColumnStyle(excelCellStyleClass = PinkHeaderStyle.class), bodyStyle = @ExcelColumnStyle(excelCellStyleClass = BlueBodyStyle.class))
     Long id;
     @ExcelColumn(headerName = "name")
     String name;

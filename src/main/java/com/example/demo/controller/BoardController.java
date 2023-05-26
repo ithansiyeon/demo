@@ -74,7 +74,7 @@ public class BoardController {
     @GetMapping("/board/download")
     public void ExcelDownload(HttpServletResponse response) throws Exception {
         List<BoardDto> boardList = boardService.getBoardList();
-        oneSheetExcelFile(boardList, BoardDto.class, response, "test");
+        multiSheetExcelFile(boardList, BoardDto.class, response, "test");
     }
 
 }

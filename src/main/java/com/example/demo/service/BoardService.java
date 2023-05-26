@@ -26,8 +26,8 @@ public class BoardService {
 
     @Transactional(readOnly = false)
     public void createBoard() {
-        for(int i=0;i<25;i++) {
-            Board board = Board.builder().name("board"+String.valueOf(i+1)).writer("test"+String.valueOf(i+1)).content("aaaaaa").build();
+        for(int i=0;i<100;i++) {
+            Board board = Board.builder().name("board"+ (i + 1)).writer("test"+ (i + 1)).content("aaaaaa").build();
             boardRepository.save(board);
         }
     }
