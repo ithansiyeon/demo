@@ -66,13 +66,13 @@ public class ExcelUtil {
         } else if (cell.getCellType() == CellType.NUMERIC) {
             if(DateUtil.isCellDateFormatted(cell)) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-               return StringUtil.nvl(formatter.format(cell.getDateCellValue()));
+                return StringUtil.nvl(formatter.format(cell.getDateCellValue()));
             } else {
                 double num = cell.getNumericCellValue();
                 if(num == Math.rint(num)) {
                     return (int) num;
                 } else {
-                   return num;
+                    return num;
                 }
             }
         } else if (cell.getCellType() == CellType.BOOLEAN) {
@@ -121,7 +121,7 @@ public class ExcelUtil {
             for (String dataFieldName : dataFieldNames) {
                 cell = row.createCell(colNum);
                 cell.setCellValue(dataFieldName);
-                cell.setCellStyle(resource.getCellStyle(dataFieldName,ExcelRenderLocation.HEADER));
+                cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.HEADER));
                 colNum++;
             }
             int rowNum = 1;
@@ -132,15 +132,20 @@ public class ExcelUtil {
                 colNum = 0;
                 rowNum++;
                 for (Field field : declaredFields) {
-                    cell = row.createCell(colNum);
-                    field.setAccessible(true);
                     for (String dataFieldName : dataFieldNames) {
                         if (field.getName().equals(dataFieldName)) {
-                            cell.setCellValue(field.get(dataList.get(j)).toString());
+                            cell = row.createCell(colNum);
+                            field.setAccessible(true);
+                            if(field.get(dataList.get(j))!=null) {
+                                cell.setCellValue(field.get(dataList.get(j)).toString());
+                            } else {
+                                cell.setCellValue("");
+                            }
                             cell.setCellStyle(resource.getCellStyle(dataFieldName,ExcelRenderLocation.BODY));
+                            colNum++;
                         }
                     }
-                    colNum++;
+
                 }
             }
             start = total;
@@ -167,7 +172,7 @@ public class ExcelUtil {
         ExcelColumnStyle classDefinedHeaderStyle = getHeaderExcelColumnStyle(type);
         //객체 위에 선언 되는 body 에노테이션 타입
         ExcelColumnStyle classDefinedBodyStyle = getBodyExcelColumnStyle(type);
-        
+
         //객체 컬럼의 field 값의 이름과 style 정보들을 styleMap에 넣어줌
         for (Field field : getAllFields(type)) {
             if (field.isAnnotationPresent(ExcelColumn.class)) {
@@ -212,7 +217,7 @@ public class ExcelUtil {
 
     //클래스의 부모 애노테이션까지 다 가져옴
     private static Annotation getAnnotation(Class<?> clazz,
-                                           Class<? extends Annotation> targetAnnotation) {
+                                            Class<? extends Annotation> targetAnnotation) {
         for (Class<?> clazzInClasses : getAllClassesIncludingSuperClasses(clazz)) {
             if (clazzInClasses.isAnnotationPresent(targetAnnotation)) {
                 return clazzInClasses.getAnnotation(targetAnnotation);
