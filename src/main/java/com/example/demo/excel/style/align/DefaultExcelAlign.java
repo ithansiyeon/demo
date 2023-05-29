@@ -4,13 +4,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
-/**
- * DefaultExcelAlign
- *
- * Can be used with {@link com.lannstark.style.CustomExcelCellStyle}
- * see {@link VerticalAlignment} and
- * {@link HorizontalAlignment} for detail explanation
- */
 public enum DefaultExcelAlign implements ExcelAlign {
 
 	GENERAL_TOP(HorizontalAlignment.GENERAL, VerticalAlignment.TOP),
@@ -66,14 +59,6 @@ public enum DefaultExcelAlign implements ExcelAlign {
 	public void apply(CellStyle cellStyle) {
 		cellStyle.setAlignment(horizontalAlignment);
 		cellStyle.setVerticalAlignment(verticalAlignment);
-	}
-
-	public HorizontalAlignment getHorizontalAlignment() {
-		return horizontalAlignment;
-	}
-
-	public VerticalAlignment getVerticalAlignment() {
-		return verticalAlignment;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.example.demo.excel.style;
+package com.example.demo.excel.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DefaultHeaderStyle {
-
+public @interface DefaultBodyStyle {
 	ExcelColumnStyle style();
 
 }

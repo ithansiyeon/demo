@@ -43,6 +43,12 @@
                 </button>
             </td>
             <td>
+                <!-- 모달 버튼 -->
+                <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/board/add}'|">
+                    작성
+                </button>
+            </td>
+            <td>
                 <form action="/board/download" method="get">
                     <button class="btn btn-primary" type="submit">엑셀 템플릿 다운로드</button>
                 </form>
@@ -79,7 +85,7 @@
               number = ${boardList.number}+1,
               size = ${boardList.size},
               totalPages = ${boardList.totalPages},
-              startPage = ${T(java.lang.Math).floor(number / size) * size + 1},
+              startPage = ${startPage},
               tempEndPage = ${startPage + size - 1},
               endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
             aria-label="Page navigation"

@@ -3,7 +3,6 @@ package com.example.demo.excel.style.border;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 public final class DefaultExcelBorder implements ExcelBorder {
-
 	private ExcelBorderStyle borderStyle;
 
 	public DefaultExcelBorder(ExcelBorderStyle borderStyle) {
