@@ -42,8 +42,6 @@ public class BoardController {
         PageRequest pageRequest = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "id"));
         Page<Board> pageList = boardService.getBoardList(pageRequest);
         Page<BoardDto> boardList = pageList.map(BoardDto::new);
-        System.out.println("boardList.getNumber() = " + boardList.getNumber());
-        System.out.println("boardList.getTotalPages() = " + boardList.getTotalPages());
         model.addAttribute("startPage",Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
         model.addAttribute("boardList",boardList);
         model.addAttribute("count",pageList.getTotalElements());
