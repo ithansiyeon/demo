@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>게시글 작성</title>
@@ -13,29 +13,42 @@
     <!-- include summernote-ko-KR -->
     <script src="../js/summernote/summernote-ko-KR.js"></script>
 </head>
+<style>
+    .container {
+        max-width: 560px;
+    }
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+</style>
+
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#summernote').summernote({
             placeholder: 'content',
             minHeight: 370,
             maxHeight: null,
             focus: true,
-            lang : 'ko-KR'
+            lang: 'ko-KR'
         });
     });
 </script>
-</head>
 <body>
 <h2 style="text-align: center;">글 작성</h2><br><br><br>
 
-<div style="width: 60%; margin: auto;">
-    <form method="post" action="/write">
-        <input type="text" name="writer" style="width: 20%;" placeholder="작성자"/><br>
-        <input type="text" name="title" style="width: 40%;" placeholder="제목"/>
+<div class="container" style="margin: auto;">
+    <form method="post" th:action th:object="${item}">
+        <label for="name">제목</label>
+        <input id="name" type="text" name="name" th:field="*{name}" style="width: 20%;" placeholder="제목"/><br>
+        <div class="field-error" th:errors="*{name}">제목 오류</div>
+        <label for="writer">작성자</label>
+        <input id="writer" type="text" name="writer" th:field="*{writer}" style="width: 40%;" placeholder="작성자"/>
+        <div class="field-error" th:errors="*{writer}">작성자 오류</div>
         <br><br>
         <textarea id="summernote" name="content"></textarea>
-        <input id="subBtn" type="button" value="등록" style="float: right;" onclick="goWrite(this.form)"/>
+        <button class="btn btn-primary" type="submit" style="float: right;">등록</button>
     </form>
 </div>
 </body>

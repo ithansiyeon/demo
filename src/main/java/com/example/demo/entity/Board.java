@@ -12,7 +12,7 @@ public class Board {
     Long id;
     String name;
     String writer;
-    @Column(length = 1000)
+    @Column(length = 2048)
     String content;
 
     @Builder
@@ -20,5 +20,12 @@ public class Board {
         this.name = name;
         this.writer = writer;
         this.content = content;
+    }
+
+    public Board toEntity() {
+        return Board.builder()
+                .name(name)
+                .writer(writer)
+                .build();
     }
 }

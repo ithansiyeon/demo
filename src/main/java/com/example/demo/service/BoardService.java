@@ -20,8 +20,8 @@ public class BoardService {
     private final EntityManager em;
     private final BoardRepository boardRepository;
 
-    public Page<Board> getBoardList(Pageable pageable) {
-        return boardRepository.findBoardCustom(pageable);
+    public Page<BoardDto> getBoardList(Pageable pageable) {
+        return boardRepository.findBoardCustom(pageable).map(BoardDto::new);
     }
 
     @Transactional(readOnly = false)
@@ -45,5 +45,11 @@ public class BoardService {
 
     public List<BoardDto> getBoardList() {
         return boardRepository.findAll().stream().map(BoardDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = false)
+    public Long insertBoard(Board board) {
+        boardRepository.save(board);
+        return board.getId();
     }
 }

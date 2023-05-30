@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.BoardDto;
+import com.example.demo.dto.BoardSaveForm;
 import com.example.demo.entity.Board;
 import com.example.demo.service.BoardService;
 import com.example.demo.utils.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,12 +15,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +34,7 @@ import static com.example.demo.utils.ExcelUtil.*;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
@@ -40,11 +48,10 @@ public class BoardController {
         if(cnt==1)
             boardService.createBoard();
         PageRequest pageRequest = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Board> pageList = boardService.getBoardList(pageRequest);
-        Page<BoardDto> boardList = pageList.map(BoardDto::new);
+        Page<BoardDto> boardList = boardService.getBoardList(pageRequest);
         model.addAttribute("startPage",Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
         model.addAttribute("boardList",boardList);
-        model.addAttribute("count",pageList.getTotalElements());
+        model.addAttribute("count",boardList.getTotalElements());
         return "board/lists";
     }
 
@@ -79,8 +86,21 @@ public class BoardController {
     }
 
     @GetMapping("/board/add")
-    public String boardAdd() {
-        return "/board/add";
+    public String boardAdd(Model model) {
+        model.addAttribute("item", new BoardSaveForm());
+        return "board/add";
+    }
+
+    @PostMapping("/board/add")
+    public String boardAdd(@Validated @ModelAttribute("item")BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+        if(bindingResult.hasErrors()) {
+            log.info("errors={}",bindingResult);
+            return "/board/add";
+        }
+        Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).build();
+        Long idx = boardService.insertBoard(board);
+        System.out.println("idx = " + idx);
+        return "board/add";
     }
 
 }
