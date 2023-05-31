@@ -55,6 +55,9 @@
                     for (var i = files.length - 1; i >= 0; i--) {
                         uploadSummernoteImageFile(files[i], this);
                     }
+                },
+                onMediaDeleteError: function (target) {
+                    deleteSummernoteImage(target[0].src);
                 }
             }
         });
@@ -75,6 +78,22 @@
             processData: false,
             success: function (data) {
                 $(el).summernote('insertImage', data.url);
+            }
+        });
+    }
+
+    // 이미지 삭제 AJAX 요청
+    function deleteSummernoteImage(imageUrl) {
+        $.ajax({
+            url: "/deleteSummernoteImage",
+            type: "POST",
+            data: JSON.stringify({ imageUrl: imageUrl }),
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
             }
         });
     }

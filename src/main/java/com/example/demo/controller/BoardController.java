@@ -109,7 +109,7 @@ public class BoardController {
 
     @PostMapping("/board/edit/{itemId}")
     public String boardEdit(@PathVariable Long itemId,  @Validated @ModelAttribute("item") BoardUpdateForm form, RedirectAttributes redirectAttributes) {
-        boardService.deleteSummernoteFile(itemId);
+        boardService.deleteSummernoteFile(itemId, form);
         Long idx = boardService.updateBoard(itemId, form);
         redirectAttributes.addAttribute("itemId",idx);
         return "redirect:/board/edit/{itemId}";

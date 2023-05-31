@@ -26,7 +26,6 @@ spring:
 #        show_sql: true
 logging.level:
   org.hibernate.SQL: debug
-
 #spring:
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/querydsl

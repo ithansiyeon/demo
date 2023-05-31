@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,13 +73,43 @@ public class BoardService {
         return board.getId();
     }
 
-    public void deleteSummernoteFile(Long idx) {
-        Board board = boardRepository.findById(idx).get();
+    public void deleteSummernoteFile(Long idx, BoardUpdateForm form) {
+        Board originalBoard = boardRepository.findById(idx).get();
         Pattern pattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>");
-        Matcher matcher = pattern.matcher(board.getContent());
-        System.out.println("matcher.find() = " + matcher.find());
-        System.out.println("matcher.group(0) = " + matcher.group(0));
-//        Matcher matcher = pattern.matcher(board.getContent());
-        System.out.println("matcher.group(0) = " + matcher.group(1));
+        Matcher matcher = pattern.matcher(originalBoard.getContent());
+        List<String> originalImagePaths = new ArrayList<>();
+        List<String> updatedImagePaths = new ArrayList<>();
+
+        // 매칭된 모든 결과를 가져와서 각각의 리스트에 추가
+        while (matcher.find()) {
+            String src = matcher.group(1);
+            originalImagePaths.add(src);
+        }
+
+        matcher = pattern.matcher(form.getContent());
+        while (matcher.find()) {
+            String src = matcher.group(1);
+            updatedImagePaths.add(src);
+        }
+
+        for (String originalImagePath : originalImagePaths) {
+            String[] paths = originalImagePath.split("/");
+            String imageName = paths[paths.length - 1];
+            if (!updatedImagePaths.contains(originalImagePath)) {
+                File imageFile = new File("/Users/siyeon/Desktop/summernote_image/" + imageName);
+                // 파일이 존재하는지 확인
+                if (imageFile.exists()) {
+                    System.out.println("File exists: " + originalImagePath);
+                    // 파일 삭제
+                    if (imageFile.delete()) {
+                        System.out.println("File deleted successfully: " + originalImagePath);
+                    } else {
+                        System.out.println("Failed to delete the file: " + originalImagePath);
+                    }
+                } else {
+                    System.out.println("File does not exist: " + originalImagePath);
+                }
+            }
+        }
     }
 }
