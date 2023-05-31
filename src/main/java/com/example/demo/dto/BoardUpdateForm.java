@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class BoardSaveForm {
+public class BoardUpdateForm {
     @NotBlank
     private String name;
     @NotBlank

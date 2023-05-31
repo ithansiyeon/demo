@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>게시판</title>
     <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
-    <script src="../jquery/jquery-3.7.0.min.js"></script>
-    <script type="text/javascript" src="../js/bootstrap.js"></script>
+          href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="../../jquery/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.js"></script>
 </head>
 <style>
     .pagination {
@@ -55,7 +55,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2"><span style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
+            <td colspan="4"><span style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
         </tr>
     </table>
 </div>
@@ -65,11 +65,13 @@
         <th>글 번호</th>
         <th>글쓴이</th>
         <th>글 제목</th>
+        <th>등록일</th>
     </tr>
     <tr th:each="board: ${boardList}">
-        <td href="detail.html" th:text="${board.id}" th:href="@{/board/{detailId}(detailId=${board.id})}">글 번호</td>
+        <td style="text-align: center"><a href="#" th:href="@{/board/edit/{itemId}(itemId=${board.id})}" th:text="${board.id}">글 번호</a></td>
         <td th:text="${board.writer}">글쓴이</td>
         <td th:text="${board.name}">글 제목</td>
+        <td th:text="${#temporals.format(board.registerDate,'yyyy-MM-dd HH:mm:ss')}">등록일</td>
     </tr>
     <tr th:if="${boardList.isEmpty()}" style="text-align: center">
         <td colspan="3">데이터가 없습니다.</td>

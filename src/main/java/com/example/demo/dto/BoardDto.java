@@ -9,6 +9,8 @@ import com.example.demo.excel.style.DefaultExcelCellStyle;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @DefaultHeaderStyle(
@@ -19,16 +21,19 @@ import lombok.Setter;
 )
 public class BoardDto {
     @ExcelColumn(headerName = "id")
-    Long id;
+    private Long id;
     @ExcelColumn(headerName = "name")
-    String name;
+    private String name;
     @ExcelColumn(headerName = "writer")
-    String writer;
+    private String writer;
+    @ExcelColumn(headerName = "registerDate")
+    private LocalDateTime registerDate;
 
     public BoardDto(Board board) {
         this.id = board.getId();
         this.name = board.getName();
         this.writer = board.getWriter();
+        this.registerDate = board.getRegisterDate();
     }
 
     @Override
@@ -37,6 +42,7 @@ public class BoardDto {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", writer='" + writer + '\'' +
+                ", registerDate=" + registerDate +
                 '}';
     }
 }
