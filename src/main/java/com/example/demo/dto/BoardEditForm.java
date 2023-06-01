@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class BoardEditForm {
     @NotBlank
+    private Long id;
+    @NotBlank
     private String name;
     @NotBlank
     private String writer;

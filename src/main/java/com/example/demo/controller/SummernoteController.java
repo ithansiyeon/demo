@@ -17,30 +17,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
 public class SummernoteController {
+
+    @Value("${image.storage.tempDir}")
+    private String imageStorageTempDir;
+
     @PostMapping(value="/uploadSummernoteImageFile", produces = "application/json")
     @ResponseBody
     public JsonObject uploadSummernoteImageFile(@RequestParam("file") MultipartFile multipartFile) {
 
         JsonObject jsonObject = new JsonObject();
-
-//        String fileRoot = "D:\\summernote_image\\";	//저장될 파일 경로
-        String fileRoot = "/Users/siyeon/Desktop/summernote_image/";	//저장될 파일 경로
+//        String fileRoot = "/Users/siyeon/Desktop/summernote_image/";	//저장될 파일 경로
         String originalFileName = multipartFile.getOriginalFilename();	//오리지날 파일명
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));	//파일 확장자
 
         // 랜덤 UUID+확장자로 저장될 savedFileName
         String savedFileName = UUID.randomUUID() + extension;
 
-        File targetFile = new File(fileRoot + savedFileName);
+        File targetFile = new File(imageStorageTempDir + savedFileName);
 
         try {
             InputStream fileStream = multipartFile.getInputStream();
             FileUtils.copyInputStreamToFile(fileStream, targetFile);	//파일 저장
-            jsonObject.addProperty("url", "/summernoteImage/"+savedFileName);
+            jsonObject.addProperty("url", "/temp/summernoteImage/"+savedFileName);
             jsonObject.addProperty("responseCode", "success");
 
         } catch (IOException e) {
@@ -52,14 +55,11 @@ public class SummernoteController {
         return jsonObject;
     }
 
-    @Value("${image.storage.path}")
-    private String imageStoragePath;
-
     @PostMapping("/deleteSummernoteImage")
-    public ResponseEntity<String> deleteSummernoteImage(@RequestBody String imageUrl) {
-        String imageName = getImageNameFromUrl(imageUrl);
+    public ResponseEntity<String> deleteSummernoteImage(@RequestBody Map<String,Object> imageUrl) {
+        String imageName = getImageNameFromUrl((String) imageUrl.get("imageUrl"));
         if (imageName != null) {
-            File imageFile = new File(imageStoragePath + imageName);
+            File imageFile = new File(imageStorageTempDir + imageName);
             if (imageFile.exists()) {
                 if (imageFile.delete()) {
                     return ResponseEntity.ok("Image deleted successfully");

@@ -7,19 +7,24 @@ import com.example.demo.entity.Board;
 import com.example.demo.repository.BoardRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -27,6 +32,12 @@ public class BoardService {
     private final EntityManager em;
     private final BoardRepository boardRepository;
     private final ModelMapper mapper;
+
+    @Value("${image.storage.tempDir}")
+    private String imageStorageTempDir;
+
+    @Value("${image.storage.Dir}")
+    private String imageStorageDir;
 
     public Page<BoardDto> getBoardList(Pageable pageRequest) {
         return boardRepository.findBoardCustom(pageRequest).map(BoardDto::new);
@@ -69,6 +80,7 @@ public class BoardService {
 
     @Transactional(readOnly = false)
     public Long updateBoard(Long itemId, BoardUpdateForm form) {
+        form.setContent(form.getContent().replaceAll("/temp/summernoteImage/","/summernoteImage/"));
         Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).id(itemId).build());
         return board.getId();
     }
@@ -81,7 +93,7 @@ public class BoardService {
         List<String> updatedImagePaths = new ArrayList<>();
 
         // 매칭된 모든 결과를 가져와서 각각의 리스트에 추가
-        while (matcher.find()) {
+       while (matcher.find()) {
             String src = matcher.group(1);
             originalImagePaths.add(src);
         }
@@ -96,20 +108,39 @@ public class BoardService {
             String[] paths = originalImagePath.split("/");
             String imageName = paths[paths.length - 1];
             if (!updatedImagePaths.contains(originalImagePath)) {
-                File imageFile = new File("/Users/siyeon/Desktop/summernote_image/" + imageName);
+                File imageFile = new File(imageStorageDir + imageName);
                 // 파일이 존재하는지 확인
                 if (imageFile.exists()) {
-                    System.out.println("File exists: " + originalImagePath);
+                    log.info("File exists: " + originalImagePath);
                     // 파일 삭제
                     if (imageFile.delete()) {
-                        System.out.println("File deleted successfully: " + originalImagePath);
+                        log.info("File deleted successfully: " + originalImagePath);
                     } else {
-                        System.out.println("Failed to delete the file: " + originalImagePath);
+                        log.info("Failed to delete the file: " + originalImagePath);
                     }
                 } else {
-                    System.out.println("File does not exist: " + originalImagePath);
+                    log.info("File does not exist: " + originalImagePath);
                 }
             }
         }
+    }
+
+    public void copyImageFiles(BoardUpdateForm form) throws IOException {
+        Pattern pattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>");
+        Matcher matcher = pattern.matcher(form.getContent());
+        while(matcher.find()) {
+            String src = matcher.group(1);
+            String[] paths = src.split("/");
+            String imageName = paths[paths.length - 1];
+            File file = new File(imageStorageTempDir+imageName);
+            File copyFile = new File(imageStorageDir+imageName);
+            if(!copyFile.exists())
+                Files.copy(file.toPath(), copyFile.toPath());
+        }
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteBoard(Long itemId) {
+        boardRepository.deleteById(itemId);
     }
 }

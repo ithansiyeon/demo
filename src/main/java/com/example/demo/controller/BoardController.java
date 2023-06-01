@@ -108,11 +108,18 @@ public class BoardController {
     }
 
     @PostMapping("/board/edit/{itemId}")
-    public String boardEdit(@PathVariable Long itemId,  @Validated @ModelAttribute("item") BoardUpdateForm form, RedirectAttributes redirectAttributes) {
+    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, RedirectAttributes redirectAttributes) throws IOException {
         boardService.deleteSummernoteFile(itemId, form);
+        boardService.copyImageFiles(form);
         Long idx = boardService.updateBoard(itemId, form);
         redirectAttributes.addAttribute("itemId",idx);
         return "redirect:/board/edit/{itemId}";
+    }
+
+    @GetMapping("/board/delete/{itemId}")
+    public String boardDelete(@PathVariable Long itemId) {
+        boardService.deleteBoard(itemId);
+        return "redirect:/board";
     }
 
 }

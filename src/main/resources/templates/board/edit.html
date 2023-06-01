@@ -56,9 +56,16 @@
                         uploadSummernoteImageFile(files[i], this);
                     }
                 },
-                onMediaDeleteError: function (target) {
-                    deleteSummernoteImage(target[0].src);
+                onMediaDelete : function(target) {
+                    deleteFile(target[0].src);
                 }
+            }
+        }),
+
+        $("div.note-editable").keydown(function (e) {
+            if(e.keyCode === 8) {
+                console.log(e.data);
+                console.log("aaaa");
             }
         });
     });
@@ -83,7 +90,8 @@
     }
 
     // 이미지 삭제 AJAX 요청
-    function deleteSummernoteImage(imageUrl) {
+    function deleteFile(imageUrl) {
+        console.log(imageUrl);
         $.ajax({
             url: "/deleteSummernoteImage",
             type: "POST",
@@ -98,19 +106,44 @@
         });
     }
 
-    $("div.note-editable").on('drop', function (e) {
-        for (var i = 0; i < e.originalEvent.dataTransfer.files.length; i++) {
-            uploadSummernoteImageFile(e.originalEvent.dataTransfer.files[i], $("#summernote")[0]);
+    function fnEdit(itemId) {
+        console.log("aaaaaaa");
+        data = new FormData();
+        files = new FormData($('#updateForm')[0]);
+        console.log(files);
+        for (var i = files.length - 1; i >= 0; i--) {
+            data.append("uploadFile", files[i]);
         }
-        e.preventDefault();
-    });
+        $.ajax({
+            data: $("#updateForm").get(0).files,
+            type: "POST",
+            url: "/uploadSummernoteImageFile",
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $(el).summernote('insertImage', data.url);
+                var updateForm = new FormData($('#updateForm')[0]);
+                $.ajax({
+                    data: updateForm,
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: false,
+                    success: function (data) {
+                        console.log("success");
+                    }
+                });
+            }
+        });
+    }
+
 </script>
 <body>
 <h2 style="text-align: center;">글 수정</h2><br><br><br>
 
 <div class="container" style="margin: auto;">
-    <form method="post" th:action th:object="${item}">
-        <!--<input type="hidden" th:field="id">-->
+    <form id="updateForm" method="post" th:action th:object="${item}">
+        <input type="hidden" th:field="*{id}">
         <label for="name">제목</label>
         <input th:errorclass="field-error" id="name" type="text" name="name" th:field="*{name}" style="width: 20%;"
                placeholder="제목"/><br>
@@ -120,10 +153,9 @@
                style="width: 40%;" placeholder="작성자"/>
         <div class="field-error" th:errors="*{writer}">작성자 오류</div>
         <br><br>
-        <div class="note-editable">
-            <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
-        </div>
-        <button class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;">수정</button>
+        <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
+        <button th:onclick="|location.href='@{/board/edit/itemId=${item.id}}'|" class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;margin-right: 2px">수정</button>
+        <button th:onclick="|location.href='@{/board/delete/itemId=${item.id}}'|" class="btn btn-secondary" type="button" style="float: right; margin-top: 3px;">삭제</button>
     </form>
 </div>
 </body>
