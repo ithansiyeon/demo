@@ -48,8 +48,8 @@
             focus: true,
             lang: 'ko-KR',
             height: 500,                 // 에디터 높이
-            lang: "ko-KR",					// 한글 설정
-            callbacks: {
+            lang: "ko-KR"					// 한글 설정
+           /* callbacks: {
                 onImageUpload: function (files) {
                     // 파일 업로드(다중업로드를 위해 반복문 사용)
                     for (var i = files.length - 1; i >= 0; i--) {
@@ -59,7 +59,7 @@
                 onMediaDelete : function(target) {
                     deleteFile(target[0].src);
                 }
-            }
+            }*/
         }),
 
         $("div.note-editable").keydown(function (e) {
@@ -106,37 +106,6 @@
         });
     }
 
-    function fnEdit(itemId) {
-        console.log("aaaaaaa");
-        data = new FormData();
-        files = new FormData($('#updateForm')[0]);
-        console.log(files);
-        for (var i = files.length - 1; i >= 0; i--) {
-            data.append("uploadFile", files[i]);
-        }
-        $.ajax({
-            data: $("#updateForm").get(0).files,
-            type: "POST",
-            url: "/uploadSummernoteImageFile",
-            contentType: false,
-            enctype: 'multipart/form-data',
-            processData: false,
-            success: function (data) {
-                $(el).summernote('insertImage', data.url);
-                var updateForm = new FormData($('#updateForm')[0]);
-                $.ajax({
-                    data: updateForm,
-                    type: "POST",
-                    dataType: 'json',
-                    contentType: false,
-                    success: function (data) {
-                        console.log("success");
-                    }
-                });
-            }
-        });
-    }
-
 </script>
 <body>
 <h2 style="text-align: center;">글 수정</h2><br><br><br>
@@ -154,8 +123,8 @@
         <div class="field-error" th:errors="*{writer}">작성자 오류</div>
         <br><br>
         <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
-        <button th:onclick="|location.href='@{/board/edit/itemId=${item.id}}'|" class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;margin-right: 2px">수정</button>
-        <button th:onclick="|location.href='@{/board/delete/itemId=${item.id}}'|" class="btn btn-secondary" type="button" style="float: right; margin-top: 3px;">삭제</button>
+        <button th:onclick="|location.href='@{/board/edit/itemId(itemId=${item.id})}'|" class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;margin-right: 2px">수정</button>
+        <button th:onclick="|location.href='@{/board/delete/itemId(itemId=${item.id})}'|" class="btn btn-secondary" type="button" style="float: right; margin-top: 3px;">삭제</button>
     </form>
 </div>
 </body>

@@ -28,8 +28,13 @@ logging.level:
   org.hibernate.SQL: debug
 image:
   storage:
-    tempDir: D:\temp\summernote_image\
-    Dir: D:\summernote_image\
+    tempDir: /Users/siyeon/Desktop/temp/summernote_image/
+    Dir: /Users/siyeon/Desktop/summernote_image/
+#image:
+#  storage:
+#    tempDir: D:\temp\summernote_image\
+#    Dir: D:\summernote_image\
+
 #spring:
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/querydsl

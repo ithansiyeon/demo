@@ -21,12 +21,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import java.util.Base64;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.example.demo.utils.ExcelUtil.*;
 
@@ -110,7 +116,21 @@ public class BoardController {
     @PostMapping("/board/edit/{itemId}")
     public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, RedirectAttributes redirectAttributes) throws IOException {
         boardService.deleteSummernoteFile(itemId, form);
-        boardService.copyImageFiles(form);
+//        boardService.copyImageFiles(form);
+        System.out.println("form.getContent() = " + form.getContent());
+        Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
+        Matcher captured = imgPattern.matcher(form.getContent());
+        String imgSrcPath = "";
+        while(captured.find()){
+            imgSrcPath = captured.group(1);  // 글 내용의 이미지들 중 첫번째 이미지만 저장
+            if(!imgSrcPath.contains("/temp/summernoteImage")) {
+                decoder(imgSrcPath, getFileExtensionFromBase64(imgSrcPath), "/Users/siyeon/Desktop/temp/summernote_image/aaaaaaa.jpg");
+                form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/aaaaaaa.jpg"));
+                System.out.println("form.getContent().replaceAll(imgSrcPath,\"/temp/summernoteImage/aaaaaaa.jpg\") = " + form.getContent().replaceAll(imgSrcPath, "/temp/summernoteImage/aaaaaaa.jpg"));
+                System.out.println("imgSrcPath = " + imgSrcPath);
+                System.out.println("form.getContent() = " + form.getContent());
+            }
+        }
         Long idx = boardService.updateBoard(itemId, form);
         redirectAttributes.addAttribute("itemId",idx);
         return "redirect:/board/edit/{itemId}";
@@ -121,5 +141,36 @@ public class BoardController {
         boardService.deleteBoard(itemId);
         return "redirect:/board";
     }
+
+    public static void decoder(String base64String, String postFix, String targetFilePath){
+
+        try {
+            String[] parts = base64String.split(",");
+            String mimeType = parts[0].split(":")[1].split(";")[0]; // MIME 타입 추출
+            String base64Data = parts[1]; // Base64 데이터 추출
+
+            byte[] decodedBytes = Base64.getDecoder().decode(base64Data); // Base64 디코딩
+
+            ByteArrayInputStream bis = new ByteArrayInputStream(decodedBytes);
+            BufferedImage bufferedImage = ImageIO.read(bis);
+
+            ImageIO.write(bufferedImage, mimeType, new File(targetFilePath)); // 파일로 저장
+
+            System.out.println("File conversion completed.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getFileExtensionFromBase64(String base64) {
+        int extensionStartIndex = base64.indexOf('/') + 1;
+        int extensionEndIndex = base64.indexOf(';');
+        if (extensionStartIndex > 0 && extensionEndIndex > extensionStartIndex) {
+            return base64.substring(extensionStartIndex, extensionEndIndex);
+        } else {
+            return null;
+        }
+    }
+
 
 }
