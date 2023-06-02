@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,6 +28,8 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
     private int views;
+    @ColumnDefault("N")
+    private String is_top;
 
     @Builder
     public Board(String name, String writer, String content, Long id) {

@@ -43,18 +43,12 @@
     $(document).ready(function () {
         $('#summernote').summernote({
             placeholder: '내용',
-            minHeight: 370,
+            minHeight: 200,
             maxHeight: null,
             focus: true,
             lang: 'ko-KR',
-            callbacks: {
-                onImageUpload: function (files) {
-                    // 파일 업로드(다중업로드를 위해 반복문 사용)
-                    for (var i = files.length - 1; i >= 0; i--) {
-                        uploadSummernoteImageFile(files[i], this);
-                    }
-                }
-            }
+            height: 500,                 // 에디터 높이
+            lang: "ko-KR"					// 한글 설정
         });
     });
 

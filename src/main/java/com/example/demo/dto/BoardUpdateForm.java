@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class BoardUpdateForm {
+    private Long id;
     @NotBlank
     private String name;
     @NotBlank

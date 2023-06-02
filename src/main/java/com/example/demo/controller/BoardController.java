@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,10 +98,26 @@ public class BoardController {
     }
 
     @PostMapping("/board/add")
-    public String boardAdd(@Validated @ModelAttribute("item")BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+    public String boardAdd(@Validated @ModelAttribute("item")BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if(bindingResult.hasErrors()) {
             log.info("errors={}",bindingResult);
-            return "/board/add";
+            return "board/add";
+        }
+        Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
+        Matcher captured = imgPattern.matcher(form.getContent());
+        String currentSimpleDate = getCurrentSimpleDate();
+        File dir = new File(imageStorageTempDir+currentSimpleDate);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        while(captured.find()){
+            String imgSrcPath = captured.group(1);
+            String extension = getFileExtensionFromBase64(imgSrcPath);
+            if(!imgSrcPath.contains("/temp/summernoteImage/")) {
+                String savedFileName = UUID.randomUUID() + "." + extension;
+                decoder(imgSrcPath, imageStorageTempDir+currentSimpleDate+"/"+savedFileName);
+                form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/"+currentSimpleDate+"/"+savedFileName));
+            }
         }
         Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).build();
         Long idx = boardService.insertBoard(board);
@@ -146,7 +161,12 @@ public class BoardController {
     }
 
     @PostMapping("/board/edit/{itemId}")
-    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, RedirectAttributes redirectAttributes) throws IOException {
+    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if(bindingResult.hasErrors()) {
+            log.info("errors={}",bindingResult);
+            return "board/edit";
+        }
+
         boardService.deleteSummernoteFile(itemId, form);
 //        boardService.copyImageFiles(form);
         Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");

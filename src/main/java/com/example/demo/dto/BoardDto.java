@@ -8,7 +8,6 @@ import com.example.demo.excel.annotation.ExcelColumnStyle;
 import com.example.demo.excel.style.DefaultExcelCellStyle;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -29,8 +28,8 @@ public class BoardDto {
     private String writer;
     @ExcelColumn(headerName = "registerDate")
     private LocalDateTime registerDate;
-    @ColumnDefault("0")
     private int views;
+    private String is_top;
 
     public BoardDto(Board board) {
         this.id = board.getId();
@@ -38,6 +37,7 @@ public class BoardDto {
         this.writer = board.getWriter();
         this.registerDate = board.getRegisterDate();
         this.views = board.getViews();
+        this.is_top = board.getIs_top();
     }
 
     @Override
@@ -48,6 +48,7 @@ public class BoardDto {
                 ", writer='" + writer + '\'' +
                 ", registerDate=" + registerDate +
                 ", views=" + views +
+                ", is_top='" + is_top + '\'' +
                 '}';
     }
 }
