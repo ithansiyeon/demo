@@ -80,14 +80,14 @@ public class BoardService {
 
     @Transactional(readOnly = false)
     public Long updateBoard(Long itemId, BoardUpdateForm form) {
-        form.setContent(form.getContent().replaceAll("/temp/summernoteImage/","/summernoteImage/"));
+        //form.setContent(form.getContent().replaceAll("/temp/summernoteImage/","/summernoteImage/"));
         Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).id(itemId).build());
         return board.getId();
     }
 
     public void deleteSummernoteFile(Long idx, BoardUpdateForm form) {
         Board originalBoard = boardRepository.findById(idx).get();
-        Pattern pattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>");
+        Pattern pattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
         Matcher matcher = pattern.matcher(originalBoard.getContent());
         List<String> originalImagePaths = new ArrayList<>();
         List<String> updatedImagePaths = new ArrayList<>();
@@ -106,20 +106,21 @@ public class BoardService {
 
         for (String originalImagePath : originalImagePaths) {
             String[] paths = originalImagePath.split("/");
-            String imageName = paths[paths.length - 1];
+            String imageName = paths[paths.length-2]+"\\"+paths[paths.length-1];
+            String fullPath = imageStorageTempDir + imageName;
             if (!updatedImagePaths.contains(originalImagePath)) {
-                File imageFile = new File(imageStorageDir + imageName);
+                File imageFile = new File(fullPath);
                 // 파일이 존재하는지 확인
                 if (imageFile.exists()) {
-                    log.info("File exists: " + originalImagePath);
+                    log.info("File exists: " + fullPath);
                     // 파일 삭제
                     if (imageFile.delete()) {
-                        log.info("File deleted successfully: " + originalImagePath);
+                        log.info("File deleted successfully: " + fullPath);
                     } else {
-                        log.info("Failed to delete the file: " + originalImagePath);
+                        log.info("Failed to delete the file: " + fullPath);
                     }
                 } else {
-                    log.info("File does not exist: " + originalImagePath);
+                    log.info("File does not exist: " + fullPath);
                 }
             }
         }
@@ -142,5 +143,11 @@ public class BoardService {
     @Transactional(readOnly = false)
     public void deleteBoard(Long itemId) {
         boardRepository.deleteById(itemId);
+    }
+
+    @Transactional(readOnly = false)
+    public void boardViewCount(Long itemId) {
+        Board board = boardRepository.findById(itemId).get();
+        board.viewCountUp(board);
     }
 }

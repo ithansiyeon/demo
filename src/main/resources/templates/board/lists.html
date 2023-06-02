@@ -66,12 +66,14 @@
         <th>글쓴이</th>
         <th>글 제목</th>
         <th>등록일</th>
+        <th>조회수</th>
     </tr>
     <tr th:each="board: ${boardList}">
         <td style="text-align: center"><a href="#" th:href="@{/board/edit/{itemId}(itemId=${board.id})}" th:text="${board.id}">글 번호</a></td>
         <td th:text="${board.writer}">글쓴이</td>
         <td th:text="${board.name}">글 제목</td>
         <td th:text="${#temporals.format(board.registerDate,'yyyy-MM-dd HH:mm:ss')}">등록일</td>
+        <td style="text-align: center" th:text="${board.views}"></td>
     </tr>
     <tr th:if="${boardList.isEmpty()}" style="text-align: center">
         <td colspan="3">데이터가 없습니다.</td>

@@ -6,10 +6,13 @@ import com.example.demo.dto.BoardSaveForm;
 import com.example.demo.dto.BoardUpdateForm;
 import com.example.demo.entity.Board;
 import com.example.demo.service.BoardService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,19 +24,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.Base64;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.demo.utils.CalendarUtil.getCurrentSimpleDate;
 import static com.example.demo.utils.ExcelUtil.*;
 
 @Controller
@@ -42,6 +43,9 @@ import static com.example.demo.utils.ExcelUtil.*;
 public class BoardController {
 
     private final BoardService boardService;
+
+    @Value("${image.storage.tempDir}")
+    private String imageStorageTempDir;
 
     private static int cnt = 0;
 
@@ -107,7 +111,35 @@ public class BoardController {
     }
 
     @GetMapping("/board/edit/{itemId}")
-    public String boardEdit(@PathVariable Long itemId, Model model) {
+    public String boardEdit(@PathVariable Long itemId, Model model, HttpServletRequest req, HttpServletResponse res) {
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("boardView")) {
+                    oldCookie = cookie;
+                    break;
+                }
+            }
+        }
+        //요청에 Cookie가 없고 글을 조회한다면 [게시글ID]의 값을 추가하여 Cookie생성 (기간은 하루로 설정)
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + itemId.toString() + "]")) {
+                boardService.boardViewCount(itemId);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + itemId + "]");
+                oldCookie.setPath("/board/edit");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                res.addCookie(oldCookie);
+            }
+        } else {
+            //요청에 Cookie가 있고 글을 조회한 기록이 있다면 pass 없다면 Cookie에 [게시글ID] 붙이기
+            boardService.boardViewCount(itemId);
+            Cookie newCookie = new Cookie("boardView", "[" + itemId + "]");
+            newCookie.setPath("/board/edit");
+            newCookie.setMaxAge(60 * 60 * 24);
+            res.addCookie(newCookie);
+        }
         BoardEditForm item = boardService.getBoardIdx(itemId);
         model.addAttribute("item", item);
         return "board/edit";
@@ -117,18 +149,20 @@ public class BoardController {
     public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, RedirectAttributes redirectAttributes) throws IOException {
         boardService.deleteSummernoteFile(itemId, form);
 //        boardService.copyImageFiles(form);
-        System.out.println("form.getContent() = " + form.getContent());
         Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
         Matcher captured = imgPattern.matcher(form.getContent());
-        String imgSrcPath = "";
+        String currentSimpleDate = getCurrentSimpleDate();
+        File dir = new File(imageStorageTempDir+currentSimpleDate);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
         while(captured.find()){
-            imgSrcPath = captured.group(1);  // 글 내용의 이미지들 중 첫번째 이미지만 저장
-            if(!imgSrcPath.contains("/temp/summernoteImage")) {
-                decoder(imgSrcPath, getFileExtensionFromBase64(imgSrcPath), "/Users/siyeon/Desktop/temp/summernote_image/aaaaaaa.jpg");
-                form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/aaaaaaa.jpg"));
-                System.out.println("form.getContent().replaceAll(imgSrcPath,\"/temp/summernoteImage/aaaaaaa.jpg\") = " + form.getContent().replaceAll(imgSrcPath, "/temp/summernoteImage/aaaaaaa.jpg"));
-                System.out.println("imgSrcPath = " + imgSrcPath);
-                System.out.println("form.getContent() = " + form.getContent());
+            String imgSrcPath = captured.group(1);
+            String extension = getFileExtensionFromBase64(imgSrcPath);
+            if(!imgSrcPath.contains("/temp/summernoteImage/")) {
+                String savedFileName = UUID.randomUUID() + "." + extension;
+                decoder(imgSrcPath, imageStorageTempDir+currentSimpleDate+"/"+savedFileName);
+                form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/"+currentSimpleDate+"/"+savedFileName));
             }
         }
         Long idx = boardService.updateBoard(itemId, form);
@@ -142,21 +176,15 @@ public class BoardController {
         return "redirect:/board";
     }
 
-    public static void decoder(String base64String, String postFix, String targetFilePath){
+    public static void decoder(String base64String, String targetFilePath){
 
         try {
             String[] parts = base64String.split(",");
-            String mimeType = parts[0].split(":")[1].split(";")[0]; // MIME 타입 추출
             String base64Data = parts[1]; // Base64 데이터 추출
-
             byte[] decodedBytes = Base64.getDecoder().decode(base64Data); // Base64 디코딩
-
-            ByteArrayInputStream bis = new ByteArrayInputStream(decodedBytes);
-            BufferedImage bufferedImage = ImageIO.read(bis);
-
-            ImageIO.write(bufferedImage, mimeType, new File(targetFilePath)); // 파일로 저장
-
-            System.out.println("File conversion completed.");
+            OutputStream stream = new FileOutputStream(targetFilePath);
+            stream.write(decodedBytes);
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -26,6 +26,7 @@ public class Board {
     @Column(nullable = true)
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+    private int views;
 
     @Builder
     public Board(String name, String writer, String content, Long id) {
@@ -33,5 +34,9 @@ public class Board {
         this.writer = writer;
         this.content = content;
         this.id = id;
+    }
+
+    public void viewCountUp(Board board) {
+        board.views++;
     }
 }

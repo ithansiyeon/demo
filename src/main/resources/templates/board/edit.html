@@ -123,8 +123,8 @@
         <div class="field-error" th:errors="*{writer}">작성자 오류</div>
         <br><br>
         <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
-        <button th:onclick="|location.href='@{/board/edit/itemId(itemId=${item.id})}'|" class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;margin-right: 2px">수정</button>
-        <button th:onclick="|location.href='@{/board/delete/itemId(itemId=${item.id})}'|" class="btn btn-secondary" type="button" style="float: right; margin-top: 3px;">삭제</button>
+        <button th:onclick="|location.href='@{/board/edit/{itemId}(itemId=${item.id})}'|" class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;margin-right: 2px">수정</button>
+        <button th:onclick="|location.href='@{/board/delete/{itemId}(itemId=${item.id})}'|" class="btn btn-secondary" type="button" style="float: right; margin-top: 3px;">삭제</button>
     </form>
 </div>
 </body>
