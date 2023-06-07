@@ -1,7 +1,11 @@
 package com.example.demo;
 
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import jakarta.xml.bind.DatatypeConverter;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,11 +14,19 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import static com.example.demo.utils.CalendarUtil.getCurrentSimpleDate;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 class DemoApplicationTests {
+
+	@Autowired
+	EntityManager em;
+
+	JPAQueryFactory query;
 
 	@Value("${image.storage.tempDir}")
 	private String imageStorageTempDir;
@@ -65,4 +77,25 @@ class DemoApplicationTests {
 
 	}
 
+	@Test
+	public void dynamicTableQuery() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+		query = new JPAQueryFactory(em);
+		String table = "QBoard";
+		Long boardIdx = 1L;
+		String isDelete = "N";
+		Class c = Class.forName("com.example.demo.entity."+table).getClass();
+		PathBuilder<?> entityPath = new PathBuilder(c, "Board");
+		System.out.println("entityPath.getType() = " + entityPath.getType());
+		assertThat("1").isEqualTo("1");
+		List<?> result = query
+				.selectFrom(entityPath)
+//				.where(entityPath.get("boardIdx").eq(boardIdx))
+				.fetch();
+		System.out.println("result = " + result);
+	}
+	class Board {
+		String name;
+		String id;
+	}
 }
+

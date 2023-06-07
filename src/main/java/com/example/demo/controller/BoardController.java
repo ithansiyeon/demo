@@ -55,6 +55,7 @@ public class BoardController {
             boardService.createBoard();*/
         PageRequest pageRequest = PageRequest.of(page-1, 10, Sort.by("id").descending());
         Page<BoardDto> boardList = boardService.getBoardList(pageRequest);
+
         model.addAttribute("startPage",Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
         model.addAttribute("boardList",boardList);
         model.addAttribute("count",boardList.getTotalElements());
@@ -119,7 +120,8 @@ public class BoardController {
                 form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/"+currentSimpleDate+"/"+savedFileName));
             }
         }
-        Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).build();
+        System.out.println("form.getIs_top() = " + form.getIs_top());
+        Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").build();
         Long idx = boardService.insertBoard(board);
         redirectAttributes.addAttribute("itemId", idx);
         return "redirect:/board/edit/{itemId}";
@@ -166,7 +168,7 @@ public class BoardController {
             log.info("errors={}",bindingResult);
             return "board/edit";
         }
-
+        System.out.println("form.getIs_top() = " + form.getIs_top());
         boardService.deleteSummernoteFile(itemId, form);
 //        boardService.copyImageFiles(form);
         Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");

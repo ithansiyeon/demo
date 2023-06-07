@@ -121,6 +121,10 @@
         <input th:errorclass="field-error" id="writer" type="text" name="writer" th:field="*{writer}"
                style="width: 40%;" placeholder="작성자"/>
         <div class="field-error" th:errors="*{writer}">작성자 오류</div>
+        <br>
+        <label for="is_top">상단 여부</label>
+        <input type="checkbox" id="is_top" name="is_top" th:field="*{is_top}" th:value="*{is_top}" th:checked="*{is_top == 'Y'}?true:false" th:onclick="handleChange(this)" class="form-check-input">
+        <input type="hidden" name="_is_top" value="N" />
         <br><br>
         <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
         <div style="float: right">
@@ -130,4 +134,17 @@
     </form>
 </div>
 </body>
+<script>
+    function handleChange(checkbox) {
+        console.log("aaa")
+        /*if (checkbox.checked) {
+            /!* Checkbox가 체크되었을 때 값 변경 *!/
+            console.log("bbbb");
+            $('[name="is_top"]').attr('value','Y');
+        } else {
+            /!* Checkbox가 체크 해제되었을 때 값 변경 *!/
+            $('[name="is_top"]').attr('value','N');
+        }*/
+    }
+</script>
 </html>

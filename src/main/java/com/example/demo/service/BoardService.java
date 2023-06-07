@@ -75,13 +75,14 @@ public class BoardService {
     public BoardEditForm getBoardIdx(Long idx) {
         Board board = boardRepository.findById(idx).get();
         //mapper를 통해서도 값 넣어 줄 수는 있음
+        System.out.println("board.toString() = " + board.toString());
         return mapper.map(board, BoardEditForm.class);
     }
 
     @Transactional(readOnly = false)
     public Long updateBoard(Long itemId, BoardUpdateForm form) {
         //form.setContent(form.getContent().replaceAll("/temp/summernoteImage/","/summernoteImage/"));
-        Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).id(itemId).build());
+        Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").id(itemId).build());
         return board.getId();
     }
 

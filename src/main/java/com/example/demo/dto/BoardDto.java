@@ -51,4 +51,7 @@ public class BoardDto {
                 ", is_top='" + is_top + '\'' +
                 '}';
     }
+
+    public BoardDto() {
+    }
 }

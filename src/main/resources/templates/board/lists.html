@@ -76,12 +76,11 @@
         <td th:text="${#temporals.format(board.registerDate,'yyyy-MM-dd HH:mm:ss')}">등록일</td>
         <td style="text-align: center" th:text="${board.views}">조회수</td>
         <td style="text-align: center">
-            <input type="checkbox" id="isTop" name="open" th:field="*{board.is_top}" class="form-check-input">
-            <label for="open" class="form-check-label">상단여부</label>
+            <input type="checkbox" id="is_top" name="is_top" th:value="${board.is_top}" th:checked="${board.is_top == 'Y'}" class="form-check-input">
         </td>
     </tr>
     <tr th:if="${boardList.isEmpty()}" style="text-align: center">
-        <td colspan="3">데이터가 없습니다.</td>
+        <td colspan="6">데이터가 없습니다.</td>
     </tr>
 </table>
 </div>

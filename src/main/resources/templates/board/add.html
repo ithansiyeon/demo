@@ -91,6 +91,10 @@
         <input th:errorclass="field-error" id="writer" type="text" name="writer" th:field="*{writer}"
                style="width: 40%;" placeholder="작성자"/>
         <div class="field-error" th:errors="*{writer}">작성자 오류</div>
+        <br>
+        <label for="is_top">상단 여부</label>
+        <input type="checkbox" id="is_top" name="is_top" th:field="*{is_top}" class="form-check-input">
+        <input type="hidden" name="_is_top" value="N" />
         <br><br>
         <div class="note-editable">
             <textarea id="summernote" name="content"></textarea>

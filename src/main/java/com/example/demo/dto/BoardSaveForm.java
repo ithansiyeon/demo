@@ -10,4 +10,5 @@ public class BoardSaveForm {
     @NotBlank
     private String writer;
     private String content;
+    private Boolean is_top;
 }

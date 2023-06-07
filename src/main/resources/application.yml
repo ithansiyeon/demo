@@ -6,6 +6,10 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+    profiles:
+        active: test
+  thymeleaf:
+    prefix: classpath:templates/
   security:
     user:
       name: user
@@ -18,6 +22,8 @@ spring:
         format_sql: true
         use_sql_comments: true
         default_batch_fetch_size: 100
+  profiles:
+    active: test
   messages:
     basename: messages,errors
   mvc:
@@ -26,6 +32,7 @@ spring:
 #        show_sql: true
 logging.level:
   org.hibernate.SQL: debug
+  org.springframework.jdbc: debug
 #image:
 #  storage:
 #    tempDir: /Users/siyeon/Desktop/temp/summernote_image/
@@ -34,44 +41,8 @@ image:
   storage:
     tempDir: D:\temp\summernote_image\
     Dir: D:\summernote_image\
-
-#spring:
-#  datasource:
-#    url: jdbc:h2:tcp://localhost/~/querydsl
-#    username: sa
-#    password:
-#    driver-class-name: org.h2.Driver
-#  messages:
-#    basename: messages
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
-#    properties:
-#      hibernate:
-#        format_sql: true
-#        default_batch_fetch_size: 100
-#  security:
-#    user:
-#      name: user
-#      password: 1111
-#logging.level:
-#  org.hibernate.SQL: debug
-#logging:
-#  level:
-#      root: info
-#  org:
-#    hibernate:
-#      SQL: debug
-#      type:
-#        descriptor:
-#          sql: trace
-#  pattern:
-#    console: "%-5level %d{yy-MM-dd HH:mm:SSS}[%thread] %logger[%method:%line] - %msg%n"
-#    file: "%-5level %d{yy-MM-dd HH:mm:SSS}[%thread] %logger[%method:%line] - %msg%n"
-#  file:
-#    name: C:/unistudy/logs/logback-dev.log
-#  logback:
-#    rollingpolicy:
-#      max-file-size: 1MB                #default 10M
-#      max-history: 31                   #default 7
-#      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
+mybatis:
+  type-aliases-package: com.example.demo.dto
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/**/*.xml

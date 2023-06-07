@@ -11,4 +11,5 @@ public class BoardUpdateForm {
     @NotBlank
     private String writer;
     private String content;
+    private Boolean is_top;
 }
