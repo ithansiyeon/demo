@@ -18,6 +18,5 @@ class MyBatisBoardRepositoryTest {
     public void dynamicTableQuery() {
         BoardSearchCond boardSearch = new BoardSearchCond("board",1L);
         List<BoardDto> result = myBatisBoardRepository.boardList(boardSearch);
-        System.out.println("result = " + result);
     }
 }

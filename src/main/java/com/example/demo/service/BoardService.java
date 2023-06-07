@@ -75,7 +75,6 @@ public class BoardService {
     public BoardEditForm getBoardIdx(Long idx) {
         Board board = boardRepository.findById(idx).get();
         //mapper를 통해서도 값 넣어 줄 수는 있음
-        System.out.println("board.toString() = " + board.toString());
         return mapper.map(board, BoardEditForm.class);
     }
 

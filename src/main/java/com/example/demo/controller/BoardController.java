@@ -158,6 +158,7 @@ public class BoardController {
             res.addCookie(newCookie);
         }
         BoardEditForm item = boardService.getBoardIdx(itemId);
+        System.out.println("item.toString() = " + item.toString());
         model.addAttribute("item", item);
         return "board/edit";
     }
@@ -168,7 +169,6 @@ public class BoardController {
             log.info("errors={}",bindingResult);
             return "board/edit";
         }
-        System.out.println("form.getIs_top() = " + form.getIs_top());
         boardService.deleteSummernoteFile(itemId, form);
 //        boardService.copyImageFiles(form);
         Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");

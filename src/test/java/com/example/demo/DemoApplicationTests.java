@@ -91,7 +91,6 @@ class DemoApplicationTests {
 				.selectFrom(entityPath)
 //				.where(entityPath.get("boardIdx").eq(boardIdx))
 				.fetch();
-		System.out.println("result = " + result);
 	}
 	class Board {
 		String name;

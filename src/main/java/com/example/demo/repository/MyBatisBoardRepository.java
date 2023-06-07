@@ -14,7 +14,6 @@ public class MyBatisBoardRepository implements BoardMapper {
     private final BoardMapper boardMapper;
     @Override
     public List<BoardDto> boardList(BoardSearchCond boardSearch) {
-        System.out.println(boardSearch.toString());
         List<BoardDto> result = boardMapper.boardList(boardSearch);
         return result;
     }
