@@ -160,6 +160,6 @@ public class BoardService {
     }
 
     public List<UploadFile> getBoardFileIdx(Long itemId) {
-        return boardFileRepository.findById(itemId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
+        return boardFileRepository.findByBoardId(itemId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
     }
 }

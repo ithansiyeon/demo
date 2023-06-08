@@ -170,6 +170,7 @@ public class BoardController {
         }
         BoardEditForm item = boardService.getBoardIdx(itemId);
         List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
+
         model.addAttribute("fileList",uploadFileList);
         model.addAttribute("item", item);
         return "board/edit";
