@@ -10,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @DynamicInsert
 public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="board_id")
     private Long id;
     private String name;
     private String writer;
@@ -35,6 +38,8 @@ public class Board {
     @NotNull
     @Column(length = 1)
     private String is_top;
+    @OneToMany(mappedBy="board")
+    private List<BoardFile> boardFile = new ArrayList<>();
 
     @Builder
     public Board(String name, String writer, String content, Long id, String is_top) {

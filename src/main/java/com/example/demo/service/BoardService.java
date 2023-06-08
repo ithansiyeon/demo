@@ -4,7 +4,10 @@ import com.example.demo.dto.BoardDto;
 import com.example.demo.dto.BoardEditForm;
 import com.example.demo.dto.BoardUpdateForm;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.BoardFile;
+import com.example.demo.repository.BoardFileRepository;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.utils.UploadFile;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,7 @@ public class BoardService {
     private final EntityManager em;
     private final BoardRepository boardRepository;
     private final ModelMapper mapper;
+    private final BoardFileRepository boardFileRepository;
 
     @Value("${image.storage.tempDir}")
     private String imageStorageTempDir;
@@ -149,5 +153,13 @@ public class BoardService {
     public void boardViewCount(Long itemId) {
         Board board = boardRepository.findById(itemId).get();
         board.viewCountUp(board);
+    }
+
+    public void createBoardFile(BoardFile boardFile) {
+        boardFileRepository.save(boardFile);
+    }
+
+    public List<UploadFile> getBoardFileIdx(Long itemId) {
+        return boardFileRepository.findById(itemId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
     }
 }

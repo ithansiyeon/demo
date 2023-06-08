@@ -36,6 +36,19 @@
         font-weight: 400;
         font-style: normal;
     }
+
+    footer {
+        /* footer를 aside위에 올리기 위해 사용(부유객체) */
+        position: absolute;
+        height: 60px;
+        width: 100%;
+        padding: 0 25px;
+        line-height: 60px;
+        color: #94a9ff;
+        border-top: 1px solid #94a9ff;
+        background-color: #94a9ff;
+        margin-top: 100px;
+    }
 </style>
 
 
@@ -106,6 +119,9 @@
         });
     }
 
+    function deleteFile(e) {
+        $(e).val('');
+    }
 </script>
 <body>
 <h2 style="text-align: center;">글 수정</h2><br><br><br>
@@ -127,11 +143,16 @@
         <input type="hidden" name="_is_top" value="N" />
         <br><br>
         <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
+        <div th:each="file : *{fileList}">
+            <input style="display: inline" type="file" name="file" id="file1" th:field="${file.getUploadFileName()}" > <a href='#' onclick=deleteFile('#file1')>[X]</a>
+        </div>
+        <input style="display: inline" type="file" name="file" id="file2" > <a href='#' onclick=deleteFile('#file2')>[X]</a>
         <div style="float: right">
             <button th:onclick="|location.href='@{/board/edit/{itemId}(itemId=${item.id})}'|" class="btn btn-primary" type="submit" style="margin-top: 3px;margin-right: 2px">수정</button>
             <button th:onclick="|location.href='@{/board/delete/{itemId}(itemId=${item.id})}'|" class="btn btn-secondary" type="button" style="margin-top: 3px;">삭제</button>
         </div>
     </form>
 </div>
+<footer></footer>
 </body>
 </html>

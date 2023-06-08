@@ -36,6 +36,19 @@
         font-weight: 400;
         font-style: normal;
     }
+
+    footer {
+        /* footer를 aside위에 올리기 위해 사용(부유객체) */
+        position: absolute;
+        height: 60px;
+        width: 100%;
+        padding: 0 25px;
+        line-height: 60px;
+        color: #94a9ff;
+        border-top: 1px solid #94a9ff;
+        background-color: #94a9ff;
+        margin-top: 100px;
+    }
 </style>
 
 
@@ -99,9 +112,16 @@
         <div class="note-editable">
             <textarea id="summernote" name="content"></textarea>
         </div>
-        <input type="file" name="file" >
+        <input style="display: inline" type="file" name="file" id="file1" > <a href='#' onclick=deleteFile('#file1')>[X]</a>
+        <input style="display: inline" type="file" name="file" id="file2" > <a href='#' onclick=deleteFile('#file2')>[X]</a>
         <button class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;">등록</button>
     </form>
 </div>
+<footer></footer>
 </body>
+<script>
+    function deleteFile(e) {
+        $(e).val('');
+    }
+</script>
 </html>

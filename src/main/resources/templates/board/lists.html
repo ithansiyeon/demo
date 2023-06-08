@@ -23,6 +23,20 @@
     body {
         font-family: 'SUITE-Regular';
     }
+
+    footer {
+        /* footer를 aside위에 올리기 위해 사용(부유객체) */
+        position: absolute;
+        height: 60px;
+        width: 100%;
+        padding: 0 25px;
+        line-height: 60px;
+        color: #94a9ff;
+        border-top: 1px solid #94a9ff;
+        background-color: #94a9ff;
+        margin-top: 100px;
+    }
+
 </style>
 <body>
 
@@ -155,6 +169,7 @@
         </div>
     </div>
 </div>
+<footer></footer>
 </body>
 <script>
     function popUp() {

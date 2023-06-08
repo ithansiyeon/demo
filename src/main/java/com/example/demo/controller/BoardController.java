@@ -5,7 +5,10 @@ import com.example.demo.dto.BoardEditForm;
 import com.example.demo.dto.BoardSaveForm;
 import com.example.demo.dto.BoardUpdateForm;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.BoardFile;
 import com.example.demo.service.BoardService;
+import com.example.demo.utils.FileUtil;
+import com.example.demo.utils.UploadFile;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,6 +45,7 @@ import static com.example.demo.utils.ExcelUtil.*;
 public class BoardController {
 
     private final BoardService boardService;
+    private final FileUtil fileStore;
 
     @Value("${image.storage.tempDir}")
     private String imageStorageTempDir;
@@ -99,11 +103,13 @@ public class BoardController {
     }
 
     @PostMapping("/board/add")
-    public String boardAdd(@Validated @ModelAttribute("item")BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String boardAdd(@Validated @ModelAttribute("item")BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if(bindingResult.hasErrors()) {
             log.info("errors={}",bindingResult);
             return "board/add";
         }
+        List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
+
         Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
         Matcher captured = imgPattern.matcher(form.getContent());
         String currentSimpleDate = getCurrentSimpleDate();
@@ -120,8 +126,13 @@ public class BoardController {
                 form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/"+currentSimpleDate+"/"+savedFileName));
             }
         }
-        System.out.println("form.getIs_top() = " + form.getIs_top());
         Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").build();
+        List<BoardFile> boardFiles = new ArrayList<>();
+        for (UploadFile uploadFile : uploadFiles) {
+            BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
+            boardFiles.add(boardFile);
+            boardService.createBoardFile(boardFile);
+        }
         Long idx = boardService.insertBoard(board);
         redirectAttributes.addAttribute("itemId", idx);
         return "redirect:/board/edit/{itemId}";
@@ -158,7 +169,8 @@ public class BoardController {
             res.addCookie(newCookie);
         }
         BoardEditForm item = boardService.getBoardIdx(itemId);
-        System.out.println("item.toString() = " + item.toString());
+        List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
+        model.addAttribute("fileList",uploadFileList);
         model.addAttribute("item", item);
         return "board/edit";
     }
