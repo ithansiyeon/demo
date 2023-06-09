@@ -88,6 +88,6 @@ public class BoardService {
     }
 
     public void deleteFileBoard(String s) {
-        boardRepository.deleteByStoreFileName(s);
+        boardFileRepository.deleteByStoreFileName(s);
     }
 }
