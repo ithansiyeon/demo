@@ -12,4 +12,5 @@ public interface BoardRepository extends JpaRepository<Board,Long>, BoardReposit
     })
     Board findByName(String name);
 
+    void deleteByStoreFileName(String s);
 }

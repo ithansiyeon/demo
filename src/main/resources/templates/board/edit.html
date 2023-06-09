@@ -6,7 +6,6 @@
     <link th:href="@{/css/bootstrap.min.css}"
           href="../../css/bootstrap.min.css" rel="stylesheet">
     <script src="../../jquery/jquery-3.7.0.min.js"></script>
-    <!--<script type="text/javascript" src="../../js/bootstrap.js"></script>-->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
@@ -49,6 +48,7 @@
         background-color: #94a9ff;
         margin-top: 100px;
     }
+
 </style>
 
 
@@ -61,26 +61,16 @@
             focus: true,
             lang: 'ko-KR',
             height: 300,                 // 에디터 높이
-            lang: "ko-KR"					// 한글 설정
-           /* callbacks: {
+            lang: "ko-KR",					// 한글 설정
+           callbacks: {
                 onImageUpload: function (files) {
                     // 파일 업로드(다중업로드를 위해 반복문 사용)
                     for (var i = files.length - 1; i >= 0; i--) {
                         uploadSummernoteImageFile(files[i], this);
                     }
-                },
-                onMediaDelete : function(target) {
-                    deleteFile(target[0].src);
                 }
-            }*/
-        }),
-
-        $("div.note-editable").keydown(function (e) {
-            if(e.keyCode === 8) {
-                console.log(e.data);
-                console.log("aaaa");
             }
-        });
+        })
     });
 
     /**
@@ -102,32 +92,22 @@
         });
     }
 
-    // 이미지 삭제 AJAX 요청
-    function deleteFile(imageUrl) {
-        console.log(imageUrl);
-        $.ajax({
-            url: "/deleteSummernoteImage",
-            type: "POST",
-            data: JSON.stringify({ imageUrl: imageUrl }),
-            contentType: "application/json",
-            success: function (response) {
-                console.log(response);
-            },
-            error: function (xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
+    function deleteFile(num) {
+        $('#file'+num).val('');
+        $('#edtText'+num).val('');
     }
 
-    function deleteFile(e) {
-        $(e).val('');
+    function editFile(num) {
+        var obj = $('#file'+num).val().split("\\");
+        $('#edtText'+num).val(obj[obj.length-1]);
     }
+
 </script>
 <body>
 <h2 style="text-align: center;">글 수정</h2><br><br><br>
 
 <div class="container" style="margin: auto;">
-    <form id="updateForm" method="post" th:action th:object="${item}">
+    <form id="updateForm" method="post" th:action th:object="${item}" enctype="multipart/form-data">
         <input type="hidden" th:field="*{id}">
         <label for="name">제목</label>
         <input th:errorclass="field-error" id="name" type="text" name="name" th:field="*{name}" style="width: 20%;"
@@ -143,8 +123,10 @@
         <input type="hidden" name="_is_top" value="N" />
         <br><br>
         <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
-        <div th:each="file : ${fileList}">
-            <input style="display: inline" type="file" name="file" id="file1" th:value="${file.uploadFileName}" > <a href='#' onclick=deleteFile('#file1')>[X]</a>
+        <div style="width: 100%;" th:each="file, fileStat : ${fileList}">
+            <input name="storeFileName" type="text" th:value="${file.storeFileName}" hidden="true">
+            <input style="display: inline;" type="text" th:id="edtText+(${fileStat.index}+1)" th:value="${file.uploadFileName}" disabled>
+            <input style="display: inline;" type="file" name="file" th:id="file+(${fileStat.index}+1)" th:onchange="editFile([[${fileStat.index}]]+1)"> <a href='#' th:onclick="deleteFile([[${fileStat.index}]]+1);">[X]</a>
         </div>
         <div style="float: right">
             <button th:onclick="|location.href='@{/board/edit/{itemId}(itemId=${item.id})}'|" class="btn btn-primary" type="submit" style="margin-top: 3px;margin-right: 2px">수정</button>

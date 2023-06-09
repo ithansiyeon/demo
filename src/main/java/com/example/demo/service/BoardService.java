@@ -12,19 +12,12 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,12 +29,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final ModelMapper mapper;
     private final BoardFileRepository boardFileRepository;
-
-    @Value("${image.storage.tempDir}")
-    private String imageStorageTempDir;
-
-    @Value("${image.storage.Dir}")
-    private String imageStorageDir;
 
     public Page<BoardDto> getBoardList(Pageable pageRequest) {
         return boardRepository.findBoardCustom(pageRequest).map(BoardDto::new);
@@ -56,13 +43,6 @@ public class BoardService {
     }
 
     public void mergeBoard(Board board) {
-        Board findBoard = boardRepository.findByName(board.getName());
-//        if(findBoard == null) {
-//            em.persist(board);
-//            boardRepository.save()
-//        } else {
-//            em.merge(board);
-//        }
         boardRepository.save(board);
     }
 
@@ -83,65 +63,9 @@ public class BoardService {
     }
 
     @Transactional(readOnly = false)
-    public Long updateBoard(Long itemId, BoardUpdateForm form) {
-        //form.setContent(form.getContent().replaceAll("/temp/summernoteImage/","/summernoteImage/"));
-        Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").id(itemId).build());
-        return board.getId();
-    }
-
-    public void deleteSummernoteFile(Long idx, BoardUpdateForm form) {
-        Board originalBoard = boardRepository.findById(idx).get();
-        Pattern pattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
-        Matcher matcher = pattern.matcher(originalBoard.getContent());
-        List<String> originalImagePaths = new ArrayList<>();
-        List<String> updatedImagePaths = new ArrayList<>();
-
-        // 매칭된 모든 결과를 가져와서 각각의 리스트에 추가
-       while (matcher.find()) {
-            String src = matcher.group(1);
-            originalImagePaths.add(src);
-        }
-
-        matcher = pattern.matcher(form.getContent());
-        while (matcher.find()) {
-            String src = matcher.group(1);
-            updatedImagePaths.add(src);
-        }
-
-        for (String originalImagePath : originalImagePaths) {
-            String[] paths = originalImagePath.split("/");
-            String imageName = paths[paths.length-2]+"\\"+paths[paths.length-1];
-            String fullPath = imageStorageTempDir + imageName;
-            if (!updatedImagePaths.contains(originalImagePath)) {
-                File imageFile = new File(fullPath);
-                // 파일이 존재하는지 확인
-                if (imageFile.exists()) {
-                    log.info("File exists: " + fullPath);
-                    // 파일 삭제
-                    if (imageFile.delete()) {
-                        log.info("File deleted successfully: " + fullPath);
-                    } else {
-                        log.info("Failed to delete the file: " + fullPath);
-                    }
-                } else {
-                    log.info("File does not exist: " + fullPath);
-                }
-            }
-        }
-    }
-
-    public void copyImageFiles(BoardUpdateForm form) throws IOException {
-        Pattern pattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>");
-        Matcher matcher = pattern.matcher(form.getContent());
-        while(matcher.find()) {
-            String src = matcher.group(1);
-            String[] paths = src.split("/");
-            String imageName = paths[paths.length - 1];
-            File file = new File(imageStorageTempDir+imageName);
-            File copyFile = new File(imageStorageDir+imageName);
-            if(!copyFile.exists())
-                Files.copy(file.toPath(), copyFile.toPath());
-        }
+    public Board updateBoard(Long itemId, BoardUpdateForm form) {
+        Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top()).id(itemId).build());
+        return board;
     }
 
     @Transactional(readOnly = false)
@@ -161,5 +85,9 @@ public class BoardService {
 
     public List<UploadFile> getBoardFileIdx(Long itemId) {
         return boardFileRepository.findByBoardId(itemId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
+    }
+
+    public void deleteFileBoard(String s) {
+        boardRepository.deleteByStoreFileName(s);
     }
 }

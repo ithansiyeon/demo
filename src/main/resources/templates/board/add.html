@@ -6,7 +6,6 @@
     <link th:href="@{/css/bootstrap.min.css}"
           href="../../css/bootstrap.min.css" rel="stylesheet">
     <script src="../../jquery/jquery-3.7.0.min.js"></script>
-    <!--<script type="text/javascript" src="../../js/bootstrap.js"></script>-->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
@@ -61,7 +60,15 @@
             focus: true,
             lang: 'ko-KR',
             height: 300,                 // 에디터 높이
-            lang: "ko-KR"					// 한글 설정
+            lang: "ko-KR",					// 한글 설정
+            callbacks: {
+                onImageUpload: function (files) {
+                    // 파일 업로드(다중업로드를 위해 반복문 사용)
+                    for (var i = files.length - 1; i >= 0; i--) {
+                        uploadSummernoteImageFile(files[i], this);
+                    }
+                }
+            }
         });
     });
 
@@ -112,8 +119,10 @@
         <div class="note-editable">
             <textarea id="summernote" name="content"></textarea>
         </div>
-        <input style="display: inline" type="file" name="file" id="file1" > <a href='#' onclick=deleteFile('#file1')>[X]</a>
-        <input style="display: inline" type="file" name="file" id="file2" > <a href='#' onclick=deleteFile('#file2')>[X]</a>
+        <th:block th:each="num : ${#numbers.sequence(1,2)}">
+            <input style="display: inline" type="file" name="file" id="file"+num> <a href='#' onclick=deleteFile('#file'+num)>[X]</a>
+        </th:block>
+
         <button class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;">등록</button>
     </form>
 </div>

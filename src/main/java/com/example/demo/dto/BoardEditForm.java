@@ -25,14 +25,6 @@ public class BoardEditForm {
         this.is_top = is_top;
     }
 
-    public BoardEditForm toEntity() {
-        return BoardEditForm.builder()
-                .name(name)
-                .writer(writer)
-                .content(content)
-                .is_top(is_top).build();
-    }
-
     public BoardEditForm() {
     }
 }

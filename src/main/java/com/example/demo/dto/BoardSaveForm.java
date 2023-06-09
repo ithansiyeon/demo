@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,5 +15,5 @@ public class BoardSaveForm {
     private String writer;
     private String content;
     private Boolean is_top;
-    List<MultipartFile> file;
+    List<MultipartFile> file = new ArrayList<>();
 }

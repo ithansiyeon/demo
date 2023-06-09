@@ -40,6 +40,17 @@ public class FileUtil {
         return new UploadFile(originalFilename, storeFileName);
     }
 
+    public boolean deleteFile(String fileName) {
+        File file = new File(fileDir+fileName);
+        System.out.println("file.exists() = " + file.exists());
+        System.out.println("fileName = " + fileName);
+        if (file.exists()) {
+            boolean delete = file.delete();
+            return delete;
+        }
+        return false;
+    }
+
     private String createStoreFileName(String originalFilename) {
         String ext = extractExt(originalFilename);
         String uuid = UUID.randomUUID().toString();

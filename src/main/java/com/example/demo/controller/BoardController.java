@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,15 +27,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.example.demo.utils.CalendarUtil.getCurrentSimpleDate;
 import static com.example.demo.utils.ExcelUtil.*;
 
 @Controller
@@ -46,9 +42,6 @@ public class BoardController {
 
     private final BoardService boardService;
     private final FileUtil fileStore;
-
-    @Value("${image.storage.tempDir}")
-    private String imageStorageTempDir;
 
     private static int cnt = 0;
 
@@ -110,22 +103,6 @@ public class BoardController {
         }
         List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
 
-        Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
-        Matcher captured = imgPattern.matcher(form.getContent());
-        String currentSimpleDate = getCurrentSimpleDate();
-        File dir = new File(imageStorageTempDir+currentSimpleDate);
-        if(!dir.exists()) {
-            dir.mkdirs();
-        }
-        while(captured.find()){
-            String imgSrcPath = captured.group(1);
-            String extension = getFileExtensionFromBase64(imgSrcPath);
-            if(!imgSrcPath.contains("/temp/summernoteImage/")) {
-                String savedFileName = UUID.randomUUID() + "." + extension;
-                decoder(imgSrcPath, imageStorageTempDir+currentSimpleDate+"/"+savedFileName);
-                form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/"+currentSimpleDate+"/"+savedFileName));
-            }
-        }
         Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").build();
         List<BoardFile> boardFiles = new ArrayList<>();
         for (UploadFile uploadFile : uploadFiles) {
@@ -140,6 +117,57 @@ public class BoardController {
 
     @GetMapping("/board/edit/{itemId}")
     public String boardEdit(@PathVariable Long itemId, Model model, HttpServletRequest req, HttpServletResponse res) {
+        Cookie(itemId, req, res);
+        BoardEditForm item = boardService.getBoardIdx(itemId);
+        List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
+
+        model.addAttribute("fileList",uploadFileList);
+        model.addAttribute("item", item);
+        return "board/edit";
+    }
+
+    @PostMapping("/board/edit/{itemId}")
+    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item")BoardUpdateForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+        if(bindingResult.hasErrors()) {
+            log.info("errors={}",bindingResult);
+            return "board/edit";
+        }
+
+        Board board = boardService.updateBoard(itemId, form);
+        Long idx = board.getId();
+
+        List<MultipartFile> fileList = form.getFile();
+        List<String> storeFileName = form.getStoreFileName();
+        for(int i=0;i<fileList.size();i++) {
+            boolean isDelete = fileStore.deleteFile(storeFileName.get(i));
+            if(isDelete) {
+                boardService.deleteFileBoard(storeFileName.get(i));
+            }
+        }
+        List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
+
+        for (UploadFile uploadFile : uploadFiles) {
+            BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
+            boardService.createBoardFile(boardFile);
+        }
+        redirectAttributes.addAttribute("itemId",idx);
+        return "redirect:/board/edit/{itemId}";
+    }
+
+    @GetMapping("/board/delete/{itemId}")
+    public String boardDelete(@PathVariable Long itemId) {
+        boardService.deleteBoard(itemId);
+        return "redirect:/board";
+    }
+
+    /**
+     * 쿠기 만드는 메소드
+     * @param itemId
+     * @param req
+     * @param res
+     */
+
+    public void Cookie(Long itemId, HttpServletRequest req, HttpServletResponse res) {
         Cookie oldCookie = null;
 
         Cookie[] cookies = req.getCookies();
@@ -168,72 +196,6 @@ public class BoardController {
             newCookie.setMaxAge(60 * 60 * 24);
             res.addCookie(newCookie);
         }
-        BoardEditForm item = boardService.getBoardIdx(itemId);
-        List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
-
-        model.addAttribute("fileList",uploadFileList);
-        model.addAttribute("item", item);
-        return "board/edit";
     }
-
-    @PostMapping("/board/edit/{itemId}")
-    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if(bindingResult.hasErrors()) {
-            log.info("errors={}",bindingResult);
-            return "board/edit";
-        }
-        boardService.deleteSummernoteFile(itemId, form);
-//        boardService.copyImageFiles(form);
-        Pattern imgPattern = Pattern.compile("(?i)< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)");
-        Matcher captured = imgPattern.matcher(form.getContent());
-        String currentSimpleDate = getCurrentSimpleDate();
-        File dir = new File(imageStorageTempDir+currentSimpleDate);
-        if(!dir.exists()) {
-            dir.mkdirs();
-        }
-        while(captured.find()){
-            String imgSrcPath = captured.group(1);
-            String extension = getFileExtensionFromBase64(imgSrcPath);
-            if(!imgSrcPath.contains("/temp/summernoteImage/")) {
-                String savedFileName = UUID.randomUUID() + "." + extension;
-                decoder(imgSrcPath, imageStorageTempDir+currentSimpleDate+"/"+savedFileName);
-                form.setContent(form.getContent().replace(imgSrcPath, "/temp/summernoteImage/"+currentSimpleDate+"/"+savedFileName));
-            }
-        }
-        Long idx = boardService.updateBoard(itemId, form);
-        redirectAttributes.addAttribute("itemId",idx);
-        return "redirect:/board/edit/{itemId}";
-    }
-
-    @GetMapping("/board/delete/{itemId}")
-    public String boardDelete(@PathVariable Long itemId) {
-        boardService.deleteBoard(itemId);
-        return "redirect:/board";
-    }
-
-    public static void decoder(String base64String, String targetFilePath){
-
-        try {
-            String[] parts = base64String.split(",");
-            String base64Data = parts[1]; // Base64 데이터 추출
-            byte[] decodedBytes = Base64.getDecoder().decode(base64Data); // Base64 디코딩
-            OutputStream stream = new FileOutputStream(targetFilePath);
-            stream.write(decodedBytes);
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static String getFileExtensionFromBase64(String base64) {
-        int extensionStartIndex = base64.indexOf('/') + 1;
-        int extensionEndIndex = base64.indexOf(';');
-        if (extensionStartIndex > 0 && extensionEndIndex > extensionStartIndex) {
-            return base64.substring(extensionStartIndex, extensionEndIndex);
-        } else {
-            return null;
-        }
-    }
-
 
 }

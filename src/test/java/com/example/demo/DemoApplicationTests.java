@@ -27,9 +27,6 @@ class DemoApplicationTests {
 	@Value("${image.storage.tempDir}")
 	private String imageStorageTempDir;
 
-	@Value("${image.storage.Dir}")
-	private String imageStorageDir;
-
 	@Test
 	void contextLoads() {
 	}
