@@ -119,15 +119,29 @@
         <div class="field-error" th:errors="*{writer}">작성자 오류</div>
         <br>
         <label for="is_top">상단 여부</label>
-        <input type="checkbox" id="is_top" name="is_top" th:field="*{is_top}" th:value="Y" th:checked="*{is_top eq 'Y'} ? 'checked':null" class="form-check-input">
-        <input type="hidden" name="_is_top" value="N" />
+        <input type="checkbox" id="is_top" name="is_top" th:field="*{is_top}" th:checked="*{is_top eq 'Y'} ? 'checked':null" class="form-check-input">
+        <input type="hidden" name="_is_top" value="N" th:attr="value=${is_top}"/>
         <br><br>
         <textarea id="summernote" name="content" th:utext="*{content}"></textarea>
         <div style="width: 100%;" th:each="file, fileStat : ${fileList}">
             <input name="storeFileName" type="text" th:value="${file.storeFileName}" hidden="true">
-            <input style="display: inline;" type="text" th:id="edtText+(${fileStat.index}+1)" th:value="${file.uploadFileName}" disabled>
+            <input name="fileName" style="display: inline;" type="text" th:id="edtText+(${fileStat.index}+1)" th:value="${file.uploadFileName}" readonly>
             <input style="display: inline;" type="file" name="file" th:id="file+(${fileStat.index}+1)" th:onchange="editFile([[${fileStat.index}]]+1)"> <a href='#' th:onclick="deleteFile([[${fileStat.index}]]+1);">[X]</a>
         </div>
+        <th:block th:if="${fileList != null and fileList.size() < 2}">
+            <div th:each="num : ${#numbers.sequence(fileList.size()+1,2)}">
+                <input name="storeFileName" type="text" hidden="true">
+                <input name="fileName" style="display: inline;" type="text" th:id="edtText+(${num})" readonly>
+                <input style="display: inline" type="file" name="file" th:id="'file' + ${num}" th:onchange="editFile([[${num}]])"> <a href='#' th:onclick="deleteFile('#file[[${num}]]')">[X]</a>
+            </div>
+        </th:block>
+        <th:block th:if="${fileList == null}">
+            <div th:each="num : ${#numbers.sequence(1,2)}">
+                <input name="storeFileName" type="text" hidden="true">
+                <input name="fileName" style="display: inline;" type="text" th:id="edtText+(${num})" readonly>
+                <input style="display: inline" type="file" name="file" th:id="'file' + ${num}" th:onchange="editFile([[${num}]])"> <a href='#' th:onclick="deleteFile('#file[[${num}]]')">[X]</a>
+            </div>
+        </th:block>
         <div style="float: right">
             <button th:onclick="|location.href='@{/board/edit/{itemId}(itemId=${item.id})}'|" class="btn btn-primary" type="submit" style="margin-top: 3px;margin-right: 2px">수정</button>
             <button th:onclick="|location.href='@{/board/delete/{itemId}(itemId=${item.id})}'|" class="btn btn-secondary" type="button" style="margin-top: 3px;">삭제</button>

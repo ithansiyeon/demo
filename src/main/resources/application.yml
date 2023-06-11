@@ -16,7 +16,7 @@ spring:
       password: 1111
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -43,7 +43,7 @@ logging.level:
 #    Dir: /Users/siyeon/Desktop/summernote_image/
 image:
   storage:
-    tempDir: D:\temp\summernote_image\
+    tempDir: /Users/siyeon/Desktop/temp/summernote_image/
     Dir: D:\summernote_image\
 mybatis:
   type-aliases-package: com.example.demo.dto
@@ -51,4 +51,4 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/**/*.xml
 file:
-  dir: C:\Users\user\Desktop\file\
+  dir: /Users/siyeon/Desktop/temp/image/

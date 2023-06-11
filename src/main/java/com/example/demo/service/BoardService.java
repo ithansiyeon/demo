@@ -59,12 +59,13 @@ public class BoardService {
     public BoardEditForm getBoardIdx(Long idx) {
         Board board = boardRepository.findById(idx).get();
         //mapper를 통해서도 값 넣어 줄 수는 있음
-        return mapper.map(board, BoardEditForm.class);
+//        return mapper.map(board, BoardEditForm.class);
+        return BoardEditForm.builder().id(board.getId()).name(board.getName()).content(board.getContent()).writer(board.getWriter()).is_top(board.getIs_top() == "Y" ? true:false).build();
     }
 
     @Transactional(readOnly = false)
     public Board updateBoard(Long itemId, BoardUpdateForm form) {
-        Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top()).id(itemId).build());
+        Board board = boardRepository.save(Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").id(itemId).build());
         return board;
     }
 

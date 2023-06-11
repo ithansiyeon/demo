@@ -119,10 +119,9 @@
         <div class="note-editable">
             <textarea id="summernote" name="content"></textarea>
         </div>
-        <th:block th:each="num : ${#numbers.sequence(1,2)}">
-            <input style="display: inline" type="file" name="file" id="file"+num> <a href='#' onclick=deleteFile('#file'+num)>[X]</a>
-        </th:block>
-
+        <div th:each="num : ${#numbers.sequence(1,2)}">
+            <input style="display: inline" type="file" name="file" th:id="'file' + ${num}"> <a href='#' th:onclick="deleteFile('#file[[${num}]]')">[X]</a>
+        </div>
         <button class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;">등록</button>
     </form>
 </div>
@@ -130,6 +129,7 @@
 </body>
 <script>
     function deleteFile(e) {
+        console.log(e);
         $(e).val('');
     }
 </script>

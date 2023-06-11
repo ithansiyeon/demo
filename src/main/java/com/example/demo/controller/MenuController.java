@@ -21,43 +21,6 @@ public class MenuController {
 
     private final MenuService menuService;
 
-//    @GetMapping("/v1/menus")
-//    public ResponseEntity<List<MenuResultDto>> getV1Menus() {
-//        final List<MenuResultDto> menus = menuService.getV1Menus();
-//        return ResponseEntity.ok(menus);
-//    }
-//
-//    @GetMapping("/v2/menus")
-//    public ResponseEntity<List<MenuResultDto>> getV2Menus() {
-//        final List<MenuResultDto> menus = menuService.getV2Menus();
-//        System.out.println("menus = " + menus);
-//        return ResponseEntity.ok(menus);
-//    }
-//
-//    @GetMapping("/v3/menus")
-//    public ResponseEntity<List<MenuResultDto>> getV3Menus() {
-//        final List<MenuResultDto> menus = menuService.getV3Menus();
-//        return ResponseEntity.ok(menus);
-//    }
-//
-//    @GetMapping("/v4/menus")
-//    public ResponseEntity<List<MenuResultDto>> getV4Menus() {
-//        final List<MenuResultDto> menus = menuService.getV4Menus();
-//        return ResponseEntity.ok(menus);
-//    }
-//
-//    @GetMapping("/jpql/menus")
-//    public ResponseEntity<List<MenuResultDto>> findAllWithJpql() {
-//        final List<MenuResultDto> menus = menuService.getJpqlMenus();
-//        return ResponseEntity.ok(menus);
-//    }
-//
-//    @GetMapping("/querydsl/menus")
-//    public ResponseEntity<List<MenuResultDto>> findAllWithQuerydsl() {
-//        final List<MenuResultDto> menus = menuService.getAllWithQuerydsl();
-//        return ResponseEntity.ok(menus);
-//    }
-
     @GetMapping("/menu")
     public String getMenuTree(Model model) {
         List<Menu> menus = menuService.getMenuTree();

@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.demo.utils.ExcelUtil.*;
 
@@ -120,7 +117,6 @@ public class BoardController {
         Cookie(itemId, req, res);
         BoardEditForm item = boardService.getBoardIdx(itemId);
         List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
-
         model.addAttribute("fileList",uploadFileList);
         model.addAttribute("item", item);
         return "board/edit";
@@ -132,18 +128,23 @@ public class BoardController {
             log.info("errors={}",bindingResult);
             return "board/edit";
         }
-
+        System.out.println("form.getIs_top() = " + form.getIs_top());
         Board board = boardService.updateBoard(itemId, form);
         Long idx = board.getId();
 
         List<MultipartFile> fileList = form.getFile();
         List<String> storeFileName = form.getStoreFileName();
+        List<String> fileName = form.getFileName();
+
         for(int i=0;i<fileList.size();i++) {
-            boolean isDelete = fileStore.deleteFile(storeFileName.get(i));
-            if(isDelete) {
-                boardService.deleteFileBoard(storeFileName.get(i));
+            if(!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) {
+                boolean isDelete = fileStore.deleteFile(storeFileName.get(i));
+                if(isDelete) {
+                    boardService.deleteFileBoard(storeFileName.get(i));
+                }
             }
         }
+        
         List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
 
         for (UploadFile uploadFile : uploadFiles) {

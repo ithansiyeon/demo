@@ -15,10 +15,11 @@ public class BoardEditForm {
     @NotBlank
     private String writer;
     private String content;
-    private String is_top;
+    private Boolean is_top;
 
     @Builder
-    public BoardEditForm(String name, String writer, String content, String is_top) {
+    public BoardEditForm(Long id, String name, String writer, String content, Boolean is_top) {
+        this.id = id;
         this.name = name;
         this.writer = writer;
         this.content = content;
