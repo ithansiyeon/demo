@@ -6,8 +6,10 @@ import com.example.demo.dto.BoardListSearchCond;
 import com.example.demo.dto.BoardUpdateForm;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
+import com.example.demo.entity.Comment;
 import com.example.demo.repository.BoardFileRepository;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.CommentRepository;
 import com.example.demo.utils.UploadFile;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final ModelMapper mapper;
     private final BoardFileRepository boardFileRepository;
+    private final CommentRepository commentRepository;
 
     public Page<BoardDto> getBoardList(BoardListSearchCond searchCond, Pageable pageRequest) {
         return boardRepository.findBoardCustom(searchCond,pageRequest).map(BoardDto::new);
@@ -84,5 +87,9 @@ public class BoardService {
     @Transactional(readOnly = false)
     public void deleteFileBoard(String storeFileName, Long boardIdx) {
         boardFileRepository.deleteByStoreFileName(storeFileName, boardIdx);
+    }
+
+    public List<Comment> getComment(Long itemId) {
+        return commentRepository.findByBoardId(itemId);
     }
 }

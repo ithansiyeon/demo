@@ -3,9 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
+import com.example.demo.entity.Comment;
 import com.example.demo.service.BoardService;
 import com.example.demo.utils.FileUtil;
 import com.example.demo.utils.UploadFile;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -152,6 +155,14 @@ public class BoardController {
     public String boardDelete(@PathVariable Long itemId) {
         boardService.deleteBoard(itemId);
         return "redirect:/board";
+    }
+
+    @GetMapping("/board/{id}/comments")
+    public ResponseEntity<String> boardComment(@PathVariable Long itemId) throws JsonProcessingException {
+        List<Comment> comments = boardService.getComment(itemId);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(comments);
+        return ResponseEntity.ok(json);
     }
 
     /**

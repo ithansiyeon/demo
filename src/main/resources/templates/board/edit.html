@@ -120,10 +120,10 @@
     // 전체 댓글 조회
     function findAllComment() {
 
-        const postId = [[ ${item.id} ]];
+        const itemId = [[ ${item.id} ]];
 
         $.ajax({
-            url : `/board/${id}/comments`,
+            url : `/board/${itemId}/comments`,
             type : 'get',
             dataType : 'json',
             async : false,
@@ -144,12 +144,12 @@
                                 <div>
                                     <span class="writer_img"><img src="/images/default_profile.png" width="30" height="30" alt="기본 프로필 이미지"/></span>
                                     <p class="writer">
-                                        <em>${row.crtId}</em>
-                                        <span class="date">${dayjs(row.createdDate).format('YYYY-MM-DD HH:mm')}</span>
+                                        <em>${row.id}</em>
+                                        <span class="date">${dayjs(row.registerDate).format('YYYY-MM-DD HH:mm')}</span>
                                     </p>
-                                    <div class="cont"><div class="txt_con">${row.contents}</div></div>
+                                    <div class="cont"><div class="txt_con">${row.content}</div></div>
                                     <p class="func_btns">
-                                        <button type="button" onclick="openCommentUpdatePopup(${row.id});" class="btns"><span class="icons icon_modify">수정</span></button>
+                                        <button type="button" class="btns"><span class="icons icon_modify">수정</span></button>
                                         <button type="button" class="btns"><span class="icons icon_del">삭제</span></button>
                                     </p>
                                 </div>
@@ -158,40 +158,6 @@
 
                 // 4. class가 "cm_list"인 요소를 찾아 HTML을 렌더링
                 document.querySelector('.cm_list').innerHTML = commentHtml;
-            },
-            error : function (request, status, error) {
-                console.log(error)
-            }
-        })
-    }
-
-    // 댓글 저장
-    function saveComment() {
-
-        const contents = document.getElementById('contents');
-        isValid(contents, '댓글');
-
-        const postId = [[ ${result.id} ]];
-        const params = {
-            postId : postId,
-            contents : contents.value,
-            writer : '홍길동'
-        }
-
-        $.ajax({
-            url : `/board/${id}/comments`,
-            type : 'post',
-            //contentType : 'application/json; charset=utf-8',
-            //dataType : 'json',
-            //data : JSON.stringify(params),
-            dataType : 'text',
-            data : params,
-            async : false,
-            success : function (result) {
-                alert('저장되었습니다.');
-                contents.value = '';
-                document.getElementById('counter').innerText = '0/300자';
-                findAllComment();
             },
             error : function (request, status, error) {
                 console.log(error)

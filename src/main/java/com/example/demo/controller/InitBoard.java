@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Board;
+import com.example.demo.entity.Comment;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -37,6 +38,8 @@ public class InitBoard {
                 }
                 Board board = Board.builder().name("board" + (i + 1)).writer("test" + (i + 1)).content("aaaaaa").is_top(is_top).build();
                 em.persist(board);
+                Comment comment = Comment.builder().content("댓글 구현 테스트"+(i+1)).board(board).build();
+                em.persist(comment);
             }
         }
     }
