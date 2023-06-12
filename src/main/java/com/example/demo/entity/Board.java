@@ -40,6 +40,8 @@ public class Board {
     private String is_top;
     @OneToMany(mappedBy="board")
     private List<BoardFile> boardFile = new ArrayList<>();
+    @OneToMany(mappedBy = "board")
+    private List<Comment> commentList = new ArrayList<>();
 
     @Builder
     public Board(String name, String writer, String content, Long id, String is_top) {
