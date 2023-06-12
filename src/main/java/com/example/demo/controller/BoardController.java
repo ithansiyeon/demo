@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.BoardDto;
-import com.example.demo.dto.BoardEditForm;
-import com.example.demo.dto.BoardSaveForm;
-import com.example.demo.dto.BoardUpdateForm;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
 import com.example.demo.service.BoardService;
@@ -40,16 +37,13 @@ public class BoardController {
     private final BoardService boardService;
     private final FileUtil fileStore;
 
-    private static int cnt = 0;
-
     @GetMapping("/board")
-    public String boardList(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-       /* cnt+=1;
-        if(cnt==1)
-            boardService.createBoard();*/
+    public String boardList(Model model, @ModelAttribute BoardListSearchCond searchCond, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
         PageRequest pageRequest = PageRequest.of(page-1, 10, Sort.by("id").descending());
-        Page<BoardDto> boardList = boardService.getBoardList(pageRequest);
+        System.out.println("searchCond.toString() = " + searchCond.toString());
+        Page<BoardDto> boardList = boardService.getBoardList(searchCond, pageRequest);
 
+        model.addAttribute("searchCond",searchCond);
         model.addAttribute("startPage",Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
         model.addAttribute("boardList",boardList);
         model.addAttribute("count",boardList.getTotalElements());
@@ -128,19 +122,18 @@ public class BoardController {
             log.info("errors={}",bindingResult);
             return "board/edit";
         }
-        System.out.println("form.getIs_top() = " + form.getIs_top());
+
         Board board = boardService.updateBoard(itemId, form);
         Long idx = board.getId();
 
         List<MultipartFile> fileList = form.getFile();
         List<String> storeFileName = form.getStoreFileName();
         List<String> fileName = form.getFileName();
-
         for(int i=0;i<fileList.size();i++) {
-            if(!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) {
+            if((!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) && !storeFileName.get(i).isEmpty()) {
                 boolean isDelete = fileStore.deleteFile(storeFileName.get(i));
                 if(isDelete) {
-                    boardService.deleteFileBoard(storeFileName.get(i));
+                    boardService.deleteFileBoard(storeFileName.get(i), idx);
                 }
             }
         }

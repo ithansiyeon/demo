@@ -42,8 +42,7 @@ public class FileUtil {
 
     public boolean deleteFile(String fileName) {
         File file = new File(fileDir+fileName);
-        System.out.println("file.exists() = " + file.exists());
-        System.out.println("fileName = " + fileName);
+
         if (file.exists()) {
             boolean delete = file.delete();
             return delete;

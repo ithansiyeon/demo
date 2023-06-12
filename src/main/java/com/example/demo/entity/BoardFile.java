@@ -13,11 +13,11 @@ public class BoardFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "boardFile_id")
+    @Column(name = "boardFile_idx")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "board_idx")
     private Board board;
     private String uploadFileName;
     private String storeFileName;

@@ -2,12 +2,12 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/querydsl
+    url: jdbc:h2:tcp://localhost/~/querydsl;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
     username: sa
     password:
     driver-class-name: org.h2.Driver
-    profiles:
-      active: test
+  profiles:
+    active: local
   thymeleaf:
     prefix: classpath:templates/
   security:
@@ -26,8 +26,6 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 10MB
-  profiles:
-    active: test
   messages:
     basename: messages,errors
   mvc:
@@ -37,13 +35,14 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.springframework.jdbc: debug
+
 #image:
 #  storage:
 #    tempDir: /Users/siyeon/Desktop/temp/summernote_image/
 #    Dir: /Users/siyeon/Desktop/summernote_image/
 image:
   storage:
-    tempDir: /Users/siyeon/Desktop/temp/summernote_image/
+    tempDir: D:\temp\summernote_image\
     Dir: D:\summernote_image\
 mybatis:
   type-aliases-package: com.example.demo.dto
@@ -51,4 +50,4 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/**/*.xml
 file:
-  dir: /Users/siyeon/Desktop/temp/image/
+  dir: D:\temp\image\

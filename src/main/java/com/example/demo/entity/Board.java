@@ -21,7 +21,7 @@ import java.util.List;
 @DynamicInsert
 public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="board_id")
+    @Column(name="board_idx")
     private Long id;
     private String name;
     private String writer;

@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.BoardDto;
 import com.example.demo.dto.BoardEditForm;
+import com.example.demo.dto.BoardListSearchCond;
 import com.example.demo.dto.BoardUpdateForm;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
@@ -30,16 +31,8 @@ public class BoardService {
     private final ModelMapper mapper;
     private final BoardFileRepository boardFileRepository;
 
-    public Page<BoardDto> getBoardList(Pageable pageRequest) {
-        return boardRepository.findBoardCustom(pageRequest).map(BoardDto::new);
-    }
-
-    @Transactional(readOnly = false)
-    public void createBoard() {
-        for(int i=0;i<110;i++) {
-            Board board = Board.builder().name("board"+ (i + 1)).writer("test"+ (i + 1)).content("aaaaaa").build();
-            boardRepository.save(board);
-        }
+    public Page<BoardDto> getBoardList(BoardListSearchCond searchCond, Pageable pageRequest) {
+        return boardRepository.findBoardCustom(searchCond,pageRequest).map(BoardDto::new);
     }
 
     public void mergeBoard(Board board) {
@@ -88,7 +81,8 @@ public class BoardService {
         return boardFileRepository.findByBoardId(itemId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
     }
 
-    public void deleteFileBoard(String s) {
-        boardFileRepository.deleteByStoreFileName(s);
+    @Transactional(readOnly = false)
+    public void deleteFileBoard(String storeFileName, Long boardIdx) {
+        boardFileRepository.deleteByStoreFileName(storeFileName, boardIdx);
     }
 }
