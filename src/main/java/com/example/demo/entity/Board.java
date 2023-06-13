@@ -38,9 +38,9 @@ public class Board {
     @NotNull
     @Column(length = 1)
     private String is_top;
-    @OneToMany(mappedBy="board")
+    @OneToMany(mappedBy="board", cascade = CascadeType.REMOVE)
     private List<BoardFile> boardFile = new ArrayList<>();
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
     @Builder

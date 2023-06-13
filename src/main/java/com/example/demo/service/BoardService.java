@@ -1,9 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.BoardDto;
-import com.example.demo.dto.BoardEditForm;
-import com.example.demo.dto.BoardListSearchCond;
-import com.example.demo.dto.BoardUpdateForm;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
 import com.example.demo.entity.Comment;
@@ -89,7 +86,20 @@ public class BoardService {
         boardFileRepository.deleteByStoreFileName(storeFileName, boardIdx);
     }
 
-    public List<Comment> getComment(Long itemId) {
-        return commentRepository.findByBoardId(itemId);
+    public List<CommentDto> getComment(Long itemId) {
+        List<Comment> comments = commentRepository.findByBoardId(itemId);
+        return comments.stream().map(o -> mapper.map(o, CommentDto.class)).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = false)
+    public void saveComment(Long itemId, CommentDto commentDto) {
+        Comment comment = null;
+        Board board = boardRepository.findById(itemId).get();
+        if(commentDto.getId() != null) {
+            comment = Comment.builder().content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
+        } else {
+            comment = Comment.builder().id(commentDto.getId()).content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
+        }
+        commentRepository.save(comment);
     }
 }

@@ -13,7 +13,6 @@ public class BoardFileRepositoryImpl implements BoardFileRepositoryCustom{
     @Override
     public void deleteByStoreFileName(String storeFileName, Long boardIdx) {
         long cnt = query.delete(boardFile).where(storeFileNameEq(storeFileName), boardIdxEq(boardIdx)).execute();
-        System.out.println("cnt = " + cnt);
     }
 
     public BooleanExpression boardIdxEq(Long boardIdx) {

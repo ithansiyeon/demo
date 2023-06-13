@@ -33,13 +33,32 @@ public class Comment {
     @Column(nullable = true)
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+    private String writer;
     private String content;
 
     @Builder
-    public Comment(Board board, LocalDateTime registerDate, LocalDateTime modifiedDate, String content) {
+    public Comment(Long id, Board board, LocalDateTime registerDate, LocalDateTime modifiedDate, String writer, String content) {
+        this.id = id;
         this.board = board;
         this.registerDate = registerDate;
         this.modifiedDate = modifiedDate;
+        this.writer = writer;
         this.content = content;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", board=" + board +
+                ", registerDate=" + registerDate +
+                ", modifiedDate=" + modifiedDate +
+                ", writer='" + writer + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

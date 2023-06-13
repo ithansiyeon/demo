@@ -9,7 +9,8 @@ spring:
   profiles:
     active: local
   thymeleaf:
-    prefix: classpath:templates/
+    cache: false
+    prefix: classpath:/templates/
   security:
     user:
       name: user
@@ -22,6 +23,7 @@ spring:
         format_sql: true
         use_sql_comments: true
         default_batch_fetch_size: 100
+    show-sql: true
   servlet:
     multipart:
       max-file-size: 1MB
@@ -31,9 +33,9 @@ spring:
   mvc:
     converters:
       preferred-json-mapper: gson
-#        show_sql: true
 logging.level:
   org.hibernate.SQL: debug
+  org.hibernate.type: trace
   org.springframework.jdbc: debug
 
 #image:

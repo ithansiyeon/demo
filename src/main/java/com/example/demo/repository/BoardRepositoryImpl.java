@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.example.demo.entity.QBoard.board;
@@ -36,7 +35,8 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
             boardQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, pathBuilder.get(o.getProperty())));
         }
         List<Board> content = boardQuery.fetch();
-        JPAQuery<Long> countQuery = query.select(board.count()).where(boardSearch(searchCond)).from(board);
+
+        JPAQuery<Long> countQuery = query.select(board.count()).where(boardSearch(searchCond),(dateBetween(searchCond.getStrtDate(),searchCond.getEndDate())), isTopEq(searchCond.getIs_top())).from(board);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne); //pageImpl 반환
     }

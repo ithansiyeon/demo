@@ -10,7 +10,7 @@ public class BoardListSearchCond {
     private String keyword;
     private String strtDate;
     private String endDate;
-    private Boolean is_top;
+    private Boolean is_top = false;
 
     @Override
     public String toString() {

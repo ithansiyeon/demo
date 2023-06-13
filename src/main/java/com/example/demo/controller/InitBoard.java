@@ -31,14 +31,14 @@ public class InitBoard {
 
         @Transactional
         public void init() {
-            for (int i = 0; i < 110; i++) {
+            for (int i = 1; i < 110; i++) {
                 String is_top = "Y";
                 if(i%2==0) {
                     is_top = "N";
                 }
-                Board board = Board.builder().name("board" + (i + 1)).writer("test" + (i + 1)).content("aaaaaa").is_top(is_top).build();
+                Board board = Board.builder().name("게시판 board 테스트 " + i).writer("test" + i).content("aaaaaa").is_top(is_top).build();
                 em.persist(board);
-                Comment comment = Comment.builder().content("댓글 구현 테스트"+(i+1)).board(board).build();
+                Comment comment = Comment.builder().content("댓글 구현 테스트 " + i).writer("홍길동"+i).board(board).build();
                 em.persist(comment);
             }
         }

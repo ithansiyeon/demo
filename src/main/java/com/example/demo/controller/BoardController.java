@@ -9,15 +9,19 @@ import com.example.demo.utils.FileUtil;
 import com.example.demo.utils.UploadFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.example.demo.utils.ExcelUtil.*;
@@ -42,14 +47,13 @@ public class BoardController {
 
     @GetMapping("/board")
     public String boardList(Model model, @ModelAttribute BoardListSearchCond searchCond, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        PageRequest pageRequest = PageRequest.of(page-1, 10, Sort.by("id").descending());
-        System.out.println("searchCond.toString() = " + searchCond.toString());
+        PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by("id").descending());
         Page<BoardDto> boardList = boardService.getBoardList(searchCond, pageRequest);
 
-        model.addAttribute("searchCond",searchCond);
-        model.addAttribute("startPage",Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
-        model.addAttribute("boardList",boardList);
-        model.addAttribute("count",boardList.getTotalElements());
+        model.addAttribute("searchCond", searchCond);
+        model.addAttribute("startPage", Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
+        model.addAttribute("boardList", boardList);
+        model.addAttribute("count", boardList.getTotalElements());
         return "board/lists";
     }
 
@@ -59,7 +63,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/excel")
-    public ResponseEntity<Map<String, Object>>boardExcelUpload(@RequestParam("file")MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, Object>> boardExcelUpload(@RequestParam("file") MultipartFile file) throws IOException {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename()); // 3
 
         if (!extension.equals("xlsx") && !extension.equals("xls")) {
@@ -90,14 +94,14 @@ public class BoardController {
     }
 
     @PostMapping("/board/add")
-    public String boardAdd(@Validated @ModelAttribute("item")BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
-        if(bindingResult.hasErrors()) {
-            log.info("errors={}",bindingResult);
+    public String boardAdd(@Validated @ModelAttribute("item") BoardSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
             return "board/add";
         }
         List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
 
-        Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y":"N").build();
+        Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y" : "N").build();
         List<BoardFile> boardFiles = new ArrayList<>();
         for (UploadFile uploadFile : uploadFiles) {
             BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
@@ -114,15 +118,15 @@ public class BoardController {
         Cookie(itemId, req, res);
         BoardEditForm item = boardService.getBoardIdx(itemId);
         List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
-        model.addAttribute("fileList",uploadFileList);
+        model.addAttribute("fileList", uploadFileList);
         model.addAttribute("item", item);
         return "board/edit";
     }
 
     @PostMapping("/board/edit/{itemId}")
-    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item")BoardUpdateForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
-        if(bindingResult.hasErrors()) {
-            log.info("errors={}",bindingResult);
+    public String boardEdit(@PathVariable Long itemId, @Validated @ModelAttribute("item") BoardUpdateForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
             return "board/edit";
         }
 
@@ -132,22 +136,23 @@ public class BoardController {
         List<MultipartFile> fileList = form.getFile();
         List<String> storeFileName = form.getStoreFileName();
         List<String> fileName = form.getFileName();
-        for(int i=0;i<fileList.size();i++) {
-            if((!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) && !storeFileName.get(i).isEmpty()) {
+        for (int i = 0; i < fileList.size(); i++) {
+            if ((!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) && !storeFileName.get(i).isEmpty()) {
                 boolean isDelete = fileStore.deleteFile(storeFileName.get(i));
-                if(isDelete) {
+                if (isDelete) {
                     boardService.deleteFileBoard(storeFileName.get(i), idx);
                 }
             }
         }
-        
+
         List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
 
         for (UploadFile uploadFile : uploadFiles) {
             BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
             boardService.createBoardFile(boardFile);
         }
-        redirectAttributes.addAttribute("itemId",idx);
+        redirectAttributes.addAttribute("msg","수정되었습니다.");
+        redirectAttributes.addAttribute("itemId", idx);
         return "redirect:/board/edit/{itemId}";
     }
 
@@ -157,16 +162,26 @@ public class BoardController {
         return "redirect:/board";
     }
 
-    @GetMapping("/board/{id}/comments")
+    @ResponseBody
+    @GetMapping("/board/{itemId}/comments")
     public ResponseEntity<String> boardComment(@PathVariable Long itemId) throws JsonProcessingException {
-        List<Comment> comments = boardService.getComment(itemId);
+        List<CommentDto> comments = boardService.getComment(itemId);
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         String json = objectMapper.writeValueAsString(comments);
         return ResponseEntity.ok(json);
     }
 
+    @ResponseBody
+    @PostMapping("/board/{itemId}/comments")
+    public ResponseEntity<String> savedComment(@PathVariable Long itemId, CommentDto commentDto) {
+        boardService.saveComment(itemId, commentDto);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
     /**
      * 쿠기 만드는 메소드
+     *
      * @param itemId
      * @param req
      * @param res
@@ -201,6 +216,14 @@ public class BoardController {
             newCookie.setMaxAge(60 * 60 * 24);
             res.addCookie(newCookie);
         }
+    }
+
+    @GetMapping("/common/message")
+    // 사용자에게 메시지를 전달하고, 페이지를 리다이렉트 한다.
+    private String showMessageAndRedirect(final MessageDto params, Model model) {
+        params.setMessage("hello");
+        model.addAttribute("params", params);
+        return "common/messageRedirect";
     }
 
 }
