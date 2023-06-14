@@ -3,24 +3,24 @@ package com.example.demo.controller;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
-import com.example.demo.entity.Comment;
 import com.example.demo.service.BoardService;
 import com.example.demo.utils.FileUtil;
 import com.example.demo.utils.UploadFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,10 +30,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.example.demo.utils.ExcelUtil.*;
 
@@ -100,23 +104,24 @@ public class BoardController {
             return "board/add";
         }
         List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
-
-        Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y" : "N").build();
-        List<BoardFile> boardFiles = new ArrayList<>();
-        for (UploadFile uploadFile : uploadFiles) {
-            BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
-            boardFiles.add(boardFile);
-            boardService.createBoardFile(boardFile);
-        }
-        Long idx = boardService.insertBoard(board);
+        Long idx = boardService.insertBoard(uploadFiles, form);
         redirectAttributes.addAttribute("itemId", idx);
         return "redirect:/board/edit/{itemId}";
     }
 
-    @GetMapping("/board/edit/{itemId}")
-    public String boardEdit(@PathVariable Long itemId, Model model, HttpServletRequest req, HttpServletResponse res) {
+    @GetMapping("/board/view/{itemId}")
+    public String boardView(@PathVariable Long itemId, Model model, HttpServletRequest req, HttpServletResponse res) {
         Cookie(itemId, req, res);
-        BoardEditForm item = boardService.getBoardIdx(itemId);
+        BoardViewForm item = boardService.getBoardIdx(itemId);
+        List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
+        model.addAttribute("fileList", uploadFileList);
+        model.addAttribute("item", item);
+        return "board/view";
+    }
+
+    @GetMapping("/board/edit/{itemId}")
+    public String boardEdit(@PathVariable Long itemId, Model model) {
+        BoardViewForm item = boardService.getBoardIdx(itemId);
         List<UploadFile> uploadFileList = boardService.getBoardFileIdx(itemId);
         model.addAttribute("fileList", uploadFileList);
         model.addAttribute("item", item);
@@ -134,13 +139,15 @@ public class BoardController {
         Long idx = board.getId();
 
         List<MultipartFile> fileList = form.getFile();
-        List<String> storeFileName = form.getStoreFileName();
+        List<Long> fileId = form.getFileId();
         List<String> fileName = form.getFileName();
+
         for (int i = 0; i < fileList.size(); i++) {
-            if ((!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) && !storeFileName.get(i).isEmpty()) {
-                boolean isDelete = fileStore.deleteFile(storeFileName.get(i));
+            if ((!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) && fileId.get(i)!=null) {
+                String storeFileName = boardService.getBoardFileName(fileId.get(i));
+                boolean isDelete = fileStore.deleteFile(storeFileName);
                 if (isDelete) {
-                    boardService.deleteFileBoard(storeFileName.get(i), idx);
+                    boardService.deleteFileBoard(fileId.get(i));
                 }
             }
         }
@@ -151,9 +158,25 @@ public class BoardController {
             BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
             boardService.createBoardFile(boardFile);
         }
-        redirectAttributes.addAttribute("msg","수정되었습니다.");
         redirectAttributes.addAttribute("itemId", idx);
-        return "redirect:/board/edit/{itemId}";
+        return "redirect:/board/view/{itemId}";
+    }
+
+    @GetMapping("/download/{itemId}")
+    public ResponseEntity<Resource> downloadAttach(@PathVariable Long itemId) throws MalformedURLException {
+        BoardFile boardFile = boardService.getBoardFile(itemId);
+        String storeFileName = boardFile.getStoreFileName();
+        String uploadFileName = boardFile.getUploadFileName();
+        UrlResource resource = new UrlResource("file:" + fileStore.getFullPath(storeFileName));
+
+        log.info("uploadFileName={}", uploadFileName);
+
+        String encodedUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
+        String contentDisposition = "attachment; filename=\"" + encodedUploadFileName + "\"";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(resource);
     }
 
     @GetMapping("/board/delete/{itemId}")
@@ -162,14 +185,16 @@ public class BoardController {
         return "redirect:/board";
     }
 
-    @ResponseBody
     @GetMapping("/board/{itemId}/comments")
-    public ResponseEntity<String> boardComment(@PathVariable Long itemId) throws JsonProcessingException {
+    public String boardComment(@PathVariable Long itemId, Model model) throws JsonProcessingException {
         List<CommentDto> comments = boardService.getComment(itemId);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        String json = objectMapper.writeValueAsString(comments);
-        return ResponseEntity.ok(json);
+//        ResponseEntity<String>
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//        String json = objectMapper.writeValueAsString(comments);
+//        return ResponseEntity.ok(json);
+        model.addAttribute("commentList",comments);
+        return "board/view :: #commentTable";
     }
 
     @ResponseBody
@@ -178,6 +203,21 @@ public class BoardController {
         boardService.saveComment(itemId, commentDto);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
+
+    @GetMapping("/board/{itemId}/comments/{id}")
+    public ResponseEntity<String> getComment(@PathVariable Long itemId, @PathVariable Long id) throws JsonProcessingException {
+        CommentDto commentDto = boardService.getCommentId(id);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return ResponseEntity.ok(objectMapper.writeValueAsString(commentDto));
+    }
+
+    /*@ResponseBody
+    @PostMapping("/board/{itemId}/comments")
+    public ResponseEntity<String> updateComment(@PathVariable Long itemId, CommentDto commentDto) {
+        System.out.println("commentDto = " + commentDto.toString());
+        boardService.updateComment(commentDto);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }*/
 
     /**
      * 쿠기 만드는 메소드
@@ -189,7 +229,6 @@ public class BoardController {
 
     public void Cookie(Long itemId, HttpServletRequest req, HttpServletResponse res) {
         Cookie oldCookie = null;
-
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -204,7 +243,7 @@ public class BoardController {
             if (!oldCookie.getValue().contains("[" + itemId.toString() + "]")) {
                 boardService.boardViewCount(itemId);
                 oldCookie.setValue(oldCookie.getValue() + "_[" + itemId + "]");
-                oldCookie.setPath("/board/edit");
+                oldCookie.setPath("/board/view");
                 oldCookie.setMaxAge(60 * 60 * 24);
                 res.addCookie(oldCookie);
             }
@@ -212,7 +251,7 @@ public class BoardController {
             //요청에 Cookie가 있고 글을 조회한 기록이 있다면 pass 없다면 Cookie에 [게시글ID] 붙이기
             boardService.boardViewCount(itemId);
             Cookie newCookie = new Cookie("boardView", "[" + itemId + "]");
-            newCookie.setPath("/board/edit");
+            newCookie.setPath("/board/view");
             newCookie.setMaxAge(60 * 60 * 24);
             res.addCookie(newCookie);
         }

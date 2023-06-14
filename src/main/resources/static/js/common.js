@@ -74,3 +74,34 @@ function popup_win(str,id,w,h,scrollchk){
 	var pop = window.open(str,id,"width="+w+",height="+h+",scrollbars="+scrollchk+",resize=no,location=no ");
 	pop.focus();
 }
+
+function ajaxCmm(type, url, param, callback) {
+	$.ajax({
+		type: type,
+		url: url,
+		data: param,
+		success: function(data, status, xr) {
+			return callback(data);
+		},
+		error: function(xhr, status, error) {
+			console.log(error);
+		}
+	});
+}
+
+function ajaxUpload(type, url, param, callback) {
+	$.ajax({
+		type: type,
+		url: url,
+		data: param,
+		contentType: false,
+		enctype: 'multipart/form-data',
+		processData: false,
+		success: function(data, status, xr) {
+			return callback(data);
+		},
+		error: function(xhr, status, error) {
+			console.log(error);
+		}
+	});
+}

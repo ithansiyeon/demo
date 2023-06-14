@@ -57,7 +57,7 @@ section:first-child, #tabmenu + section {margin-top:0;}
 
 .tb_row {border-top:2px solid #6f8294;}
 .tb_row th, .tb_row td {padding:8px 12px;}
-.tb_row th {background:#f6f7f8; text-align:left;}
+.tb_row th {background:#f6f7f8; text-align:left; font-weight: bold;}
 .tb_row td {height:40px;}
 .tb_row .btns {height:38px; line-height:38px;}
 .viewcon {min-height:100px;}

@@ -286,16 +286,6 @@ external_root_jQuery_commonjs2_jquery_commonjs_jquery_amd_jquery_default.a.exten
       openInNewWindow: 'Open in new window',
       useProtocol: 'Use default protocol'
     },
-    table: {
-      table: 'Table',
-      addRowAbove: 'Add row above',
-      addRowBelow: 'Add row below',
-      addColLeft: 'Add column left',
-      addColRight: 'Add column right',
-      delRow: 'Delete row',
-      delCol: 'Delete column',
-      delTable: 'Delete table'
-    },
     hr: {
       insert: 'Insert Horizontal Rule'
     },
