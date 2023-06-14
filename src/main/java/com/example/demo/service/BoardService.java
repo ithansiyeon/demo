@@ -116,10 +116,9 @@ public class BoardService {
     public void saveComment(Long itemId, CommentDto commentDto) {
         Comment comment = null;
         Board board = boardRepository.findById(itemId).get();
-        if(commentDto.getId() != null) {
+        if(commentDto.getId() == null) {
             comment = Comment.builder().content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
         } else {
-            System.out.println("aaaaaaa");
             comment = Comment.builder().id(commentDto.getId()).content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
         }
         commentRepository.save(comment);
