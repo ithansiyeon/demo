@@ -16,7 +16,7 @@ function hasCoda(value) {
  * @returns 필드 입력(선택) 여부
  */
 function isValid(target, fieldName, focusTarget) {
-    if (target.value.trim()) {
+    if (target.val().trim()) {
         return true;
     }
 
@@ -24,7 +24,7 @@ function isValid(target, fieldName, focusTarget) {
     const elementType = (target.type === 'text' || target.type === 'password' || target.type === 'search' || target.type === 'textarea') ? '입력' : '선택';
     alert( `${fieldName + particle} ${elementType}해 주세요.` );
 
-    target.value = '';
+    target.val('');
     ( !focusTarget ? target : focusTarget).focus();
     throw new Error(`"${target.id}" is required...`)
 }

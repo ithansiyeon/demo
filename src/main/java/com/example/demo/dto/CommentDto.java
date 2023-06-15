@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,5 +28,18 @@ public class CommentDto {
     private LocalDateTime modifiedDate;
     private String content;
     private String writer;
-    private Long itemId;
+//    private Long boardId;
+    private Long likeCnt;
+    private Long commentHeartId;
+
+    @QueryProjection
+    public CommentDto(Long id, LocalDateTime registerDate, LocalDateTime modifiedDate, String content, String writer, Long likeCnt, Long commentHeartId) {
+        this.id = id;
+        this.registerDate = registerDate;
+        this.modifiedDate = modifiedDate;
+        this.content = content;
+        this.writer = writer;
+        this.likeCnt = likeCnt;
+        this.commentHeartId = commentHeartId;
+    }
 }

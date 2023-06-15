@@ -11,7 +11,7 @@
         <p class="path"><strong>현재 위치 :</strong> <span>게시판 관리</span> <span>리스트형</span> <span>상세정보</span></p>
     </div>
 
-    <div class="page_tits">
+    <div class="content">
         <section>
             <form id="updateForm" th:action th:object="${item}" enctype="multipart/form-data">
                 <table class="tb tb_row">
@@ -21,7 +21,7 @@
                         <col style="width:10%;"/>
                         <col style="width:23%;"/>
                     </colgroup>
-                    <tr>
+                    <tr hidden>
                         <td colspan="4"><input type="hidden" th:field="*{id}"></td>
                     </tr>
                     <tr>
@@ -64,7 +64,7 @@
                     </tr>
                 </table>
                 <p class="btn_set">
-                    <button class="btns btn_bdr4 btn_mid" th:onclick="|location.href='@{/board/edit/{itemId}(itemId=${item.id})}'|" type="button" style="margin-top: 3px;margin-right: 2px">글수정
+                    <button class="btns btn_bdr4 btn_mid" th:onclick="|location.href='@{/board/edit/{boardId}(boardId=${item.id})}'|" type="button" style="margin-top: 3px;margin-right: 2px">글수정
                     </button>
                     <button class="btns btn_bdr5 btn_mid" th:onclick="|location.href='@{/board}'|" type="button" style="margin-top: 3px;">전체글보기
                     </button>
@@ -84,21 +84,46 @@
     </div>
     <!--/* 댓글 렌더링 영역 */-->
     <div class="cm_list" id="commentTable">
-        <div th:each="comment:${commentList}">
+        <div th:if="${!#lists.isEmpty(commentList)}" th:each="comment:${commentList}">
         <form action="">
             <span class="writer_img"><img src="/images/default_profile.png" width="30" height="30" alt="기본 프로필 이미지"/></span>
             <p class="writer">
                 <em name="postId" th:text="${comment.id}"></em>
-                <span class="date" th:text="${#temporals.format(comment.registerDate,'yyyy-MM-dd HH:mm:ss')}"></span>
+                <span class="date" th:text="|등록일: ${#temporals.format(comment.registerDate,'yyyy-MM-dd HH:mm:ss')}|"></span>
             </p>
-            <div class="cont"><textarea class="txt_con" th:text="${comment.content}" readonly></textarea></div>
+            <div class="cont">
+                <!-- 보기 모드 -->
+                <!--<p class="collapse multi-collapse-1 show" th:text="${comment.content}"></p>
+                <form class="collapse multi-collapse-1">
+                    <input type="hidden" id="id" value="1">
+                    <input type="hidden" id="postsId" value="108">
+                    <div class="form-group">
+                        <textarea class="form-control" id="comment-content" rows="3">{{comment}}</textarea>
+                    </div>
+                    <button type="button" id="btn-comment-update" class="btn btn-outline-primary bi bi-pencil-square"> 수정</button>
+                </form>-->
+
+                <textarea class="txt_con" th:text="${comment.content}" readonly></textarea>
+                <div class="float-end">
+                    <div style="border: blue 1px solid; width: 50px; text-align: center;">
+                        <span class="heart-icon" style="color: blue; border: blue; cursor:pointer;" th:onclick="toggleHeart(this, [[${comment.id}]], [[${comment.commentHeartId}]])">
+                            <span th:text="♥" th:if="${comment.isLike == 'Y'}"></span> <span th:text="♡" th:if="${comment.isLike == 'N'}"></span> <span th:text="${comment.likeCnt}"></span></span>
+                    </div>
+                </div>
+            </div>
+            <!--<small>
+                <a href="#" class="comment-edit-btn" data-toggle="collapse" data-target=".multi-collapse-1">수정</a>
+            </small>-->
             <p class="func_btns">
                 <button type="button" class="btns" th:onclick="openCommentUpdatePopup([[${comment.id}]])"><span class="icons icon_modify">수정</span></button>
-                <button type="button" class="btns" th:onclick="|location.href='@{/board/${itemId}/comment/${comment.id}}'|"><span class="icons icon_del">삭제</span></button>
+                <button type="button" class="btns" th:onclick="deleteComment([[${comment.id}]])"><span class="icons icon_del">삭제</span></button>
             </p>
             <input type="text" name="postId" value="${comment.id}" hidden>
             <input type="text" name="content" value="${comment.content}" hidden>
         </form>
+        </div>
+        <div class="cm_none" th:unless="${!#lists.isEmpty(commentList)}">
+            <p>등록된 댓글이 없습니다.</p>
         </div>
     </div>
 
@@ -141,6 +166,7 @@
                 contents.focus();
             }
             document.getElementById('counter').innerText = contents.value.length + '/300자';
+            $('#counter').innerText = contents.value.length + '/300자';
         }
 
         window.onload = () => {
@@ -149,48 +175,44 @@
 
         // 전체 댓글 조회
         function findAllComment() {
-            const itemId = [[${item.id}]];
-            $.ajax({
-                url: `/board/${itemId}/comments`,
-                type: 'get',
-                dataType: 'Text',
-                async: false}).done(function (fragment) {
-                    $("#commentTable").replaceWith(fragment);
-                });
+            const boardId = [[${item.id}]];
+            ajaxCmm('get',`/board/${boardId}/comments`,'Text','',function (data) {
+                $("#commentTable").replaceWith(data);
+            });
         }
 
         // 댓글 저장
         function saveComment() {
-            const contents = document.getElementById('contents');
+            const contents = $('#contents');
             isValid(contents, '댓글');
-            const itemId = [[${item.id}]];
+            const boardId = [[${item.id}]];
             const params = {
-                itemId : itemId,
-                content : contents.value,
+                boardId : boardId,
+                content : contents.val(),
                 writer : '홍길동'
             }
 
-            ajaxCmm('post',`/board/${itemId}/comments`,params,function () {
+            ajaxCmm('post',`/board/${boardId}/comments`,'text',params,function () {
                 alert('저장되었습니다.');
-                contents.value = '';
-                document.getElementById('counter').innerText = '0/300자';
+                contents.val('');
+                $('#counter').innerText = '0/300자';
                 findAllComment();
             });
         }
 
         function updateComment(id) {
-            const itemId = [[${item.id}]];
+            const boardId = [[${item.id}]];
             const writer = $('#modalWriter').val();
             const contents = $('#modalContent').val();
-            /*isValid(writer,'작성자');
-            isValid(contents,'수정할 내용');*/
+            isValid($('#modalWriter'),'작성자');
+            isValid($('#modalContent'),'수정할 내용');
             const params = {
                 id:id,
                 content: contents,
                 writer: writer
             };
 
-            ajaxCmm('post',`/board/${itemId}/comments`,params,function(data) {
+            ajaxCmm('post',`/board/${boardId}/comments`,'text',params,function(data) {
                 alert('수정되었습니다.');
                 closeCommentUpdatePopup();
                 findAllComment();
@@ -199,22 +221,21 @@
 
         // 댓글 수정 팝업 open
         function openCommentUpdatePopup(id) {
-            const itemId = [[${item.id}]];
-            $.ajax({
-                url : `/board/${itemId}/comments/${id}`,
-                type : 'get',
-                dataType : 'json',
-                async : false,
-                success : function (result) {
-                    $('#modalWriter').val(result.writer);
-                    $('#modalContent').val(result.content);
-                    document.getElementById('commentUpdateBtn').setAttribute('onclick', `updateComment(${id})`);
-                    layerPop('commentUpdatePopup');
-                },
-                error : function (request, status, error) {
-                    console.log(error)
-                }
-            })
+            const boardId = [[${item.id}]];
+            ajaxCmm('get',`/board/${boardId}/comments/${id}`,'json','',function (data) {
+                $('#modalWriter').val(data.writer);
+                $('#modalContent').val(data.content);
+                document.getElementById('commentUpdateBtn').setAttribute('onclick', `updateComment(${id})`);
+                layerPop('commentUpdatePopup');
+            });
+        }
+
+        function deleteComment(id) {
+            const boardId = [[${item.id}]];
+            ajaxCmm('get',`/board/${boardId}/comment/${id}`,'text','', function (data) {
+                alert("삭제 되었습니다.");
+                findAllComment();
+            });
         }
 
         // 댓글 수정 팝업 close
@@ -222,6 +243,24 @@
             document.querySelectorAll('#modalContent, #modalWriter').forEach(element => element.value = '');
             document.getElementById('commentUpdateBtn').removeAttribute('onclick');
             layerPopClose('commentUpdatePopup');
+        }
+
+        function toggleHeart(obj, id, commentHeartId) {
+            const boardId = [[${item.id}]];
+            var heart_text = obj.innerText;
+            var heartYn = "Y";
+            if(heart_text == "♥") {
+                obj.innerText = "♡";
+                heartYn = "N";
+            } else {
+                obj.innerText = "♥";
+            }
+            var params = {
+                commentHeartId:commentHeartId
+            }
+            ajaxCmm('get',`/board/${boardId}/commentHeart/${id}/${heartYn}`,'',params,function () {
+                findAllComment();
+            });
         }
 
     </script>

@@ -1,136 +1,116 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>게시글 작성</title>
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../../css/bootstrap.min.css" rel="stylesheet">
-    <script src="../../jquery/jquery-3.7.0.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
-
-    <!-- include summernote css/js-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>글 작성</title>
+</th:block>
+<th:block layout:fragment="add-css">
     <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="page_tits">
+        <h3>게시판 관리</h3>
+        <p class="path"><strong>현재 위치 :</strong> <span>게시판 관리</span> <span>리스트형</span> <span>글 작성</span></p>
+    </div>
+    <div class="content">
+        <section>
+            <form method="post" th:action th:object="${item}" enctype="multipart/form-data">
+                <table class="tb tb_row">
+                    <colgroup>
+                        <col style="width:10%;"/>
+                        <col style="width:23%;"/>
+                        <col style="width:10%;"/>
+                        <col style="width:23%;"/>
+                    </colgroup>
+                    <tr>
+                        <th scope="row">제목</th>
+                        <td colspan="3">
+                            <input th:errorclass="field-error" id="name" type="text" name="name" th:field="*{name}"
+                                   style="width: 20%;"
+                                   placeholder="제목"/><br>
+                            <div class="field-error" th:errors="*{name}">제목 오류</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">작성자</th>
+                        <td colspan="3">
+                            <input th:errorclass="field-error" id="writer" type="text" name="writer"
+                                   th:field="*{writer}"
+                                   style="width: 40%;" placeholder="작성자"/>
+                            <div class="field-error" th:errors="*{writer}">작성자 오류</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">상단 여부</th>
+                        <td colspan="3">
+                            <input type="checkbox" id="is_top" name="is_top" th:field="*{is_top}"
+                                   class="form-check-input">
+                            <input type="hidden" name="_is_top" value="N"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">내용</th>
+                        <td colspan="3">
+                            <textarea id="summernote" name="content"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">첨부파일</th>
+                        <td colspan="3">
+                            <div th:each="num : ${#numbers.sequence(1,2)}">
+                                <input class="file_input" type="file" name="file" th:id="'file' + ${num}"> <a href='#' th:onclick="deleteFile('#file[[${num}]]')">[X]</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <button class="btns btn_st3 btn_mid" type="submit" style="float: right; margin-top: 3px;">등록</button>
+            </form>
+        </section>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
     <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
     <script src="../../js/summernote/summernote-ko-KR.js"></script>
-</head>
-<style>
-    .container {
-        max-width: 560px;
-    }
-
-    .field-error {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-
-    input {
-        margin: 4px;
-    }
-
-    @font-face {
-        font-family: 'SUITE-Regular';
-        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
-        font-weight: 400;
-        font-style: normal;
-    }
-
-    footer {
-        /* footer를 aside위에 올리기 위해 사용(부유객체) */
-        position: absolute;
-        height: 60px;
-        width: 100%;
-        padding: 0 25px;
-        line-height: 60px;
-        color: #94a9ff;
-        border-top: 1px solid #94a9ff;
-        background-color: #94a9ff;
-        margin-top: 100px;
-    }
-</style>
-
-
-<script>
-    $(document).ready(function () {
-        $('#summernote').summernote({
-            placeholder: '내용',
-            minHeight: 200,
-            maxHeight: null,
-            focus: true,
-            lang: 'ko-KR',
-            height: 300,                 // 에디터 높이
-            lang: "ko-KR",					// 한글 설정
-            callbacks: {
-                onImageUpload: function (files) {
-                    // 파일 업로드(다중업로드를 위해 반복문 사용)
-                    for (var i = files.length - 1; i >= 0; i--) {
-                        uploadSummernoteImageFile(files[i], this);
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                placeholder: '내용',
+                minHeight: 200,
+                maxHeight: null,
+                focus: true,
+                lang: 'ko-KR',
+                height: 300,                 // 에디터 높이
+                lang: "ko-KR",					// 한글 설정
+                callbacks: {
+                    onImageUpload: function (files) {
+                        for (var i = files.length - 1; i >= 0; i--) {
+                            uploadSummernoteImageFile(files[i], this);
+                        }
                     }
                 }
-            }
+            })
         });
-    });
 
-    /**
-     * 이미지 파일 업로드
-     */
-    function uploadSummernoteImageFile(file, el) {
-        data = new FormData();
-        data.append("file", file);
-        $.ajax({
-            data: data,
-            type: "POST",
-            url: "/uploadSummernoteImageFile",
-            contentType: false,
-            enctype: 'multipart/form-data',
-            processData: false,
-            success: function (data) {
+        /**
+         * 이미지 파일 업로드
+         */
+        function uploadSummernoteImageFile(file, el) {
+            data = new FormData();
+            data.append("file", file);
+            ajaxUpload('post', '/uploadSummernoteImageFile', data, function (data) {
                 $(el).summernote('insertImage', data.url);
-            }
-        });
-    }
-
-    $("div.note-editable").on('drop', function (e) {
-        for (var i = 0; i < e.originalEvent.dataTransfer.files.length; i++) {
-            uploadSummernoteImageFile(e.originalEvent.dataTransfer.files[i], $("#summernote")[0]);
+            });
         }
-        e.preventDefault();
-    });
-</script>
-<body>
-<h2 style="text-align: center;">글 작성</h2><br><br><br>
 
-<div class="container" style="margin: auto;">
-    <form method="post" th:action th:object="${item}" enctype="multipart/form-data">
-        <label for="name">제목</label>
-        <input th:errorclass="field-error" id="name" type="text" name="name" th:field="*{name}" style="width: 20%;"
-               placeholder="제목"/><br>
-        <div class="field-error" th:errors="*{name}">제목 오류</div>
-        <label for="writer">작성자</label>
-        <input th:errorclass="field-error" id="writer" type="text" name="writer" th:field="*{writer}"
-               style="width: 40%;" placeholder="작성자"/>
-        <div class="field-error" th:errors="*{writer}">작성자 오류</div>
-        <br>
-        <label for="is_top">상단 여부</label>
-        <input type="checkbox" id="is_top" name="is_top" th:field="*{is_top}" class="form-check-input">
-        <input type="hidden" name="_is_top" value="N" />
-        <br><br>
-        <div class="note-editable">
-            <textarea id="summernote" name="content"></textarea>
-        </div>
-        <div th:each="num : ${#numbers.sequence(1,2)}">
-            <input style="display: inline" type="file" name="file" th:id="'file' + ${num}"> <a href='#' th:onclick="deleteFile('#file[[${num}]]')">[X]</a>
-        </div>
-        <button class="btn btn-primary" type="submit" style="float: right; margin-top: 3px;">등록</button>
-    </form>
-</div>
-<footer></footer>
-</body>
-<script>
-    function deleteFile(e) {
-        console.log(e);
-        $(e).val('');
-    }
-</script>
+        function deleteFile(e) {
+            console.log(e);
+            $(e).val('');
+        }
+    </script>
+</th:block>
 </html>

@@ -14,7 +14,7 @@
         <p class="path"><strong>현재 위치 :</strong> <span>게시판 관리</span> <span>리스트형</span> <span>상세정보</span></p>
     </div>
 
-    <div class="page_tits">
+    <div class="content">
         <section>
             <form id="updateForm" method="post" th:action th:object="${item}" enctype="multipart/form-data">
                 <table class="tb tb_row">
@@ -24,7 +24,7 @@
                         <col style="width:10%;"/>
                         <col style="width:23%;"/>
                     </colgroup>
-                    <tr>
+                    <tr hidden>
                         <td colspan="4"><input type="hidden" th:field="*{id}"></td>
                     </tr>
                     <tr>
@@ -92,14 +92,15 @@
                         </td>
                     </tr>
                 </table>
-                <p class="btn_set">
+                <p class="btn_set mgt3 mgr3">
                     <button class="btns btn_bdr4 btn_mid"
-                            th:onclick="|location.href='@{/board/edit/{itemId}(itemId=${item.id})}'|" type="submit"
-                            style="margin-top: 3px;margin-right: 2px">수정
+                            th:onclick="|location.href='@{/board/edit/{boardId}(boardId=${item.id})}'|" type="submit">수정
                     </button>
                     <button class="btns btn_bdr1 btn_mid"
-                            th:onclick="|location.href='@{/board/delete/{itemId}(itemId=${item.id})}'|" type="button"
-                            style="margin-top: 3px;">삭제
+                            th:onclick="|location.href='@{/board/delete/{boardId}(boardId=${item.id})}'|" type="button">삭제
+                    </button>
+                    <button class="btns btn_bdr2 btn_mid"
+                            th:onclick="|location.href='@{/board/view/{boardId}(boardId=${item.id})}'|">취소
                     </button>
                 </p>
             </form>

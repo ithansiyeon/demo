@@ -4,9 +4,11 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.BoardFile;
 import com.example.demo.entity.Comment;
-import com.example.demo.repository.BoardFileRepository;
-import com.example.demo.repository.BoardRepository;
-import com.example.demo.repository.CommentRepository;
+import com.example.demo.entity.CommentHeart;
+import com.example.demo.repository.boardFile.BoardFileRepository;
+import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.commentHeart.CommentHeartRepository;
+import com.example.demo.repository.comment.CommentRepository;
 import com.example.demo.utils.UploadFile;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class BoardService {
     private final ModelMapper mapper;
     private final BoardFileRepository boardFileRepository;
     private final CommentRepository commentRepository;
+    private final CommentHeartRepository commentHeartRepository;
 
     public Page<BoardDto> getBoardList(BoardListSearchCond searchCond, Pageable pageRequest) {
         return boardRepository.findBoardCustom(searchCond,pageRequest).map(BoardDto::new);
@@ -65,19 +68,19 @@ public class BoardService {
     }
 
     @Transactional(readOnly = false)
-    public Board updateBoard(Long itemId, BoardUpdateForm form) {
-        Board board = boardRepository.save(Board.builder().name(form.getName()).content(form.getContent()).writer("홍길동").is_top(form.getIs_top() == true ? "Y":"N").id(itemId).build());
+    public Board updateBoard(Long boardId, BoardUpdateForm form) {
+        Board board = boardRepository.save(Board.builder().name(form.getName()).content(form.getContent()).writer("홍길동").is_top(form.getIs_top() == true ? "Y":"N").id(boardId).build());
         return board;
     }
 
     @Transactional(readOnly = false)
-    public void deleteBoard(Long itemId) {
-        boardRepository.deleteById(itemId);
+    public void deleteBoard(Long boardId) {
+        boardRepository.deleteById(boardId);
     }
 
     @Transactional(readOnly = false)
-    public void boardViewCount(Long itemId) {
-        Board board = boardRepository.findById(itemId).get();
+    public void boardViewCount(Long boardId) {
+        Board board = boardRepository.findById(boardId).get();
         board.viewCountUp(board);
     }
 
@@ -85,8 +88,8 @@ public class BoardService {
         boardFileRepository.save(boardFile);
     }
 
-    public List<UploadFile> getBoardFileIdx(Long itemId) {
-        return boardFileRepository.findByBoardId(itemId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
+    public List<UploadFile> getBoardFileIdx(Long boardId) {
+        return boardFileRepository.findByBoardId(boardId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
     }
 
     public BoardFile getBoardFile(Long fileId) {
@@ -102,9 +105,10 @@ public class BoardService {
         boardFileRepository.deleteById(fileId);
     }
 
-    public List<CommentDto> getComment(Long itemId) {
-        List<Comment> comments = commentRepository.findByBoardId(itemId);
-        return comments.stream().map(o -> mapper.map(o, CommentDto.class)).collect(Collectors.toList());
+    public List<CommentDto> getComment(Long boardId) {
+        List<CommentDto> comments = commentRepository.findByBoardId(boardId);
+//        return comments.stream().map(o -> mapper.map(o, CommentDto.class)).collect(Collectors.toList());
+        return comments;
     }
 
     public CommentDto getCommentId(Long id) {
@@ -113,14 +117,28 @@ public class BoardService {
     }
 
     @Transactional(readOnly = false)
-    public void saveComment(Long itemId, CommentDto commentDto) {
+    public void saveComment(Long boardId, CommentDto commentDto) {
         Comment comment = null;
-        Board board = boardRepository.findById(itemId).get();
+        Board board = boardRepository.findById(boardId).get();
         if(commentDto.getId() == null) {
             comment = Comment.builder().content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
         } else {
             comment = Comment.builder().id(commentDto.getId()).content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
         }
         commentRepository.save(comment);
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteCommentById(Long id) {
+        commentRepository.deleteById(id);
+    }
+
+    public void createCommentHeart(Long id, Long commentHeartId, String heartYn) {
+        if (heartYn.equals("N")) {
+            commentHeartRepository.deleteByCommentId(id,"홍길동");
+        } else {
+            Comment comment = commentRepository.findById(id).get();
+            commentHeartRepository.save(CommentHeart.builder().id(commentHeartId).isLike(heartYn).writer("홍길동").comment(comment).build());
+        }
     }
 }

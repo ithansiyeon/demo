@@ -75,11 +75,15 @@ function popup_win(str,id,w,h,scrollchk){
 	pop.focus();
 }
 
-function ajaxCmm(type, url, param, callback) {
+function ajaxCmm(type, url, dataType, param, callback) {
+	if(dataType == '') {
+		dataType = 'json';
+	}
 	$.ajax({
 		type: type,
 		url: url,
 		data: param,
+		dataType: dataType,
 		success: function(data, status, xr) {
 			return callback(data);
 		},

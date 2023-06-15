@@ -11,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,6 +37,9 @@ public class Comment {
     private LocalDateTime modifiedDate;
     private String writer;
     private String content;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<CommentHeart> commentHeartList = new ArrayList<>();
 
     @Builder
     public Comment(Long id, Board board, LocalDateTime registerDate, LocalDateTime modifiedDate, String writer, String content) {

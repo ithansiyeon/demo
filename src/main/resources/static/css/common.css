@@ -81,3 +81,18 @@ footer {background:#fff; box-shadow:0 0 20px rgba(80,80,80,0.1); height:40px; li
     font-weight: 400;
     font-style: normal;
 }
+
+/*
+.heart-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-image: url('../images/heart_icon.png');
+    background-size: cover;
+    background-position: center;
+    transition: background-iamge 0.3s;
+}
+
+.heart-icon.filled {
+    background-image: url("../images/fillHeart_icon.png");
+}*/

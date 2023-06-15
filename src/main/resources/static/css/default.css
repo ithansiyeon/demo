@@ -49,6 +49,7 @@ iframe {border:0;}
 
 /* margin ------------------------------- */
 .mgt_5 {margin-top:-5px;}
+.mgt3 {margin-top:3px;}
 .mgt5 {margin-top:5px;}
 .mgt10 {margin-top:10px;}
 .mgt15 {margin-top:15px;}
@@ -69,6 +70,7 @@ iframe {border:0;}
 .mgl40 {margin-left:40px;}
 .mgl50 {margin-left:50px;}
 .mgl80 {margin-left:80px;}
+.mgr3 {margin-right:3px;}
 
 .wph {max-width:120px;} /* 전화번호 */
 .year {max-width:120px;} /* 연월일 */
