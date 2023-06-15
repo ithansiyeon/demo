@@ -107,7 +107,8 @@
                 <div class="float-end">
                     <div style="border: blue 1px solid; width: 50px; text-align: center;">
                         <span class="heart-icon" style="color: blue; border: blue; cursor:pointer;" th:onclick="toggleHeart(this, [[${comment.id}]], [[${comment.commentHeartId}]])">
-                            <span th:text="♥" th:if="${comment.isLike == 'Y'}"></span> <span th:text="♡" th:if="${comment.isLike == 'N'}"></span> <span th:text="${comment.likeCnt}"></span></span>
+                            <span class="board-heart" th:text="'♥'" th:if="${comment.isLike == 'Y'}"></span>
+                            <span class="board-heart" th:text="'♡'" th:if="${comment.isLike == 'N' || comment.isLike == null}"></span> <span th:text="${comment.likeCnt}"></span></span>
                     </div>
                 </div>
             </div>
@@ -247,7 +248,7 @@
 
         function toggleHeart(obj, id, commentHeartId) {
             const boardId = [[${item.id}]];
-            var heart_text = obj.innerText;
+            var heart_text = obj.getElementsByClassName('board-heart')[0].innerText;
             var heartYn = "Y";
             if(heart_text == "♥") {
                 obj.innerText = "♡";
@@ -258,7 +259,7 @@
             var params = {
                 commentHeartId:commentHeartId
             }
-            ajaxCmm('get',`/board/${boardId}/commentHeart/${id}/${heartYn}`,'',params,function () {
+            ajaxCmm('get',`/board/${boardId}/commentHeart/${id}/${heartYn}`,'text',params,function () {
                 findAllComment();
             });
         }

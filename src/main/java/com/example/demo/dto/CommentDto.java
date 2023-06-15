@@ -31,9 +31,10 @@ public class CommentDto {
 //    private Long boardId;
     private Long likeCnt;
     private Long commentHeartId;
+    private String isLike;
 
     @QueryProjection
-    public CommentDto(Long id, LocalDateTime registerDate, LocalDateTime modifiedDate, String content, String writer, Long likeCnt, Long commentHeartId) {
+    public CommentDto(Long id, LocalDateTime registerDate, LocalDateTime modifiedDate, String content, String writer, Long likeCnt, Long commentHeartId, String isLike) {
         this.id = id;
         this.registerDate = registerDate;
         this.modifiedDate = modifiedDate;
@@ -41,5 +42,6 @@ public class CommentDto {
         this.writer = writer;
         this.likeCnt = likeCnt;
         this.commentHeartId = commentHeartId;
+        this.isLike = isLike;
     }
 }

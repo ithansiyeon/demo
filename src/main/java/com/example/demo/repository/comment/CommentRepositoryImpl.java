@@ -24,7 +24,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                               comment.content,
                               comment.writer,
                               query.select(commentHeart.count()).from(commentHeart).where(commentHeart.comment.id.eq(comment.id)),
-                              commentHeart.id))
+                              commentHeart.id,
+                              commentHeart.isLike))
                 .from(comment).leftJoin(comment.commentHeartList, commentHeart).where(comment.board.id.eq(id)).fetch();
     }
 }
