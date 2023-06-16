@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Board;
-import com.example.demo.entity.Comment;
+import com.example.demo.entity.board.Board;
+import com.example.demo.entity.board.Comment;
+import com.example.demo.entity.user.User;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -31,7 +32,7 @@ public class InitBoard {
 
         @Transactional
         public void init() {
-            for (int i = 1; i < 110; i++) {
+            for (int i = 1; i < 50; i++) {
                 String is_top = "Y";
                 if(i%2==0) {
                     is_top = "N";
@@ -40,6 +41,8 @@ public class InitBoard {
                 em.persist(board);
                 Comment comment = Comment.builder().content("댓글 구현 테스트 " + i).writer("홍길동"+i).board(board).build();
                 em.persist(comment);
+                User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").delYn("N").authority("admin").build();
+                em.persist(user);
             }
         }
     }

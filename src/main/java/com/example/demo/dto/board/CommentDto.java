@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.board;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

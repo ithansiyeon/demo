@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.entity.board;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,7 +32,6 @@ public class Comment {
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
-    @Column(nullable = true)
     @LastModifiedDate
     private LocalDateTime modifiedDate;
     private String writer;

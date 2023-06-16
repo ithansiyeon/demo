@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.menu.Menu;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;

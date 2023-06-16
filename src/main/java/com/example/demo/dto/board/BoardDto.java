@@ -1,6 +1,6 @@
-package com.example.demo.dto;
+package com.example.demo.dto.board;
 
-import com.example.demo.entity.Board;
+import com.example.demo.entity.board.Board;
 import com.example.demo.excel.annotation.DefaultBodyStyle;
 import com.example.demo.excel.annotation.DefaultHeaderStyle;
 import com.example.demo.excel.annotation.ExcelColumn;

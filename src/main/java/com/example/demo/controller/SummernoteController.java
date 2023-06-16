@@ -3,11 +3,8 @@ package com.example.demo.controller;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,9 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -53,34 +47,5 @@ public class SummernoteController {
         }
 
         return jsonObject;
-    }
-
-    @PostMapping("/deleteSummernoteImage")
-    public ResponseEntity<String> deleteSummernoteImage(@RequestBody Map<String,Object> imageUrl) {
-        String imageName = getImageNameFromUrl((String) imageUrl.get("imageUrl"));
-        if (imageName != null) {
-            File imageFile = new File(imageStorageTempDir + imageName);
-            if (imageFile.exists()) {
-                if (imageFile.delete()) {
-                    return ResponseEntity.ok("Image deleted successfully");
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete the image");
-                }
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            return ResponseEntity.badRequest().body("Invalid image URL");
-        }
-    }
-
-    private String getImageNameFromUrl(String imageUrl) {
-        try {
-            URL url = new URL(imageUrl);
-            String path = url.getPath();
-            return path.substring(path.lastIndexOf('/') + 1);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

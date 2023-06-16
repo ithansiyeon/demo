@@ -3,7 +3,7 @@ package com.example.demo.repository.commentHeart;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import static com.example.demo.entity.QCommentHeart.commentHeart;
+import static com.example.demo.entity.board.QCommentHeart.commentHeart;
 
 @RequiredArgsConstructor
 public class CommentHeartRepositoryImpl implements CommentHeartRepositoryCustom {

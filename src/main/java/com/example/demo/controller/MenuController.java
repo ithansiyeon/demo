@@ -1,14 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.MenuResultDto;
-import com.example.demo.entity.Menu;
+import com.example.demo.entity.menu.Menu;
 import com.example.demo.service.MenuService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,9 +28,9 @@ public class MenuController {
             if(menu.getParent() == null) {
                 topLevelMenus.add(menu);
             } else {
-                List<Menu> childMenus = childMenusMap.getOrDefault(menu.getParent().getId(),new ArrayList<>());
+                List<Menu> childMenus = childMenusMap.getOrDefault(menu.getParent().getMenuIdx(),new ArrayList<>());
                 childMenus.add(menu);
-                childMenusMap.put(menu.getParent().getId(),childMenus);
+                childMenusMap.put(menu.getParent().getMenuIdx(),childMenus);
             }
         }
         model.addAttribute("topLevelMenus",topLevelMenus);

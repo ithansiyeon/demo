@@ -1,10 +1,11 @@
-package com.example.demo.service;
+package com.example.demo.service.board;
 
-import com.example.demo.dto.*;
-import com.example.demo.entity.Board;
-import com.example.demo.entity.BoardFile;
-import com.example.demo.entity.Comment;
-import com.example.demo.entity.CommentHeart;
+import com.example.demo.dto.board.*;
+import com.example.demo.dto.board.CommentDto;
+import com.example.demo.entity.board.Board;
+import com.example.demo.entity.board.BoardFile;
+import com.example.demo.entity.board.Comment;
+import com.example.demo.entity.board.CommentHeart;
 import com.example.demo.repository.boardFile.BoardFileRepository;
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.commentHeart.CommentHeartRepository;

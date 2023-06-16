@@ -1,6 +1,6 @@
 package com.example.demo.utils;
 
-import com.example.demo.entity.BoardFile;
+import com.example.demo.entity.board.BoardFile;
 import lombok.Getter;
 import lombok.Setter;
 

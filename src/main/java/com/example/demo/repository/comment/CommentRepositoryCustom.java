@@ -1,6 +1,6 @@
 package com.example.demo.repository.comment;
 
-import com.example.demo.dto.CommentDto;
+import com.example.demo.dto.board.CommentDto;
 
 import java.util.List;
 

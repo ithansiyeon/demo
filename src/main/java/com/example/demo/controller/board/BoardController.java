@@ -1,9 +1,11 @@
-package com.example.demo.controller;
+package com.example.demo.controller.board;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.Board;
-import com.example.demo.entity.BoardFile;
-import com.example.demo.service.BoardService;
+import com.example.demo.dto.board.*;
+import com.example.demo.dto.board.CommentDto;
+import com.example.demo.entity.board.Board;
+import com.example.demo.entity.board.BoardFile;
+import com.example.demo.service.board.BoardService;
 import com.example.demo.utils.FileUtil;
 import com.example.demo.utils.UploadFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +50,11 @@ public class BoardController {
     private final BoardService boardService;
     private final FileUtil fileStore;
 
+    @GetMapping("/index")
+    public String indexPage() {
+        return "index";
+    }
+
     @GetMapping("/board")
     public String boardList(Model model, @ModelAttribute BoardListSearchCond searchCond, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
         PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by("id").descending());
@@ -68,7 +74,7 @@ public class BoardController {
 
     @PostMapping("/board/excel")
     public ResponseEntity<Map<String, Object>> boardExcelUpload(@RequestParam("file") MultipartFile file) throws IOException {
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename()); // 3
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
         if (!extension.equals("xlsx") && !extension.equals("xls")) {
             throw new IOException("엑셀파일만 업로드 해주세요.");
@@ -188,11 +194,6 @@ public class BoardController {
     @GetMapping("/board/{boardId}/comments")
     public String boardComment(@PathVariable Long boardId, Model model) {
         List<CommentDto> comments = boardService.getComment(boardId);
-//        ResponseEntity<String>
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
-//        String json = objectMapper.writeValueAsString(comments);
-//        return ResponseEntity.ok(json);
         model.addAttribute("commentList",comments);
         return "board/view :: #commentTable";
     }

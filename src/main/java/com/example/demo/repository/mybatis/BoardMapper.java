@@ -1,7 +1,7 @@
 package com.example.demo.repository.mybatis;
 
-import com.example.demo.dto.BoardDto;
-import com.example.demo.dto.BoardSearchCond;
+import com.example.demo.dto.board.BoardDto;
+import com.example.demo.dto.board.BoardSearchCond;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

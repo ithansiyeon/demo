@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import static com.example.demo.entity.QBoardFile.boardFile;
+import static com.example.demo.entity.board.QBoardFile.boardFile;
 import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor

@@ -1,14 +1,14 @@
 package com.example.demo.repository.comment;
 
-import com.example.demo.dto.CommentDto;
-import com.example.demo.dto.QCommentDto;
+import com.example.demo.dto.board.CommentDto;
+import com.example.demo.dto.board.QCommentDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.example.demo.entity.QComment.comment;
-import static com.example.demo.entity.QCommentHeart.commentHeart;
+import static com.example.demo.entity.board.QComment.comment;
+import static com.example.demo.entity.board.QCommentHeart.commentHeart;
 
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements CommentRepositoryCustom {

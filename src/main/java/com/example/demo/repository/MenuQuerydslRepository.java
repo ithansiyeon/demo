@@ -1,14 +1,13 @@
 package com.example.demo.repository;
 
-import com.example.demo.entity.Menu;
-import com.example.demo.entity.QMenu;
+import com.example.demo.entity.menu.Menu;
+import com.example.demo.entity.menu.QMenu;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-import static com.example.demo.entity.QMenu.menu;
+import static com.example.demo.entity.menu.QMenu.menu;
 
 @Repository
 @RequiredArgsConstructor

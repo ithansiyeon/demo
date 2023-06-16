@@ -1,8 +1,7 @@
-package com.example.demo.entity;
+package com.example.demo.entity.menu;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +9,12 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id","name","listOrder"})
+@ToString(of = {"menuIdx","name","listOrder"})
 public class Menu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long menuIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -28,6 +27,8 @@ public class Menu {
     @OneToMany(mappedBy = "parent")
     @OrderBy("listOrder asc")
     private List<Menu> children = new ArrayList<>();
+    @OneToMany(mappedBy = "menu")
+    private List<MenuAuth> menuAuths = new ArrayList<>();
 
     @Builder
     public Menu(Menu parent, String name, int listOrder, List<Menu> children) {

@@ -1,7 +1,7 @@
 package com.example.demo.repository;
 
-import com.example.demo.dto.BoardDto;
-import com.example.demo.dto.BoardSearchCond;
+import com.example.demo.dto.board.BoardDto;
+import com.example.demo.dto.board.BoardSearchCond;
 import com.example.demo.repository.mybatis.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

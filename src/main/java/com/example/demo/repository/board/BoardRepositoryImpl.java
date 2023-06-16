@@ -1,7 +1,7 @@
 package com.example.demo.repository.board;
 
-import com.example.demo.dto.BoardListSearchCond;
-import com.example.demo.entity.Board;
+import com.example.demo.dto.board.BoardListSearchCond;
+import com.example.demo.entity.board.Board;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -16,7 +16,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.example.demo.entity.QBoard.board;
+import static com.example.demo.entity.board.QBoard.board;
 import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor

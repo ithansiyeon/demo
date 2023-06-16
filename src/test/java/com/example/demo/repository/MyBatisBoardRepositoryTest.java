@@ -1,7 +1,7 @@
 package com.example.demo.repository;
 
-import com.example.demo.dto.BoardDto;
-import com.example.demo.dto.BoardSearchCond;
+import com.example.demo.dto.board.BoardDto;
+import com.example.demo.dto.board.BoardSearchCond;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

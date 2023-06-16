@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.Menu;
+import com.example.demo.entity.menu.Menu;
 import lombok.Getter;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class MenuResultDto {
     private List<MenuResultDto> children;
 
     public MenuResultDto(final Menu menu) {
-        this.id = menu.getId();
+        this.id = menu.getMenuIdx();
         this.name = menu.getName();
         this.listOrder = menu.getListOrder();
         this.children = menu.getChildren().stream().map(MenuResultDto::new).collect(Collectors.toList());

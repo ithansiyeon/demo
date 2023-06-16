@@ -1,9 +1,7 @@
-package com.example.demo.dto;
+package com.example.demo.dto.board;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.apache.xpath.operations.Bool;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;

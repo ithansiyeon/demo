@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.entity.board;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +32,6 @@ public class Board {
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
-    @Column(nullable = true)
     @LastModifiedDate
     private LocalDateTime modifiedDate;
     private int views;
@@ -41,9 +40,9 @@ public class Board {
     @Column(length = 1)
     private String is_top;
     @OneToMany(mappedBy="board", cascade = CascadeType.REMOVE)
-    private List<BoardFile> boardFile = new ArrayList<>();
+    private List<BoardFile> boardFiles = new ArrayList<>();
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<Comment> commentList = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Board(String name, String writer, String content, Long id, String is_top) {
