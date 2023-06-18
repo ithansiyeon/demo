@@ -38,6 +38,10 @@ public class User {
     private String url;
     @NotNull
     private String authority;
+    @NotNull
+    @ColumnDefault("0")
+    private int failLoginCount;
+    LocalDateTime lastLoginDate;
 
     @Builder
     public User(String userName, String password, String userId, String delYn, String url, String authority) {
@@ -47,5 +51,13 @@ public class User {
         this.delYn = delYn;
         this.url = url;
         this.authority = authority;
+    }
+
+    public void incrementFailLoginCount() {
+        this.failLoginCount+=1;
+    }
+
+    public void updateLastLoginDate(LocalDateTime now) {
+        this.lastLoginDate = now;
     }
 }

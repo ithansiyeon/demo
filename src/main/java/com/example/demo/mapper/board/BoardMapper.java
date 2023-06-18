@@ -1,4 +1,4 @@
-package com.example.demo.repository.mybatis;
+package com.example.demo.mapper.board;
 
 import com.example.demo.dto.board.BoardDto;
 import com.example.demo.dto.board.BoardSearchCond;
