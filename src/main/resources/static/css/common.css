@@ -73,18 +73,3 @@ login_wrap * {font-family: 'Noto Sans KR', sans-serif; font-weight:400; letter-s
     pointer-events: none;
     cursor: default;
 }
-
-/*
-.heart-icon {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    background-image: url('../images/heart_icon.png');
-    background-size: cover;
-    background-position: center;
-    transition: background-iamge 0.3s;
-}
-
-.heart-icon.filled {
-    background-image: url("../images/fillHeart_icon.png");
-}*/
