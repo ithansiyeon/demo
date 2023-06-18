@@ -10,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,10 +40,9 @@ public class User {
     private String url;
     @NotNull
     private String authority;
-    @NotNull
-    @ColumnDefault("0")
-    private int failLoginCount;
     LocalDateTime lastLoginDate;
+    @OneToMany(mappedBy = "user")
+    private List<UserLog> userLogs = new ArrayList<>();
 
     @Builder
     public User(String userName, String password, String userId, String delYn, String url, String authority) {
@@ -51,10 +52,6 @@ public class User {
         this.delYn = delYn;
         this.url = url;
         this.authority = authority;
-    }
-
-    public void incrementFailLoginCount() {
-        this.failLoginCount+=1;
     }
 
     public void updateLastLoginDate(LocalDateTime now) {

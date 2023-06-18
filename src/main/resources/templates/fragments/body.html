@@ -6,7 +6,7 @@
         <div class="head">
             <h1>유니스터디 프로젝트</h1>
             <div class="top_menu">
-                <div class="login_user"><strong><i class="far fa-user-circle"></i> 홍길동</strong>님 반갑습니다.</div>
+                <div class="login_user"><strong><i class="far fa-user-circle"></i> <span th:text="${session.userName}"></span></strong>님 반갑습니다.</div>
                 <div class="logout">
                     <button type="button"><span class="skip_info">로그아웃</span><i class="fas fa-sign-out-alt"></i>
                     </button>

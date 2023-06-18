@@ -1,6 +1,8 @@
 package com.example.demo.service.user;
 
 import com.example.demo.entity.user.User;
+import com.example.demo.entity.user.UserLog;
+import com.example.demo.repository.user.UserLogRepository;
 import com.example.demo.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 public class UserService {
     private final ModelMapper mapper;
     private final UserRepository userRepository;
+    private final UserLogRepository userLogRepository;
 
     public User getUserByUserId(String loginId) {
         return userRepository.findByUserId(loginId);
@@ -30,5 +33,9 @@ public class UserService {
 
     public String getUrlByUserId(String loginId) {
         return userRepository.findByUserId(loginId).getUrl();
+    }
+
+    public void insertUserLog(UserLog userLog) {
+        userLogRepository.save(userLog);
     }
 }

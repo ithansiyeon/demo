@@ -1,6 +1,7 @@
 package com.example.demo.springsecurity;
 
 import com.example.demo.entity.user.User;
+import com.example.demo.entity.user.UserLog;
 import com.example.demo.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,10 +34,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userService.updateLastLoginDate(loginId);
     }
 
-    public void updateLoginFailCount(String loginId) {
+    public void insertUserLog(String ip, boolean isSuccess, String loginId) {
+        String isLogin = isSuccess ? "Y" : "N";
         User user = userService.getUserByUserId(loginId);
-        user.incrementFailLoginCount();
-        userService.save(user);
+        UserLog userLog = UserLog.builder().ip(ip).isLoginSuccess(isLogin).user(user).build();
+        userService.insertUserLog(userLog);
     }
 }
 
