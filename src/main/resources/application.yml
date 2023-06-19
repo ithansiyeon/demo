@@ -34,7 +34,6 @@ spring:
     converters:
       preferred-json-mapper: gson
 logging.level:
-  org.hibernate.SQL: debug
   org.hibernate.type: trace
   org.springframework.jdbc: debug
 

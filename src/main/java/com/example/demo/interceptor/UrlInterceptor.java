@@ -14,10 +14,15 @@ public class UrlInterceptor implements HandlerInterceptor {
         SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AntPathMatcher matcher = new AntPathMatcher();
         System.out.println("apple");
-        if(matcher.match(securityUser.getUrl(), requestURI)) {
+        System.out.println(requestURI);
+       /* if(matcher.match(securityUser.getUrl(), requestURI)) {
             return true;
-        }
-        response.sendRedirect("/access-denied");
-        return false; //false 진행X
+        }*/
+//        if(requestURI.contains(securityUser.getUrl())) {
+//            return true;
+//        }
+//        response.sendRedirect("/access-denied");
+//        return false; //false 진행X
+        return true;
     }
 }

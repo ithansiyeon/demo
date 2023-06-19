@@ -9,6 +9,7 @@ import com.example.demo.repository.boardFile.BoardFileRepository;
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.commentHeart.CommentHeartRepository;
 import com.example.demo.repository.comment.CommentRepository;
+import com.example.demo.utils.FileUtil;
 import com.example.demo.utils.UploadFile;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +37,7 @@ public class BoardService {
     private final BoardFileRepository boardFileRepository;
     private final CommentRepository commentRepository;
     private final CommentHeartRepository commentHeartRepository;
+    private final FileUtil fileStore;
 
     public Page<BoardDto> getBoardList(BoardListSearchCond searchCond, Pageable pageRequest) {
         return boardRepository.findBoardCustom(searchCond,pageRequest).map(BoardDto::new);
@@ -50,37 +54,32 @@ public class BoardService {
     @Transactional(readOnly = false)
     public Long insertBoard(List<UploadFile> uploadFiles, BoardSaveForm form) {
         Board board = Board.builder().name(form.getName()).writer(form.getWriter()).content(form.getContent()).is_top(form.getIs_top() == true ? "Y" : "N").build();
-        List<BoardFile> boardFiles = new ArrayList<>();
         for (UploadFile uploadFile : uploadFiles) {
             BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
-            boardFiles.add(boardFile);
             createBoardFile(boardFile);
         }
-        boardRepository.save(board);
-        return board.getId();
+        return boardRepository.save(board).getId();
     }
 
-    public BoardViewForm getBoardIdx(Long idx) {
-        Board board = boardRepository.findById(idx).get();
-        //mapper를 통해서도 값 넣어 줄 수는 있음
-//        return mapper.map(board, BoardEditForm.class);
+    public BoardViewForm getBoardByIdx(Long boardIdx) {
+        Board board = boardRepository.findById(boardIdx).get();
         return BoardViewForm.builder().id(board.getId()).name(board.getName()).registerDate(board.getRegisterDate()).content(board.getContent()).writer(board.getWriter()).is_top(board.getIs_top() == "Y" ? true:false).build();
     }
 
     @Transactional(readOnly = false)
-    public Board updateBoard(Long boardId, BoardUpdateForm form) {
-        Board board = boardRepository.save(Board.builder().name(form.getName()).content(form.getContent()).writer("홍길동").is_top(form.getIs_top() == true ? "Y":"N").id(boardId).build());
+    public Board updateBoard(Long boardIdx, BoardUpdateForm form) {
+        Board board = boardRepository.save(Board.builder().name(form.getName()).content(form.getContent()).writer("홍길동").is_top(form.getIs_top() == true ? "Y":"N").id(boardIdx).build());
         return board;
     }
 
     @Transactional(readOnly = false)
-    public void deleteBoard(Long boardId) {
-        boardRepository.deleteById(boardId);
+    public void deleteBoardById(Long boardIdx) {
+        boardRepository.deleteById(boardIdx);
     }
 
     @Transactional(readOnly = false)
-    public void boardViewCount(Long boardId) {
-        Board board = boardRepository.findById(boardId).get();
+    public void boardViewCount(Long boardIdx) {
+        Board board = boardRepository.findById(boardIdx).get();
         board.viewCountUp(board);
     }
 
@@ -88,12 +87,12 @@ public class BoardService {
         boardFileRepository.save(boardFile);
     }
 
-    public List<UploadFile> getBoardFileIdx(Long boardId) {
-        return boardFileRepository.findByBoardId(boardId).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
+    public List<UploadFile> getBoardFileIdx(Long boardIdx) {
+        return boardFileRepository.findByboardId(boardIdx).stream().map(o->new UploadFile(o)).collect(Collectors.toList());
     }
 
-    public BoardFile getBoardFile(Long fileId) {
-        return boardFileRepository.findById(fileId).get();
+    public BoardFile getBoardFile(Long fileIdx) {
+        return boardFileRepository.findById(fileIdx).get();
     }
 
     public String getBoardFileName(Long fileId) {
@@ -105,40 +104,55 @@ public class BoardService {
         boardFileRepository.deleteById(fileId);
     }
 
-    public List<CommentDto> getComment(Long boardId) {
-        List<CommentDto> comments = commentRepository.findByBoardId(boardId);
-//        return comments.stream().map(o -> mapper.map(o, CommentDto.class)).collect(Collectors.toList());
+    public List<CommentDto> getComment(Long boardIdx) {
+        List<CommentDto> comments = commentRepository.findByBoardId(boardIdx);
         return comments;
     }
 
-    public CommentDto getCommentId(Long id) {
-        Comment comment = commentRepository.findById(id).get();
+    public CommentDto getCommentByIdx(Long commentIdx) {
+        Comment comment = commentRepository.findById(commentIdx).get();
         return mapper.map(comment, CommentDto.class);
     }
 
     @Transactional(readOnly = false)
-    public void saveComment(Long boardId, CommentDto commentDto) {
-        Comment comment = null;
-        Board board = boardRepository.findById(boardId).get();
-        if(commentDto.getId() == null) {
-            comment = Comment.builder().content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
-        } else {
-            comment = Comment.builder().id(commentDto.getId()).content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
-        }
+    public void saveComment(Long boardIdx, CommentDto commentDto) {
+        Board board = boardRepository.findById(boardIdx).get();
+        Comment comment = Comment.builder().id(commentDto.getId()).content(commentDto.getContent()).writer(commentDto.getWriter()).board(board).build();
         commentRepository.save(comment);
     }
 
     @Transactional(readOnly = false)
-    public void deleteCommentById(Long id) {
-        commentRepository.deleteById(id);
+    public void deleteCommentByIdx(Long commentIdx) {
+        commentRepository.deleteById(commentIdx);
     }
 
-    public void createCommentHeart(Long id, Long commentHeartId, String heartYn) {
+    public void createCommentHeart(Long commentIdx, Long commentHeartId, String heartYn) {
         if (heartYn.equals("N")) {
-            commentHeartRepository.deleteByCommentId(id,"홍길동");
+            commentHeartRepository.deleteByCommentId(commentIdx,"홍길동");
         } else {
-            Comment comment = commentRepository.findById(id).get();
+            Comment comment = commentRepository.findById(commentIdx).get();
             commentHeartRepository.save(CommentHeart.builder().id(commentHeartId).isLike(heartYn).writer("홍길동").comment(comment).build());
+        }
+    }
+
+    public void deleteBoardFile(List<MultipartFile> fileList, List<Long> fileId, List<String> fileName) {
+        for (int i = 0; i < fileList.size(); i++) {
+            if ((!fileList.get(i).isEmpty() || fileName.get(i).isEmpty()) && fileId.get(i)!=null) {
+                String storeFileName = getBoardFileName(fileId.get(i));
+                boolean isDelete = fileStore.deleteFile(storeFileName);
+                if (isDelete) {
+                    deleteFileBoard(fileId.get(i));
+                }
+            }
+        }
+    }
+
+    public void createBoardFile(BoardUpdateForm form, Board board) throws IOException {
+        List<UploadFile> uploadFiles = fileStore.storeFiles(form.getFile());
+
+        for (UploadFile uploadFile : uploadFiles) {
+            BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
+            createBoardFile(boardFile);
         }
     }
 }

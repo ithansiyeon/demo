@@ -1,5 +1,6 @@
 package com.example.demo.service.user;
 
+import com.example.demo.dto.user.UserLogDto;
 import com.example.demo.entity.user.User;
 import com.example.demo.entity.user.UserLog;
 import com.example.demo.repository.user.UserLogRepository;
@@ -9,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,10 @@ public class UserService {
         return userRepository.findByUserId(loginId);
     }
 
+    public List<UserLogDto> getUserLog(String loginId) {
+        return userLogRepository.findUserLogByUserId(loginId).stream().map( o -> mapper.map(o,UserLogDto.class)).collect(Collectors.toList());
+    }
+
     public void save(User user) {
         userRepository.save(user);
     }
@@ -29,10 +36,6 @@ public class UserService {
         User user = userRepository.findByUserId(loginId);
         user.updateLastLoginDate(LocalDateTime.now());
         userRepository.save(user);
-    }
-
-    public String getUrlByUserId(String loginId) {
-        return userRepository.findByUserId(loginId).getUrl();
     }
 
     public void insertUserLog(UserLog userLog) {

@@ -20,6 +20,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+    private final CustomAuthFailureHandler customAuthFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,11 +35,13 @@ public class SecurityConfig {
                 .passwordParameter("loginPassword")
                 .loginPage("/login")
                 .defaultSuccessUrl("/board")
+                .failureHandler(customAuthFailureHandler)
                 .permitAll()
                 .and()
                 .logout()
-                .logoutSuccessUrl("/logout")
+                .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
+               .deleteCookies("JSESSIONID","remember-me")
                 .and()
                 .exceptionHandling().accessDeniedPage("/login")
                 .and()

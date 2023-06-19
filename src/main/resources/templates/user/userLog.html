@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>운영자접속관리</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="page_tits">
+        <h3>운영자접속관리</h3>
+        <p class="path"><strong>현재 위치 :</strong> <span>관리자운영관리</span> <span>운영자관리</span> <span>운영자접속관리</span></p>
+    </div>
+
+    <div class="content">
+        <section>
+            <div>
+                안녕하세요. <span th:text="${#authentication.getName()}"></span></strong>님. <br/>
+
+                현재 접속 IP <span th:text="${currentIp}"></span> <br/><br/>
+
+                오늘 로그인 기록
+                <div th:each=" userLog : ${userLogList}">
+                    <th:block th:if="${userLog.isLoginSuccess} == 'Y'">
+                        <span th:text="|[${#temporals.format(userLog.registerDate,'yyyy-MM-dd HH:mm:ss')}] [${userLog.ip}] [로그인 성공]|"></span>
+                    </th:block>
+                    <th:block th:if="${userLog.isLoginSuccess} == 'N'">
+                        <span th:text="|[${#temporals.format(userLog.registerDate,'yyyy-MM-dd HH:mm:ss')}] [${userLog.ip}] [비밀번호 불일치]|"></span>
+                    </th:block>
+                </div>
+            </div>
+        </section>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script"></th:block>
+</html>

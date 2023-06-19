@@ -8,9 +8,12 @@
             <h2>Login</h2>
             <input id="loginId" class="login_con" type="text" name="loginId" placeholder="Email">
             <input id="loginPassword" class="login_con" type="password" name="loginPassword" placeholder="Password">
-            <label for="remember-check">
+            <!--<label for="remember-check">
                 <input type="checkbox" id="remember-check">아이디 저장하기
-            </label>
+            </label>-->
+            <span th:if="${error}">
+                <div class="field-error" th:text="${exception}"></div>
+            </span>
             <button class="login_btn" type="submit">Login</button>
         </form>
     </div>

@@ -109,3 +109,13 @@ function ajaxUpload(type, url, param, callback) {
 		}
 	});
 }
+
+function openUserLog(userId) {
+	alert(userId);
+	layerPop('userLogPopup');
+	ajaxCmm('get',`userLog/${userId}`,'json','',function (data) {
+         // $('#modalWriter').val(data.);
+         // $('#modalContent').val(data.content);
+         layerPop('userLogPopup');
+     });
+}

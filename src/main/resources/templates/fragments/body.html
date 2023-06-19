@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body th:fragment="main-body">
 <div id="adm_wrap">
     <header>
@@ -7,14 +7,13 @@
             <h1>유니스터디 프로젝트</h1>
             <div class="top_menu">
                 <!--가로형 3단 드롭다운 메뉴-->
-                <div id="menu">
+                <!--<div id="menu">
                     <ul class="main1">
                         <li>
                             <a href="#">메뉴1</a>
                             <ul class="main2">
-                                <li><a href="#">소메뉴1</a></li>
                                 <li>
-                                    <a href="#">소메뉴2</a>
+                                    <a href="#">소메뉴1</a>
                                     <ul class="main3">
                                         <li><a href="#">2단소메뉴1</a></li>
                                         <li><a href="#">2단소메뉴2</a></li>
@@ -22,7 +21,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="#">소메뉴3</a>
+                                    <a href="#">소메뉴2</a>
                                     <ul class="main3">
                                         <li><a href="#">2단소메뉴4</a></li>
                                         <li><a href="#">2단소메뉴5</a></li>
@@ -75,17 +74,14 @@
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="#">메뉴4</a>
-                            <ul class="main2">
-                                <li><a href="#">소메뉴1</a></li>
-                                <li><a href="#">소메뉴2</a></li>
-                                <li><a href="#">소메뉴3</a></li>
-                            </ul>
-                        </li>
                     </ul>
+                </div>-->
+                <div class="login_user"><strong><i class="far fa-user-circle"></i>
+                    <span th:text="${#authentication.getName()}"></span></strong>님
+                    <th:block th:each="authority: ${#authentication.authorities}">
+                        <span th:text="|[${authority.getAuthority()}]|"></span>
+                    </th:block>
                 </div>
-                <div class="login_user"><strong><i class="far fa-user-circle"></i> <span th:text="${session.userName}"></span></strong>님 반갑습니다.</div>
                 <div class="logout">
                     <button type="button"><span class="skip_info">로그아웃</span><i class="fas fa-sign-out-alt"></i>
                     </button>
@@ -104,7 +100,7 @@
                     <li class="has_sub"><a href="javascript: void(0);" class="on"><span>유니스터디<br>관리시스템</span></a>
                         <ul>
                             <li><a href="/board" class="on">리스트형</a></li>
-                            <li><a href="javascript: alert('준비 중입니다.');">갤러리형</a></li>
+                            <li><a href="/userLog">운영자접속관리</a></li>
                             <li><a href="javascript: alert('준비 중입니다.');">캘린더형</a></li>
                         </ul>
                     </li>
@@ -130,6 +126,8 @@
 <script th:src="@{/js/bootstrap.js}"></script>
 <script src="https://kit.fontawesome.com/79613ae794.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-<th:block layout:fragment="script"></th:block>
+
+<th:block layout:fragment="script">
+</th:block>
 </body>
 </html>

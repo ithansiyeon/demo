@@ -21,7 +21,7 @@ import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class BoardRepositoryImpl implements BoardRepositoryCustom{
-    private final JPAQueryFactory query;
+    public final JPAQueryFactory query;
     @Override
     public Page<Board> findBoardCustom(BoardListSearchCond searchCond, org.springframework.data.domain.Pageable pageable) {
         JPAQuery<Board> boardQuery = query.
@@ -78,7 +78,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
         }
     }
 
-    private BooleanExpression isTopEq(Boolean is_top) {
+    public BooleanExpression isTopEq(Boolean is_top) {
         return is_top != null ? board.is_top.eq(is_top == true ? "Y":"N"): null;
     }
 

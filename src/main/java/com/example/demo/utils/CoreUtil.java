@@ -608,7 +608,6 @@ public class CoreUtil {
         if (ip == null) {
             ip = request.getRemoteAddr();
         }
-
         return ip;
     }
 

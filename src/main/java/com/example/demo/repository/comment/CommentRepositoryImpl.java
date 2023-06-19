@@ -16,7 +16,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public List<CommentDto> findByBoardId(Long id) {
+    public List<CommentDto> findByBoardId(Long boardIdx) {
         return query.select
                 (new QCommentDto(comment.id,
                               comment.registerDate,
@@ -26,6 +26,6 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                               query.select(commentHeart.count()).from(commentHeart).where(commentHeart.comment.id.eq(comment.id)),
                               commentHeart.id,
                               commentHeart.isLike))
-                .from(comment).leftJoin(comment.commentHeartList, commentHeart).where(comment.board.id.eq(id)).fetch();
+                .from(comment).leftJoin(comment.commentHeartList, commentHeart).where(comment.board.id.eq(boardIdx)).fetch();
     }
 }

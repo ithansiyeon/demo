@@ -22,7 +22,8 @@ import java.util.List;
 @ToString(of = {"userIdx","userName","password","url","authority"})
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userIdx;
+    @Column(name = "user_idx")
+    private Long id;
     @NotNull
     private String userName;
     @NotNull

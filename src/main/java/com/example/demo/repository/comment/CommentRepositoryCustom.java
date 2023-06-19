@@ -5,5 +5,5 @@ import com.example.demo.dto.board.CommentDto;
 import java.util.List;
 
 public interface CommentRepositoryCustom {
-    List<CommentDto> findByBoardId(Long id);
+    List<CommentDto> findByBoardId(Long boardIdx);
 }

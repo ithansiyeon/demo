@@ -2,6 +2,7 @@ package com.example.demo.springsecurity;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -45,7 +46,6 @@ public class AuthProvider implements AuthenticationProvider {
 
         throw new BadCredentialsException("No such user or wrong password.");
     }
-
 
     @Override
     public boolean supports(Class<?> authentication) {

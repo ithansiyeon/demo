@@ -34,66 +34,7 @@
 /* 컨텐츠 간격 */
 section {margin-top:80px;}
 section:first-child, #tabmenu + section {margin-top:0;}
-/*가로메뉴형*/
 
-#menu {
-    height: 50px;
-    background: #fcc;
-    z-index: 1;
-}
-.main1 {
-    width: 600px;
-    height: 100%;
-    margin: 0 auto;
-}
-.main1>li {
-    float: left;
-    width: 25%;
-    line-height: 50px;
-    text-align: center;
-    position: relative;
-}
-.main1>li:hover .main2 {
-    left: 0;
-}
-.main1>li a {
-    display: block;
-}
-.main1>li a:hover {
-    background: #B21016;
-    color: #fff;
-    font-weight: bold;
-}
-.main2 {
-    position: absolute;
-    top: 50px;
-    left: -9999px;
-    background: #ccc;
-    width: 120%;
-}
-.main2>li {
-    position: relative;
-}
-.main2>li:hover .main3 {
-    left: 100%;
-}
-.main2>li a, .main3>li a {
-    border-radius: 10px;
-    margin: 10px;
-}
-.main3 {
-    position: absolute;
-    top: 0;
-    background: #6BD089;
-    width: 80%;
-    left: -9999px;
-    /*left: 100%;*/
-    /*display: none;*/
-}
-.main3>li a:hover {
-    background: #085820;
-    color: #fff;
-}
 /* 탭메뉴 */
 #tabmenu * {box-sizing:border-box;}
 #tabmenu {font-size:0; margin:0 0 30px; position:relative; z-index:1;}

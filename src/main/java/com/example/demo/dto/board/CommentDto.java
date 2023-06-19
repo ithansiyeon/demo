@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Setter
 @ToString(of = {"id","content","writer"})
 public class CommentDto {
-
     private Long id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -28,20 +27,22 @@ public class CommentDto {
     private LocalDateTime modifiedDate;
     private String content;
     private String writer;
-//    private Long boardId;
     private Long likeCnt;
-    private Long commentHeartId;
+    private Long commentHeartIdx;
     private String isLike;
 
     @QueryProjection
-    public CommentDto(Long id, LocalDateTime registerDate, LocalDateTime modifiedDate, String content, String writer, Long likeCnt, Long commentHeartId, String isLike) {
+    public CommentDto(Long id, LocalDateTime registerDate, LocalDateTime modifiedDate, String content, String writer, Long likeCnt, Long commentHeartIdx, String isLike) {
         this.id = id;
         this.registerDate = registerDate;
         this.modifiedDate = modifiedDate;
         this.content = content;
         this.writer = writer;
         this.likeCnt = likeCnt;
-        this.commentHeartId = commentHeartId;
+        this.commentHeartIdx = commentHeartIdx;
         this.isLike = isLike;
+    }
+
+    public CommentDto() {
     }
 }
