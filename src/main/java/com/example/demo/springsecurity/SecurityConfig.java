@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .logout()
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
-               .deleteCookies("JSESSIONID","remember-me")
+                .deleteCookies("JSESSIONID","remember-me")
                 .and()
                 .exceptionHandling().accessDeniedPage("/login")
                 .and()
