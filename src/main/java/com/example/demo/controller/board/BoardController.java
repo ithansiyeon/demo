@@ -1,8 +1,7 @@
 package com.example.demo.controller.board;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.MessageDto;
 import com.example.demo.dto.board.*;
-import com.example.demo.dto.board.CommentDto;
 import com.example.demo.entity.board.Board;
 import com.example.demo.entity.board.BoardFile;
 import com.example.demo.service.board.BoardService;
@@ -65,6 +64,12 @@ public class BoardController {
         model.addAttribute("boardList", boardList);
         model.addAttribute("count", boardList.getTotalElements());
         return "board/list";
+    }
+
+    @PostMapping("/board/fixedIsTop")
+    public ResponseEntity<String> fixedIsTop(@RequestBody HashMap<String, Object> tableData) {
+        System.out.println("tableData.toString() = " + tableData.toString());
+        return new ResponseEntity<>("ok",HttpStatus.OK);
     }
 
     @GetMapping("/board/excel")

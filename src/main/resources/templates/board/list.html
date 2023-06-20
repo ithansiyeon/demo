@@ -65,7 +65,7 @@
                     </td>
                     <td>
                         <!-- 모달 버튼 -->
-                        <button type="button" class="btn_st3 btn_mid btn_bdr3" th:onclick="|location.href='#'|">
+                        <button type="button" class="btn_st3 btn_mid btn_bdr3" th:onclick="fixedIsTop()">
                             상단고정 적용
                         </button>
                     </td>
@@ -76,7 +76,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td th:colspan="6"><span class="float-end" style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
+                    <td th:colspan="6"><span class="float-end" style="float: right" th:text="'총 개수 정: ' + ${count}"></span></td>
                 </tr>
             </table>
 
@@ -197,6 +197,34 @@
             }
 
             location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
+        }
+
+        function fixedIsTop() {
+            if(confirm("적용하시겠습니까?")) {
+                // 테이블 데이터 추출
+                var table = document.getElementsByClassName("tb_col")[0];  // 테이블 요소 선택
+                var rows = table.getElementsByTagName("tr");  // 테이블의 모든 행(tr) 요소 선택
+
+                var tableData = [];  // 추출한 테이블 데이터를 담을 배열
+
+                // 테이블 행 순회
+                for (var i = 1; i < rows.length; i++) {  // 첫 번째 행은 헤더이므로 i=1부터 시작
+                    var rowData = [];  // 행의 데이터를 담을 배열
+
+                    var cells = rows[i].getElementsByTagName("td");  // 해당 행의 모든 셀(td) 요소 선택
+
+                    // 셀 데이터 추출
+                    for (var j = 0; j < cells.length; j++) {
+                        rowData.push(cells[j].innerText);  // 셀의 내용을 rowData 배열에 추가
+                    }
+
+                    tableData.push(rowData);  // 추출한 행 데이터를 tableData 배열에 추가
+                }
+                console.log(tableData);
+                ajaxCmm('post',`/board/fixedIsTop`,'text',tableData,function () {
+
+                });
+            }
         }
 
     </script>
