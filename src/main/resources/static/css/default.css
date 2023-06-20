@@ -128,3 +128,5 @@ input[type=text]:focus, input[type="password"]:focus, input[type=search]:focus, 
 .tdRed{background:#fce4e4 !important;}
 .tdGray{background:#f3f3f3 !important;}
 .tdYellow{background:#fef6e9 !important;}
+
+.field-error {border-color: #dc3545;color: #dc3545;}

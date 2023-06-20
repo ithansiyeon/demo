@@ -64,7 +64,7 @@ public class BoardController {
         model.addAttribute("startPage", Math.floor(boardList.getNumber() / boardList.getSize()) * boardList.getSize() + 1);
         model.addAttribute("boardList", boardList);
         model.addAttribute("count", boardList.getTotalElements());
-        return "board/lists";
+        return "board/list";
     }
 
     @GetMapping("/board/excel")

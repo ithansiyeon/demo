@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
@@ -23,14 +24,14 @@ import static org.springframework.util.StringUtils.hasText;
 public class BoardRepositoryImpl implements BoardRepositoryCustom{
     public final JPAQueryFactory query;
     @Override
-    public Page<Board> findBoardCustom(BoardListSearchCond searchCond, org.springframework.data.domain.Pageable pageable) {
+    public Page<Board> findBoardCustom(BoardListSearchCond searchCond, PageRequest pageRequest) {
         JPAQuery<Board> boardQuery = query.
                                             select(board).
                                             from(board)
                                             .where(boardSearch(searchCond),(dateBetween(searchCond.getStrtDate(),searchCond.getEndDate())), isTopEq(searchCond.getIs_top()))
-                                            .offset(pageable.getOffset()).limit(pageable.getPageSize());
+                                            .offset(pageRequest.getOffset()).limit(pageRequest.getPageSize());
         //동적으로 order by하는 부분 되록이면 파라미터 받아서 처리하는게 낫다고 함
-        for(Sort.Order o : pageable.getSort()) {
+        for(Sort.Order o : pageRequest.getSort()) {
             PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
             boardQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, pathBuilder.get(o.getProperty())));
         }
@@ -38,7 +39,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
 
         JPAQuery<Long> countQuery = query.select(board.count()).where(boardSearch(searchCond),(dateBetween(searchCond.getStrtDate(),searchCond.getEndDate())), isTopEq(searchCond.getIs_top())).from(board);
 
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne); //pageImpl 반환
+        return PageableExecutionUtils.getPage(content, pageRequest, countQuery::fetchOne); //pageImpl 반환
     }
 
     public BooleanExpression boardSearch(BoardListSearchCond searchCond) {

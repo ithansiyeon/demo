@@ -1,7 +1,6 @@
 package com.example.demo.springsecurity;
 
 import com.example.demo.entity.user.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

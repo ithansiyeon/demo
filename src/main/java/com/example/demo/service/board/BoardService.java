@@ -16,13 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,7 @@ public class BoardService {
     private final CommentHeartRepository commentHeartRepository;
     private final FileUtil fileStore;
 
-    public Page<BoardDto> getBoardList(BoardListSearchCond searchCond, Pageable pageRequest) {
+    public Page<BoardDto> getBoardList(BoardListSearchCond searchCond, PageRequest pageRequest) {
         return boardRepository.findBoardCustom(searchCond,pageRequest).map(BoardDto::new);
     }
 

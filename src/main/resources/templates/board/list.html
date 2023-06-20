@@ -39,10 +39,11 @@
             <table class="float-end">
                 <colgroup>
                     <col style="width: auto;">
-                    <col style="width: 11.7%;">
-                    <col style="width: 10.5%;">
-                    <col style="width: 6%;">
-                    <col style="width: 20%;">
+                    <col style="width: 9.4%;">
+                    <col style="width: 8.5%;">
+                    <col style="width: 4.9%;">
+                    <col style="width: 11.4%;">
+                    <col style="width: 16%;">
                 </colgroup>
                 <tr>
                     <td></td>
@@ -63,13 +64,19 @@
                         </button>
                     </td>
                     <td>
+                        <!-- 모달 버튼 -->
+                        <button type="button" class="btn_st3 btn_mid btn_bdr3" th:onclick="|location.href='#'|">
+                            상단고정 적용
+                        </button>
+                    </td>
+                    <td>
                         <form action="/board/download" method="get">
                             <button class="bt_excel btn_mid btn_bdr2" type="submit">엑셀 템플릿 다운로드</button>
                         </form>
                     </td>
                 </tr>
                 <tr>
-                    <td th:colspan="5"><span class="float-end" style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
+                    <td th:colspan="6"><span class="float-end" style="float: right" th:text="'총 개수 : ' + ${count}"></span></td>
                 </tr>
             </table>
 
@@ -80,7 +87,7 @@
                     <th style="color: white;" scope="col">글 제목</th>
                     <th style="color: white;" scope="col">등록일</th>
                     <th style="color: white;" scope="col">조회수</th>
-                    <th style="color: white;" scope="col">상단여부</th>
+                    <th style="color: white;" scope="col">상단고정</th>
                 </tr>
                 <tr th:each="board: ${boardList}">
                     <td style="text-align: center"><a href="#" th:href="@{/board/view/{boardId}(boardId=${board.id})}"

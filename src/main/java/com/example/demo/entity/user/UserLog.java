@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -27,12 +28,19 @@ public class UserLog {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userIdx")
     private User user;
+    @ColumnDefault("'N'")
+    private String autoYn;
+    private String reasonType;
+    private String otherReason;
 
 
     @Builder
-    public UserLog(String ip, String isLoginSuccess, User user) {
+    public UserLog(String ip, String isLoginSuccess, User user, String autoYn, String reasonType, String otherReason) {
         this.ip = ip;
         this.isLoginSuccess = isLoginSuccess;
         this.user = user;
+        this.autoYn = autoYn;
+        this.reasonType = reasonType;
+        this.otherReason = otherReason;
     }
 }

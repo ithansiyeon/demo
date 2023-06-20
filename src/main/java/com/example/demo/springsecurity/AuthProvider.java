@@ -38,7 +38,7 @@ public class AuthProvider implements AuthenticationProvider {
             userDetailsService.insertUserLog(ip, true, loginId);
             userDetailsService.updateLastLoginDate(loginId);
             HttpSession session = request.getSession();
-            session.setAttribute("userName",userDetails.getUsername());
+            session.setAttribute("loginId", loginId);
             return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         } else {
             userDetailsService.insertUserLog(ip, false, loginId);

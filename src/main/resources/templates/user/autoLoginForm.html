@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>자동로그인</title>
+    <link rel="stylesheet" th:href="@{/css/default.css}" />
+    <link rel="stylesheet" th:href="@{/css/common.css}" />
+    <link rel="stylesheet" th:href="@{/css/content.css}" />
+    <link rel="stylesheet" th:href="@{/css/button.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <form method="post" th:action id="autoLoginForm">
+        <h3>자동로그인</h3>
+        <input type="hidden" th:val="${session.loginId}">
+        <select name="reasonType">
+            <option value="">사유 선택</option>
+            <option value="1">비번확인</option>
+            <option value="2">장바구니 취소</option>
+            <option value="3">기타사유</option>
+        </select>
+        <div>
+            <input name="otherReason" type="text" placeholder="기타 사유를 입력해 주세요.">
+        </div>
+        <button type="button" class="bt_excel btn_mid btn_bdr2" th:onclick="autoLogin([[${session.loginId}]])">자동 로그인</button>
+    </form>
+</body>
+<script th:src="@{/js/function.js}"></script>
+<script th:src="@{/js/jquery-3.7.0.min.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+<script>
+    function autoLogin(loginId) {
+        var data = $("#autoLoginForm").serialize();
+        ajaxCmm('post',`/user/autoLogin/${loginId}`,'json',data ,function () {
+
+        });
+    }
+</script>
+</html>

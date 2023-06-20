@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>회원운영관리</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content">
+        <section>
+            <div class="py-5 text-center">
+                <h2>회원운영관리</h2>
+            </div>
+
+            <table class="tb tb_col">
+                <tr style="text-align: center; background-color: cornflowerblue;">
+                    <th style="color: white;" scope="col">번호</th>
+                    <th style="color: white;" scope="col">이름</th>
+                    <th style="color: white;" scope="col">아이디</th>
+                    <th style="color: white;" scope="col">휴대폰번호</th>
+                    <th style="color: white;" scope="col">주의회원</th>
+                    <th style="color: white;" scope="col">권한</th>
+                    <th style="color: white;" scope="col">자동로그인</th>
+                </tr>
+                <tr th:each="user: ${userList}">
+                    <td th:text="${user.id}" style="text-align: center">회원번호</td>
+                    <td th:text="${user.userName}">회원이름</td>
+                    <td th:text="${user.userId}">회원아이디</td>
+                    <td th:text="${user.phoneNumber}">휴대폰번호</td>
+                    <td th:text="${user.isAlert}" th:inline="text" th:style="${user.isAlert == 'Y' ? 'text-color:red;':''}">주의회원</td>
+                    <td th:text="${user.authority}">회원권한</td>
+                    <td><button class="btn_st5 btn_mid btn_bdr5" type="button" th:onclick="popUp([[${session.loginId}]])">자동로그인</button></td>
+                </tr>
+                <tr th:if="${userList.isEmpty()}" style="text-align: center">
+                    <td colspan="4">데이터가 없습니다.</td>
+                </tr>
+            </table>
+        </section>
+    </div>
+    <!-- 페이징 -->
+    <div class="paging" th:if="${!userList.isEmpty()}">
+        <!-- 전역 변수 선언 -->
+        <nav
+                th:with="
+              number = ${userList.number}+1,
+              size = ${userList.size},
+              totalPages = ${userList.totalPages},
+              startPage = ${startPage},
+              tempEndPage = ${startPage + size - 1},
+              endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
+                aria-label="Page navigation"
+        >
+            <!-- 처음으로 이동 -->
+            <a class="page_bt first" th:href="@{/user/userList?(page=1)}">
+                <span>&laquo;</span>
+                <span class="sr-only">First</span>
+            </a>
+            <a th:classappend="${userList.first} ? 'disabled'" class="page_bt prev" href="javascript:void(0);" th:onclick="movePage([[${number}-1]])"
+               aria-label="Previous">
+                <span aria-hidden="true">&lt;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <!-- 특정 페이지로 이동 -->
+            <a th:each="page: ${#numbers.sequence(startPage, endPage)}"
+               th:classappend="${page == number} ? 'on'" th:text="${page}" href="javascript:void(0);"
+               th:onclick="movePage([[${page}]])"></a>
+            <!-- 다음으로 이동 -->
+            <a th:classappend="${userList.last} ? 'disabled'" class="page_bt next" href="javascript:void(0);" th:onclick="movePage([[${number + 1}]])"
+               aria-label="Next">
+                <span aria-hidden="true">&gt;</span>
+                <span class="sr-only">Next</span>
+            </a>
+            <!-- 마지막으로 이동 -->
+            <a class="page_bt last" th:onclick="movePage([[${totalPages}]])">
+                <span>&raquo;</span>
+                <span class="sr-only">Last</span>
+            </a>
+        </nav>
+    </div>
+
+</th:block>
+<th:block layout:fragment="script">
+    <script>
+
+        function popUp(loginId) {
+            var popupX = (document.body.offsetWidth / 2) - (300 / 2);
+            // 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
+            var popupY = (window.screen.height / 2) - (300 / 2);
+            // 만들 팝업창 상하 크기의 1/2 만큼 보정값으로 빼주었음
+            window.open(`/user/autoLogin/${loginId}`, "pop", "width=400, height=200, scrollbars=yes left=" + popupX + ", top=" + popupY);
+        }
+
+        // 페이지 이동
+        function movePage(page) {
+
+            const queryParams = {
+                page: (page) ? page : 1,
+                recordSize: 10,
+                pageSize: 10
+            }
+
+            location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
+        }
+
+    </script>
+</th:block>
+</html>

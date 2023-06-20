@@ -11,10 +11,10 @@ public class UrlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
-        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AntPathMatcher matcher = new AntPathMatcher();
         System.out.println("apple");
         System.out.println(requestURI);
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AntPathMatcher matcher = new AntPathMatcher();
        /* if(matcher.match(securityUser.getUrl(), requestURI)) {
             return true;
         }*/

@@ -44,15 +44,19 @@ public class User {
     LocalDateTime lastLoginDate;
     @OneToMany(mappedBy = "user")
     private List<UserLog> userLogs = new ArrayList<>();
+    private String phoneNumber;
+    private String isAlert;
 
     @Builder
-    public User(String userName, String password, String userId, String delYn, String url, String authority) {
+    public User(String userName, String password, String userId, String delYn, String url, String authority, String phoneNumber, String isAlert) {
         this.userName = userName;
         this.password = password;
         this.userId = userId;
         this.delYn = delYn;
         this.url = url;
         this.authority = authority;
+        this.phoneNumber = phoneNumber;
+        this.isAlert = isAlert;
     }
 
     public void updateLastLoginDate(LocalDateTime now) {

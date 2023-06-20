@@ -20,6 +20,7 @@ public class CustomAuthFailureHandler extends SimpleUrlAuthenticationFailureHand
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String errorMessage;
+        System.out.println("bbbbbb");
         if (exception instanceof BadCredentialsException) {
             errorMessage = "아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해 주세요.";
         } else if (exception instanceof InternalAuthenticationServiceException) {
@@ -35,4 +36,5 @@ public class CustomAuthFailureHandler extends SimpleUrlAuthenticationFailureHand
         setDefaultFailureUrl("/login?error=true&exception=" + errorMessage);
         super.onAuthenticationFailure(request, response, exception);
     }
-} 
+}
+

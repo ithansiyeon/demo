@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import java.util.Random;
 
 @Profile("local")
 @Component
@@ -32,6 +33,7 @@ public class InitBoard {
 
         @Transactional
         public void init() {
+            Random rm = new Random();
             for (int i = 1; i < 50; i++) {
                 String is_top = "Y";
                 if(i%2==0) {
@@ -41,7 +43,12 @@ public class InitBoard {
                 em.persist(board);
                 Comment comment = Comment.builder().content("댓글 구현 테스트 " + i).writer("홍길동"+i).board(board).build();
                 em.persist(comment);
-                User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").delYn("N").authority("admin").build();
+                String numStr = "";
+                for(int j=0;j<8;j++) {
+                    if(j==4) numStr+="-";
+                    numStr += rm.nextInt(9);
+                }
+                User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").delYn("N").authority("admin").phoneNumber("010-"+numStr).isAlert(is_top).build();
                 em.persist(user);
             }
         }
