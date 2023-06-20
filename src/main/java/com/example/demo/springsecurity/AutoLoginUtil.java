@@ -14,6 +14,7 @@ public class AutoLoginUtil {
         // 인증 객체를 시큐리티 컨텍스트 홀더에 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 세션에 인증 객체 저장
+        System.out.println("loginId = " + loginId);
         request.getSession().setAttribute("loginId", loginId);
     }
 }

@@ -125,12 +125,12 @@ public class BoardService {
         commentRepository.deleteById(commentIdx);
     }
 
-    public void createCommentHeart(Long commentIdx, Long commentHeartId, String heartYn) {
-        if (heartYn.equals("N")) {
+    public void createCommentHeart(Long commentIdx, Long commentHeartId, String isHeart) {
+        if (isHeart.equals("N")) {
             commentHeartRepository.deleteByCommentId(commentIdx,"홍길동");
         } else {
             Comment comment = commentRepository.findById(commentIdx).get();
-            commentHeartRepository.save(CommentHeart.builder().id(commentHeartId).isLike(heartYn).writer("홍길동").comment(comment).build());
+            commentHeartRepository.save(CommentHeart.builder().id(commentHeartId).isLike(isHeart).writer("홍길동").comment(comment).build());
         }
     }
 

@@ -13,9 +13,8 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
-    <form method="post" th:action id="autoLoginForm">
+    <form id="autoLoginForm">
         <h3>자동로그인</h3>
-        <input type="hidden" th:val="${session.loginId}">
         <select name="reasonType">
             <option value="">사유 선택</option>
             <option value="1">비번확인</option>
@@ -25,7 +24,7 @@
         <div>
             <input name="otherReason" type="text" placeholder="기타 사유를 입력해 주세요.">
         </div>
-        <button type="button" class="bt_excel btn_mid btn_bdr2" th:onclick="autoLogin([[${session.loginId}]])">자동 로그인</button>
+        <button type="button" class="bt_excel btn_mid btn_bdr2" th:onclick="autoLogin([[${userId}]])">자동 로그인</button>
     </form>
 </body>
 <script th:src="@{/js/function.js}"></script>
@@ -33,10 +32,11 @@
 <script th:src="@{/js/common.js}"></script>
 <script th:src="@{/js/bootstrap.js}"></script>
 <script>
-    function autoLogin(loginId) {
+    function autoLogin(userId) {
         var data = $("#autoLoginForm").serialize();
-        ajaxCmm('post',`/user/autoLogin/${loginId}`,'json',data ,function () {
-
+        ajaxCmm('post',`/user/autoLogin/${userId}`,'text',data, function () {
+            window.opener.location.href = '/board';
+            window.close();
         });
     }
 </script>

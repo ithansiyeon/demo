@@ -235,17 +235,17 @@
         function toggleHeart(obj, commentIdx, commentHeartIdx) {
             const boardIdx = [[${board.id}]];
             var heart_text = obj.getElementsByClassName('board-heart')[0].innerText;
-            var heartYn = "Y";
+            var isHeart = "Y";
             if(heart_text == "♥") {
                 obj.innerText = "♡";
-                heartYn = "N";
+                isHeart = "N";
             } else {
                 obj.innerText = "♥";
             }
             var params = {
                 commentHeartIdx:commentHeartIdx
             }
-            ajaxCmm('get',`/board/${boardIdx}/commentHeart/${commentIdx}/${heartYn}`,'text',params,function () {
+            ajaxCmm('get',`/board/${boardIdx}/commentHeart/${commentIdx}/${isHeart}`,'text',params,function () {
                 findAllComment();
             });
         }

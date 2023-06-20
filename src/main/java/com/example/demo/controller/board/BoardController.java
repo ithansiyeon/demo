@@ -206,9 +206,9 @@ public class BoardController {
     }
 
     @ResponseBody
-    @GetMapping("/board/{boardIdx}/commentHeart/{commentIdx}/{heartYn}")
-    public ResponseEntity<String> createCommentHeart(@PathVariable Long commentIdx, @PathVariable String heartYn, Long commentHeartIdx) {
-        boardService.createCommentHeart(commentIdx, commentHeartIdx, heartYn);
+    @GetMapping("/board/{boardIdx}/commentHeart/{commentIdx}/{isHeart}")
+    public ResponseEntity<String> createCommentHeart(@PathVariable Long commentIdx, @PathVariable String isHeart, Long commentHeartIdx) {
+        boardService.createCommentHeart(commentIdx, commentHeartIdx, isHeart);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 

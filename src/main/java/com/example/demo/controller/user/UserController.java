@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,19 +51,19 @@ public class UserController {
         return "user/userList";
     }
 
-    @GetMapping("/user/autoLogin/{loginId}")
-    public String autoLogin(@PathVariable(value = "loginId", required = true) String loginId) {
+    @GetMapping("/user/autoLogin/{userId}")
+    public String autoLogin(@PathVariable(value = "userId", required = true) String userId, Model model) {
+        model.addAttribute("userId",userId);
         return "user/autoLoginForm";
     }
 
-    @PostMapping("/user/autoLogin/{loginId}")
-    public String autoLoginProc(@PathVariable(value = "loginId", required = true) String loginId, @ModelAttribute AutoLoginForm autoLoginForm, HttpServletRequest request) {
-        System.out.println("autoLoginForm.toString() = " + autoLoginForm.toString());
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
-        User user = userService.getUserByUserId(loginId);
-        AutoLoginUtil.autoLogin(request, userDetails, loginId);
+    @PostMapping("/user/autoLogin/{userId}")
+    public ResponseEntity<String> autoLoginProc(@PathVariable(value = "userId", required = true) String userId, @ModelAttribute AutoLoginForm autoLoginForm, HttpServletRequest request) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+        User user = userService.getUserByUserId(userId);
+        AutoLoginUtil.autoLogin(request, userDetails, userId);
         UserLog userLog = UserLog.builder().ip(getClientIP(request)).isLoginSuccess("Y").user(user).autoYn("Y").reasonType(autoLoginForm.getReasonType()).otherReason(autoLoginForm.getOtherReason()).build();
         userService.insertUserLog(userLog);
-        return "redirect:/board/list";
+        return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 }

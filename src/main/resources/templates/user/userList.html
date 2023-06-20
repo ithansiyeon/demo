@@ -29,7 +29,7 @@
                     <td th:text="${user.phoneNumber}">휴대폰번호</td>
                     <td th:text="${user.isAlert}" th:inline="text" th:style="${user.isAlert == 'Y' ? 'text-color:red;':''}">주의회원</td>
                     <td th:text="${user.authority}">회원권한</td>
-                    <td><button class="btn_st5 btn_mid btn_bdr5" type="button" th:onclick="popUp([[${session.loginId}]])">자동로그인</button></td>
+                    <td><button class="btn_st5 btn_mid btn_bdr5" type="button" th:onclick="popUp([[${user.userId}]])">자동로그인</button></td>
                 </tr>
                 <tr th:if="${userList.isEmpty()}" style="text-align: center">
                     <td colspan="4">데이터가 없습니다.</td>
@@ -82,23 +82,21 @@
 <th:block layout:fragment="script">
     <script>
 
-        function popUp(loginId) {
+        function popUp(userId) {
             var popupX = (document.body.offsetWidth / 2) - (300 / 2);
             // 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
             var popupY = (window.screen.height / 2) - (300 / 2);
             // 만들 팝업창 상하 크기의 1/2 만큼 보정값으로 빼주었음
-            window.open(`/user/autoLogin/${loginId}`, "pop", "width=400, height=200, scrollbars=yes left=" + popupX + ", top=" + popupY);
+            window.open(`/user/autoLogin/${userId}`, "pop", "width=400, height=200, scrollbars=yes left=" + popupX + ", top=" + popupY);
         }
 
         // 페이지 이동
         function movePage(page) {
-
             const queryParams = {
                 page: (page) ? page : 1,
                 recordSize: 10,
                 pageSize: 10
             }
-
             location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
         }
 
