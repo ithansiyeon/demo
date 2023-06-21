@@ -35,7 +35,6 @@ public class User {
     private LocalDateTime registerDate;
     @LastModifiedDate
     private LocalDateTime modifiedDate;
-    @NotNull
     @ColumnDefault("'N'")
     private String isDel;
     private String url;

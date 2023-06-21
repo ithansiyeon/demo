@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +67,10 @@ public class BoardController {
     }
 
     @PostMapping("/board/fixedIsTop")
-    public ResponseEntity<String> fixedIsTop(@RequestBody HashMap<String, Object> tableData) {
+    public ResponseEntity<String> fixedIsTop(@RequestBody ArrayList<BoardDto> tableData) {
+        System.out.println("aaaaaa");
         System.out.println("tableData.toString() = " + tableData.toString());
+        boardService.updateFixedIsTop(tableData);
         return new ResponseEntity<>("ok",HttpStatus.OK);
     }
 

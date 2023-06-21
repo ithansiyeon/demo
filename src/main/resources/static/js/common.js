@@ -71,7 +71,10 @@ function layerPopClose2(popName){
 
 // 클릭시 새창 팝업 띄우기
 function popup_win(str,id,w,h,scrollchk){
-	var pop = window.open(str,id,"width="+w+",height="+h+",scrollbars="+scrollchk+",resize=no,location=no ");
+	var popupX = (document.body.offsetWidth / 2) - w/3;
+	// 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
+	var popupY = (window.screen.height / 2) - h/2;
+	var pop = window.open(str,id,"width="+w+",height="+h+",scrollbars="+scrollchk+ " left="+popupX,", top="+popupY+",resize=no,location=no ");
 	pop.focus();
 }
 
@@ -83,6 +86,7 @@ function ajaxCmm(type, url, dataType, param, callback) {
 		type: type,
 		url: url,
 		data: param,
+		contentType: 'application/json',
 		dataType: dataType,
 		success: function(data, status, xr) {
 			return callback(data);
@@ -108,14 +112,4 @@ function ajaxUpload(type, url, param, callback) {
 			console.log(error);
 		}
 	});
-}
-
-function openUserLog(userId) {
-	alert(userId);
-	layerPop('userLogPopup');
-	ajaxCmm('get',`userLog/${userId}`,'json','',function (data) {
-         // $('#modalWriter').val(data.);
-         // $('#modalContent').val(data.content);
-         layerPop('userLogPopup');
-     });
 }

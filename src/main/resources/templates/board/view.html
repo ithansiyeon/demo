@@ -64,7 +64,7 @@
                     </tr>
                 </table>
                 <p class="btn_set">
-                    <button class="btns btn_bdr4 btn_mid" th:onclick="|location.href='@{/board/edit/{boardIdx}(boardIdx=${board.id})}'|" type="button" style="margin-top: 3px;margin-right: 2px">글수정
+                    <button th:if="${board.writer == session.loginId}" class="btns btn_bdr4 btn_mid" th:onclick="|location.href='@{/board/edit/{boardIdx}(boardIdx=${board.id})}'|" type="button" style="margin-top: 3px;margin-right: 2px">글수정
                     </button>
                     <button class="btns btn_bdr5 btn_mid" th:onclick="|location.href='@{/board}'|" type="button" style="margin-top: 3px;">전체글보기
                     </button>
@@ -174,7 +174,6 @@
             isValid(contents, '댓글');
             const boardIdx = [[${board.id}]];
             const params = {
-                boardIdx : boardIdx,
                 content : contents.val(),
                 writer : '홍길동'
             }

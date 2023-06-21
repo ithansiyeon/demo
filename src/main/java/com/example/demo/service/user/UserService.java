@@ -37,12 +37,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateLastLoginDate(String loginId) {
-        User user = userRepository.findByUserId(loginId);
-        user.updateLastLoginDate(LocalDateTime.now());
-        userRepository.save(user);
-    }
-
     public void insertUserLog(UserLog userLog) {
         userLogRepository.save(userLog);
     }

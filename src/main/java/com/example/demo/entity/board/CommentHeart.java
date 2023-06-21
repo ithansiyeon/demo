@@ -24,7 +24,6 @@ public class CommentHeart {
     @JoinColumn(name = "comment_idx")
     private Comment comment;
 
-    @NotNull
     @ColumnDefault("'N'")
     private String isLike;
 

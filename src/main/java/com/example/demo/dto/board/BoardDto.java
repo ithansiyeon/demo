@@ -6,6 +6,7 @@ import com.example.demo.excel.annotation.DefaultHeaderStyle;
 import com.example.demo.excel.annotation.ExcelColumn;
 import com.example.demo.excel.annotation.ExcelColumnStyle;
 import com.example.demo.excel.style.DefaultExcelCellStyle;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +28,7 @@ public class BoardDto {
     @ExcelColumn(headerName = "writer")
     private String writer;
     @ExcelColumn(headerName = "registerDate")
-    private LocalDateTime registerDate;
+    private transient LocalDateTime registerDate;
     private int views;
     private String is_top;
 

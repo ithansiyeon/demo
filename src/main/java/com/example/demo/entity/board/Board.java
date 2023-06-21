@@ -36,7 +36,6 @@ public class Board {
     private LocalDateTime modifiedDate;
     private int views;
     @ColumnDefault("'N'")
-    @NotNull
     @Column(length = 1)
     private String is_top;
     @OneToMany(mappedBy="board", cascade = CascadeType.REMOVE)
@@ -55,5 +54,9 @@ public class Board {
 
     public void viewCountUp(Board board) {
         board.views++;
+    }
+
+    public void changeIsTop(String is_top) {
+        this.is_top = is_top;
     }
 }

@@ -48,7 +48,7 @@ public class InitBoard {
                     if(j==4) numStr+="-";
                     numStr += rm.nextInt(9);
                 }
-                User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").isDel("N").authority("admin").phoneNumber("010-"+numStr).isAlert(is_top).build();
+                User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").isDel("N").authority("관리자").phoneNumber("010-"+numStr).isAlert(is_top).build();
                 em.persist(user);
             }
         }

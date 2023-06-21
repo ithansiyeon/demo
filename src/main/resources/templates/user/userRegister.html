@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>운영자정보관리</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="page_tits">
+        <h3>운영자 기본 정보 등록</h3>
+        <p class="path"><strong>현재 위치 :</strong> <span>관리자운영관리</span> <span>운영자관리</span> <span>운영자정보관리</span></p>
+    </div>
+
+    <div class="content">
+        <section>
+            <div>
+                <form method="post" th:action>
+                    <table class="tb tb_row">
+                        <tr>
+                            <th scope="row">아이디</th>
+                            <td><input type="text" style="width:200px;">
+                                <button>중복확인</button>
+                            </td>
+                            <th scope="row">이름</th>
+                            <td><input type="text" style="width:200px;"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">비밀번호</th>
+                            <td colspan="3"><input type="text" style="width:200px;">
+                                비밀번호 확인 <input type="text" style="width:200px;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">운영자 권한</th>
+                            <td>
+                                <select name="" id="" style="width:200px;">
+                                    <option value="">권한미설정</option>
+                                </select>
+                            </td>
+                            <th scope="row">부서/직급</th>
+                            <td>
+                                <select name="" id="" style="width:200px;">
+                                    <option value="">부서</option>
+                                </select>
+                                <select name="" id="" style="width:200px;">
+                                    <option value="">직급</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">휴대폰 번호</th>
+                            <td>
+                                <select name="" id="" style="width:70px;">
+                                    <option value="">010</option>
+                                </select>
+                                -
+                                <input type="text" style="width:70px;">
+                                -
+                                <input type="text" style="width:70px;">
+                            </td>
+                            <th scope="row">이메일</th>
+                            <td><input type="text" style="width:50px;"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">메모</th>
+                            <td colspan="3">
+                                <textare></textare>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">사용여부</th>
+                            <td colspan="3"><input type="radio">사용 <input type="radio">미사용</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">등록자</th>
+                            <td></td>
+                            <th scope="row">등록일</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">최종 수정자</th>
+                            <td></td>
+                            <th scope="row">최종 수정일</th>
+                            <td></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </section>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script"></th:block>
+</html>

@@ -48,12 +48,12 @@
                 <tr>
                     <td></td>
                     <td>
-                        <button class="btn_st3 btn_mid btn_bdr3" data-bs-toggle="modal" th:attr="onclick=|popUp()|">엑셀업로드
+                        <button class="btn_st3 btn_mid btn_bdr3"  th:attr="onclick=|popup_win('/board/excel','pop',400,200,'yes')|">엑셀업로드
                         </button>
                     </td>
                     <td>
                         <!-- 모달 버튼 -->
-                        <button type="button" class="btn_st3 btn_mid btn_bdr3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <button type="button" class="btn_st3 btn_mid btn_bdr3"  data-bs-target="#exampleModal">
                             모달 열기
                         </button>
                     </td>
@@ -76,11 +76,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <td th:colspan="6"><span class="float-end" style="float: right" th:text="'총 개수 정: ' + ${count}"></span></td>
+                    <td th:colspan="6"><span class="float-end" style="float: right" th:text="'총 개수: ' + ${count}"></span></td>
                 </tr>
             </table>
 
-            <table class="tb tb_col">
+            <table class="tb tb_col" id="boardTable">
                 <tr style="text-align: center; background-color: cornflowerblue;">
                     <th style="color: white;" scope="col">글 번호</th>
                     <th style="color: white;" scope="col">글쓴이</th>
@@ -168,13 +168,6 @@
 </th:block>
 <th:block layout:fragment="script">
     <script>
-        function popUp() {
-            var popupX = (document.body.offsetWidth / 2) - (300 / 2);
-            // 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
-            var popupY = (window.screen.height / 2) - (300 / 2);
-            // 만들 팝업창 상하 크기의 1/2 만큼 보정값으로 빼주었음
-            window.open("/board/excel", "pop", "width=400, height=200, scrollbars=yes left=" + popupX + ", top=" + popupY);
-        }
 
         // 페이지 이동
         function movePage(page) {
@@ -202,27 +195,33 @@
         function fixedIsTop() {
             if(confirm("적용하시겠습니까?")) {
                 // 테이블 데이터 추출
-                var table = document.getElementsByClassName("tb_col")[0];  // 테이블 요소 선택
-                var rows = table.getElementsByTagName("tr");  // 테이블의 모든 행(tr) 요소 선택
-
-                var tableData = [];  // 추출한 테이블 데이터를 담을 배열
-
-                // 테이블 행 순회
-                for (var i = 1; i < rows.length; i++) {  // 첫 번째 행은 헤더이므로 i=1부터 시작
-                    var rowData = [];  // 행의 데이터를 담을 배열
-
-                    var cells = rows[i].getElementsByTagName("td");  // 해당 행의 모든 셀(td) 요소 선택
-
-                    // 셀 데이터 추출
+                var table = document.getElementById("boardTable");  // 테이블 요소 선택
+                var tableData = [];
+                var headers = ["id","writer","name","registerDate","views","is_top"]
+                for (var i = 1; i < table.rows.length; i++) {
+                    var rowData = {};
+                    var cells = table.rows[i].getElementsByTagName("td");
                     for (var j = 0; j < cells.length; j++) {
-                        rowData.push(cells[j].innerText);  // 셀의 내용을 rowData 배열에 추가
+                        var cell = cells[j];
+                        var checkbox = cell.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            if (checkbox.checked) {
+                                rowData[headers[j]] = 'Y';
+                            } else {
+                                rowData[headers[j]] = 'N';
+                            }
+                        } else {
+                            // 텍스트 가져오기
+                            var text = cell.textContent.trim();
+                            rowData[headers[j]] = text;
+                        }
                     }
-
-                    tableData.push(rowData);  // 추출한 행 데이터를 tableData 배열에 추가
+                    tableData.push(rowData);
                 }
                 console.log(tableData);
-                ajaxCmm('post',`/board/fixedIsTop`,'text',tableData,function () {
-
+                ajaxCmm('post',`/board/fixedIsTop`,'text',JSON.stringify(tableData),function () {
+                    alert("적용되었습니다.");
+                    location.reload();
                 });
             }
         }

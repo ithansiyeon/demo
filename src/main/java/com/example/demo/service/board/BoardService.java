@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -152,6 +153,14 @@ public class BoardService {
         for (UploadFile uploadFile : uploadFiles) {
             BoardFile boardFile = BoardFile.builder().uploadFileName(uploadFile.getUploadFileName()).storeFileName(uploadFile.getStoreFileName()).board(board).build();
             createBoardFile(boardFile);
+        }
+    }
+
+    @Transactional(readOnly = false)
+    public void updateFixedIsTop(ArrayList<BoardDto> tableData) {
+        for (BoardDto board : tableData) {
+            Board findBoard = boardRepository.findById(board.getId()).get();
+            findBoard.changeIsTop(board.getIs_top());
         }
     }
 }

@@ -66,4 +66,9 @@ public class UserController {
         userService.insertUserLog(userLog);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
+
+    @GetMapping("/user/userRegister")
+    public String userRegister(Model model) {
+        return "user/userRegister";
+    }
 }
