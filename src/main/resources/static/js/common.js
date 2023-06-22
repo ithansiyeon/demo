@@ -86,7 +86,6 @@ function ajaxCmm(type, url, dataType, param, callback) {
 		type: type,
 		url: url,
 		data: param,
-		contentType: 'application/json',
 		dataType: dataType,
 		success: function(data, status, xr) {
 			return callback(data);

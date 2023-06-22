@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"menuIdx","name","listOrder"})
+@ToString(of = {"id","name","listOrder"})
 public class Menu {
 
     @Id

@@ -192,13 +192,14 @@
             const contents = $('#modalContent').val();
             isValid($('#modalWriter'),'작성자');
             isValid($('#modalContent'),'수정할 내용');
+
             const params = {
                 id:commentIdx,
                 content: contents,
                 writer: writer
             };
 
-            ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,function(data) {
+            ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,function() {
                 alert('수정되었습니다.');
                 closeCommentUpdatePopup();
                 findAllComment();
