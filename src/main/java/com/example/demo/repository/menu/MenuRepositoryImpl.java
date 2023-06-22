@@ -1,19 +1,18 @@
-package com.example.demo.repository;
+package com.example.demo.repository.menu;
 
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.menu.QMenu;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 import static com.example.demo.entity.menu.QMenu.menu;
 
-@Repository
 @RequiredArgsConstructor
-public class MenuQuerydslRepository {
-    private final JPAQueryFactory query;
+public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
+    private final JPAQueryFactory query;
     public List<Menu> findAllByParentIsNull() {
         QMenu qMenu = menu;
         List<Menu> results = query.select(menu).from(menu).where(menu.parent.isNull()).fetch();

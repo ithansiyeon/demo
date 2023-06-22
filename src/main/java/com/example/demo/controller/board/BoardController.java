@@ -68,8 +68,6 @@ public class BoardController {
 
     @PostMapping("/board/fixedIsTop")
     public ResponseEntity<String> fixedIsTop(@RequestBody ArrayList<BoardDto> tableData) {
-        System.out.println("aaaaaa");
-        System.out.println("tableData.toString() = " + tableData.toString());
         boardService.updateFixedIsTop(tableData);
         return new ResponseEntity<>("ok",HttpStatus.OK);
     }

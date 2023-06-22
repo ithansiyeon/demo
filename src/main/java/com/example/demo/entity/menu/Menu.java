@@ -14,16 +14,17 @@ public class Menu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long menuIdx;
+    @Column(name = "menu_idx")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Menu parent;
 
-    private String name;
+    private String menuName;
 
     private int listOrder;
-
+    private String authority;
     @OneToMany(mappedBy = "parent")
     @OrderBy("listOrder asc")
     private List<Menu> children = new ArrayList<>();
@@ -31,9 +32,10 @@ public class Menu {
     private List<MenuAuth> menuAuths = new ArrayList<>();
 
     @Builder
-    public Menu(Menu parent, String name, int listOrder, List<Menu> children) {
+    public Menu(Menu parent, String menuName, String authority, int listOrder, List<Menu> children) {
         this.parent = parent;
-        this.name = name;
+        this.menuName = menuName;
+        this.authority = authority;
         this.listOrder = listOrder;
         this.children = children;
     }
