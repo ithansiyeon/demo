@@ -21,6 +21,7 @@ public class MenuController {
     @GetMapping("/menu/menuList")
     public String menuList(Model model) {
         List<MenuResultDto> menuList = menuService.getMenuList();
+        System.out.println("menuList.toString() = " + menuList.toString());
         model.addAttribute("menuList",menuList);
         return "menu/menuList";
     }

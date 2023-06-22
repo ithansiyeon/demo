@@ -218,7 +218,7 @@ $(function () {
         expandBtnHTML   : '<button data-action="expand" type="button">Expand</button>',
         collapseBtnHTML : '<button data-action="collapse" type="button">Collapse</button>',
         group           : 0,
-        maxDepth        : 5,
+        maxDepth        : 3,
         threshold       : 20
     };
 
@@ -659,3 +659,4 @@ $(function () {
     };
 
 })(window.jQuery || window.Zepto, window, document);
+
