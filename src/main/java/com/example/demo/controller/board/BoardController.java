@@ -191,10 +191,10 @@ public class BoardController {
 
     @ResponseBody
     @PostMapping("/board/{boardIdx}/comments")
-    public ResponseEntity<String> savedComment(@PathVariable Long boardIdx, CommentDto commentDto) {
+    public ResponseEntity savedComment(@PathVariable Long boardIdx, CommentDto commentDto) {
         System.out.println("commentDto.getId() = " + commentDto.getId());
         boardService.saveComment(boardIdx, commentDto);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/board/{boardIdx}/comments/{commentIdx}")
@@ -206,16 +206,16 @@ public class BoardController {
 
     @ResponseBody
     @GetMapping("/board/{boardIdx}/comment/{commentIdx}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long commentIdx) {
+    public ResponseEntity deleteComment(@PathVariable Long commentIdx) {
         boardService.deleteCommentByIdx(commentIdx);
-        return new ResponseEntity<>("ok",HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ResponseBody
     @GetMapping("/board/{boardIdx}/commentHeart/{commentIdx}/{isHeart}")
-    public ResponseEntity<String> createCommentHeart(@PathVariable Long commentIdx, @PathVariable String isHeart, Long commentHeartIdx) {
+    public ResponseEntity createCommentHeart(@PathVariable Long commentIdx, @PathVariable String isHeart, Long commentHeartIdx) {
         boardService.createCommentHeart(commentIdx, commentHeartIdx, isHeart);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     /**

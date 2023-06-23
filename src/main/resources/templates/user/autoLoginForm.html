@@ -34,7 +34,7 @@
 <script>
     function autoLogin(userId) {
         var data = $("#autoLoginForm").serialize();
-        ajaxCmm('post',`/user/autoLogin/${userId}`,'text',data, function () {
+        ajaxCmm('post',`/user/autoLogin/${userId}`,'text',data,'', function () {
             window.opener.location.href = '/board';
             window.close();
         });

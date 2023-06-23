@@ -219,7 +219,7 @@
                     tableData.push(rowData);
                 }
                 console.log(tableData);
-                ajaxCmm('post',`/board/fixedIsTop`,'text',JSON.stringify(tableData),function () {
+                ajaxCmm('post',`/board/fixedIsTop`,'text',JSON.stringify(tableData),'application/json',function () {
                     alert("적용되었습니다.");
                     location.reload();
                 });

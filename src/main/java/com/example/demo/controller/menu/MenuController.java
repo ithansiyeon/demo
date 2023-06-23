@@ -3,13 +3,16 @@ package com.example.demo.controller.menu;
 import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
 import com.example.demo.service.menu.MenuService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -26,9 +29,15 @@ public class MenuController {
         return "menu/menuList";
     }
 
+    @GetMapping("/menu/registerMenu")
+    public String registerMenu() {
+        return "/menu/registerMenu";
+    }
+
     @PostMapping("/menu/menuSave")
-    public String meunSave(@ModelAttribute List<MenuSaveForm> menuSaveForm) {
-        System.out.println("menuSaveForm.toString() = " + menuSaveForm.toString());
-        return "redirect:/menu/menuList";
+    public ResponseEntity meunSave(@RequestBody ArrayList<MenuSaveForm> menuSaveForms) {
+        System.out.println("menuSaveForms.toString() = " + menuSaveForms.toString());
+        menuService.createMenuList(menuSaveForms);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }

@@ -13,6 +13,7 @@ var updateOutput = function (e) {
     } else {
         alert('JSON browser support required for this page.');
     }
+    return list.nestable('serialize');
 };
 
 var nestableList = $("#nestable > .dd-list");
@@ -33,7 +34,7 @@ var deleteFromMenuHelper = function (target) {
         // otherwise hide and mark it for deletion
         target.appendTo(nestableList); // if children, move to the top level
         target.data('deleted', '1');
-        target.fadeOut();
+        target.remove();
     }
 };
 
@@ -41,7 +42,7 @@ var deleteFromMenu = function () {
     var targetId = $(this).data('owner-id');
     var target = $('[data-id="' + targetId + '"]');
 
-    var result = confirm("Delete " + target.data('name') + " and all its subitems ?");
+    var result = confirm("하위메뉴까지 모두 삭제됩니다. 삭제하시겠습니까?");
     if (!result) {
         return;
     }
@@ -75,7 +76,7 @@ var prepareEdit = function () {
     var target = $('[data-id="' + targetId + '"]');
 
     editInputName.val(target.data("name"));
-    editInputSlug.val(target.data("slug"));
+    editInputSlug.val(target.data("authority"));
     currentEditName.html(target.data("name"));
     editButton.data("owner-id", target.data("id"));
 
@@ -91,9 +92,8 @@ var editMenuItem = function () {
 
     var newName = editInputName.val();
     var newSlug = editInputSlug.val();
-
     target.data("name", newName);
-    target.data("slug", newSlug);
+    target.data("authority", newSlug);
 
     target.find("> .dd-handle").html(newName);
 

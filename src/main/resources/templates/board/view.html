@@ -163,7 +163,7 @@
         // 전체 댓글 조회
         function findAllComment() {
             const boardIdx = [[${board.id}]];
-            ajaxCmm('get',`/board/${boardIdx}/comments`,'Text','',function (data) {
+            ajaxCmm('get',`/board/${boardIdx}/comments`,'Text','','',function (data) {
                 $("#commentTable").replaceWith(data);
             });
         }
@@ -178,7 +178,7 @@
                 writer : '홍길동'
             }
 
-            ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,function () {
+            ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,'',function () {
                 alert('저장되었습니다.');
                 contents.val('');
                 $('#counter').innerText = '0/300자';
@@ -199,7 +199,7 @@
                 writer: writer
             };
 
-            ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,function() {
+            ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,'',function() {
                 alert('수정되었습니다.');
                 closeCommentUpdatePopup();
                 findAllComment();
@@ -209,7 +209,7 @@
         // 댓글 수정 팝업 open
         function openCommentUpdatePopup(commentIdx) {
             const boardIdx = [[${board.id}]];
-            ajaxCmm('get',`/board/${boardIdx}/comments/${commentIdx}`,'json','',function (data) {
+            ajaxCmm('get',`/board/${boardIdx}/comments/${commentIdx}`,'json','','',function (data) {
                 $('#modalWriter').val(data.writer);
                 $('#modalContent').val(data.content);
                 document.getElementById('commentUpdateBtn').setAttribute('onclick', `updateComment(${commentIdx})`);
@@ -219,7 +219,7 @@
 
         function deleteComment(commentIdx) {
             const boardIdx = [[${board.id}]];
-            ajaxCmm('get',`/board/${boardIdx}/comment/${commentIdx}`,'text','', function (data) {
+            ajaxCmm('get',`/board/${boardIdx}/comment/${commentIdx}`,'text','','', function (data) {
                 alert("삭제 되었습니다.");
                 findAllComment();
             });
@@ -245,7 +245,7 @@
             var params = {
                 commentHeartIdx:commentHeartIdx
             }
-            ajaxCmm('get',`/board/${boardIdx}/commentHeart/${commentIdx}/${isHeart}`,'text',params,function () {
+            ajaxCmm('get',`/board/${boardIdx}/commentHeart/${commentIdx}/${isHeart}`,'text',params,'',function () {
                 findAllComment();
             });
         }

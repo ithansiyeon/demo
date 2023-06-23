@@ -30,13 +30,15 @@ public class Menu {
     private List<Menu> children = new ArrayList<>();
     @OneToMany(mappedBy = "menu")
     private List<MenuAuth> menuAuths = new ArrayList<>();
+    private int depth;
 
     @Builder
-    public Menu(Menu parent, String menuName, String authority, int listOrder, List<Menu> children) {
+    public Menu(Menu parent, String menuName, String authority, int listOrder, List<Menu> children, int depth) {
         this.parent = parent;
         this.menuName = menuName;
         this.authority = authority;
         this.listOrder = listOrder;
         this.children = children;
+        this.depth = depth;
     }
 }

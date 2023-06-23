@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <link href="../css/style.css" rel="stylesheet">
     <style>
-        /**
-   *  Nestable css
-   */
         .dd {
             position: relative;
             display: block;
@@ -82,23 +79,6 @@
         }
 
         .dd-item > button {
-            /*  display: block;
-              position: relative;
-              cursor: pointer;
-              float: left;
-              width: 25px;
-              height: 20px;
-              margin: 5px 0;
-              padding: 0;
-              text-indent: 100%;
-              white-space: nowrap;
-              overflow: hidden;
-              border: 0;
-              background: transparent;
-              font-size: 12px;
-              line-height: 1;
-              text-align: center;
-              font-weight: bold;*/
             position: relative;
             cursor: pointer;
             float: left;
@@ -383,47 +363,46 @@
                         </form>
                     </div>
                     <div class="col-md-9">
-                        <form>
-                            <h3>Menu</h3>
-                            <p class="btn_set mgt3 mgr3">
-                                <button type="button" class="btns btn_bdr4 btn_mid fl" th:onclick="saveMenu()">저장</button>
-                            </p>
-                            <div class="dd nestable" id="nestable">
-                                <ol class="dd-list">
-                                    <li th:each="menu : ${menuList}" class="dd-item" th:data-id="${menu.id}" th:data-name="${menu.menuName}" th:data-slug="${menu.authority}" data-new="0" data-deleted="0">
-                                        <div class="dd-handle" th:text="${menu.menuName}"></div>
-                                        <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${menu.id}">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                        </span>
-                                        <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${menu.id}">
-                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                        </span>
-                                        <ol class="dd-list" th:each="child1 : ${menu.getChildren()}">
-                                            <li class="dd-item" th:data-id="${child1.id}" th:data-name="${child1.menuName}" th:data-slug="${child1.authority}" data-new="0" data-deleted="0">
-                                                <div class="dd-handle" th:text="${child1.menuName}"></div>
-                                                <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child1.id}">
-                                                    <i class="fa fa-times" aria-hidden="true"></i>
-                                                </span>
-                                                <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child1.id}">
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                </span>
-                                                <ol class="dd-list" th:each="child2 : ${child1.getChildren()}">
-                                                    <li class="dd-item" th:data-id="${child2.id}" th:data-name="${child2.menuName}" th:data-slug="${child2.authority}" data-new="0" data-deleted="0">
-                                                        <div class="dd-handle" th:text="${child2.menuName}"></div>
-                                                        <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child2.id}">
-                                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                                        </span>
-                                                        <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child2.id}">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                        </span>
-                                                    </li>
-                                                </ol>
-                                            </li>
-                                        </ol>
-                                    </li>
-                                </ol>
-                            </div>
-                        </form>
+                        <h3>Menu</h3>
+                        <p class="btn_set mgt3 mgr3">
+                            <button type="button" class="btns btn_bdr4 btn_mid fl" th:attr="onclick=|popup_win('/menu/registerMenu','pop',400,200,'yes')|">메뉴등록</button>
+                            <button type="button" class="btns btn_bdr4 btn_mid fl" th:onclick="saveMenu()">저장</button>
+                        </p>
+                        <div class="dd nestable" id="nestable">
+                            <ol class="dd-list">
+                                <li th:each="menu : ${menuList}" class="dd-item" th:data-id="${menu.id}" th:data-name="${menu.menuName}" th:data-authority="${menu.authority}" data-new="0" data-deleted="0">
+                                    <div class="dd-handle" th:text="${menu.menuName}"></div>
+                                    <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${menu.id}">
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${menu.id}">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </span>
+                                    <ol class="dd-list" th:if="${!menu.children.isEmpty()}">
+                                        <li class="dd-item" th:each="child1 : ${menu.children}" th:data-id="${child1.id}" th:data-name="${child1.menuName}" th:data-authority="${child1.authority}" data-new="0" data-deleted="0">
+                                            <div class="dd-handle" th:text="${child1.menuName}"></div>
+                                            <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child1.id}">
+                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                            </span>
+                                            <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child1.id}">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </span>
+                                            <ol class="dd-list" th:if="${!child1.children.isEmpty()}">
+                                                <li class="dd-item" th:each="child2 : ${child1.children}" th:data-id="${child2.id}" th:data-name="${child2.menuName}" th:data-authority="${child2.authority}" data-new="0" data-deleted="0">
+                                                    <div class="dd-handle" th:text="${child2.menuName}"></div>
+                                                    <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child2.id}">
+                                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                                    </span>
+                                                    <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child2.id}">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </span>
+                                                </li>
+                                            </ol>
+                                        </li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -433,7 +412,6 @@
 </th:block>
 <th:block layout:fragment="script">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="../js/jquery.nestable.js"></script>
     <script>
         $('#nestable').nestable({
@@ -442,11 +420,61 @@
             .on('change', updateOutput);
 
         function saveMenu() {
-            var menuForm = $("#nestable").find('.dd-item');
-            var data = [];
-            var subData = {};
-            console.log(menuForm);
+            // var menuForm = $("#nestable").find('.dd-item');
+            var menuForm = document.getElementsByClassName('dd-item');
+            var params = [];
+            /*for(var i=0 ; i<menuForm.length;i++) {
+                var depth = 1;
+                var data = {};
+                data['depth'] = depth;
+                data['name'] = menuForm[i].getAttribute('data-name');
+                // data['authority'] = menuForm[i].getAttribute('data-authority');
+                data['authority'] = menuForm[i].getAttribute('data-authority');
+                data['id'] = menuForm[i].getAttribute('data-id');
+                data['parent'] = null;
+                var parentId = data['id'];
+                params.push(data);
+                var depth2 = menuForm[i].getElementsByTagName('ol');
+                var cnt = 0;
+                for(var j=0; j < depth2.length; j++) {
+                    if(j == 0) depth = 2;
+                    else depth = 3;
+                    var depth3 = depth2[j].children;
+                    for(var k=0; k < depth3.length; k++) {
+                        if(j > 0) parentId = depth2[0].children[j-1].getAttribute("data-id");
+                        cnt++;
+                        data = {};
+                        data['depth'] = depth;
+                        data['name'] = depth3[k].getAttribute('data-name');
+                        data['authority'] = depth3[k].getAttribute('data-authority');
+                        data['id'] = depth3[k].getAttribute("data-id");
+                        data['parent'] = parentId;
+                        data['children'] = [];
+                        params.push(data);
+                    }
+                }
+                i+=cnt;
+            }
+            var filterParams = params.filter( o => o.parent == null);
+            for(var i=0;i<filterParams.length;i++) {
+                var itemList = params.filter( o => o.parent == filterParams[i].id);
+                filterParams[i]['children'] = itemList;
+                for(var j=0;j<itemList.length;j++) {
+                    filterParams[i][j]['children'] = params.filter(o=>o.parent == itemList[j].id)
+                }
+            }*/
+            // var params = JSON.stringify(updateOutput($('#nestable').data('output', $('#json-output'))));
+            console.log($("#nestable").nestable('serialize'));
+            ajaxCmm('post',`/menu/menuSave`,'text',JSON.stringify(updateOutput($('#nestable').data('output', $('#json-output')))),'application/json',function () {
+
+            });
+            
         }
+
+        function registerMenu() {
+
+        }
+
     </script>
 </th:block>
 </html>

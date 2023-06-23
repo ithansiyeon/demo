@@ -78,14 +78,18 @@ function popup_win(str,id,w,h,scrollchk){
 	pop.focus();
 }
 
-function ajaxCmm(type, url, dataType, param, callback) {
+function ajaxCmm(type, url, dataType, param, contentType, callback) {
 	if(dataType == '') {
 		dataType = 'json';
+	}
+	if(contentType == '') {
+		contentType = 'application/x-www-form-urlencoded; charset=utf-8';
 	}
 	$.ajax({
 		type: type,
 		url: url,
 		data: param,
+		contentType: contentType,
 		dataType: dataType,
 		success: function(data, status, xr) {
 			return callback(data);
