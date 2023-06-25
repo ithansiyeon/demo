@@ -192,7 +192,6 @@ public class BoardController {
     @ResponseBody
     @PostMapping("/board/{boardIdx}/comments")
     public ResponseEntity savedComment(@PathVariable Long boardIdx, CommentDto commentDto) {
-        System.out.println("commentDto.getId() = " + commentDto.getId());
         boardService.saveComment(boardIdx, commentDto);
         return ResponseEntity.ok(HttpStatus.OK);
     }

@@ -329,43 +329,11 @@
     <div class="content">
         <section>
             <div class="container" style="height: 100vh;">
-                <h1 class="text-center">Menu Design</h1>
                 <div class="row">
-                    <div class="col-md-3">
-                        <form class="form-inline" id="menu-add">
-                            <h3>Add Menu</h3>
-                            <div class="form-group">
-                                <label for="addInputName">Name</label>
-                                <input type="text" class="form-control" id="addInputName" placeholder="Item name" required>
-                            </div>
-                            <div>&nbsp;</div>
-                            <div class="form-group">
-                                <label for="addInputSlug">Slug &nbsp;</label>
-                                <input type="text" class="form-control" id="addInputSlug" placeholder="item-slug" required>
-                            </div>
-                            <div>&nbsp;</div>
-                            <button class="btn btn-primary" id="addButton"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Item
-                            </button>
-                        </form>
-
-                        <form class="" id="menu-editor" style="display: none;">
-                            <h3>Editing <span id="currentEditName"></span></h3>
-                            <div class="form-group">
-                                <label for="addInputName">Name</label>
-                                <input type="text" class="form-control" id="editInputName" placeholder="Item name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="addInputSlug">Slug</label>
-                                <input type="text" class="form-control" id="editInputSlug" placeholder="item-slug">
-                            </div>
-                            <div>&nbsp;</div>
-                            <button class="btn btn-info" id="editButton">Edit</button>
-                        </form>
-                    </div>
                     <div class="col-md-9">
                         <h3>Menu</h3>
                         <p class="btn_set mgt3 mgr3">
-                            <button type="button" class="btns btn_bdr4 btn_mid fl" th:attr="onclick=|popup_win('/menu/registerMenu','pop',400,200,'yes')|">메뉴등록</button>
+                            <button type="button" class="btns btn_bdr4 btn_mid fl mgr3" th:attr="onclick=|menuPopupOpen('menuRegisterPopup')|">메뉴등록</button>
                             <button type="button" class="btns btn_bdr4 btn_mid fl" th:onclick="saveMenu()">저장</button>
                         </p>
                         <div class="dd nestable" id="nestable">
@@ -407,6 +375,87 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <div id="menuRegisterPopup" class="popLayer">
+        <div class="popupHeader">
+            <span style="color: #ffffff;" th:name="popupTitle">메뉴 등록</span>
+            <button class="btn_close" th:onclick="|layerPopClose2('menuRegisterPopup')|">X</button>
+        </div>
+        <div class="pop_container">
+            <section>
+                <div id="menuTable">
+                    <form method="post" th:if="${menuForm != null}" th:object="${menuForm}">
+                        <table class="tb tb_row">
+                            <colgroup>
+                                <col style="width:20%;"/>
+                                <col style="width:30%;"/>
+                                <col style="width:20%;"/>
+                                <col style="width:*;"/>
+                            </colgroup>
+                            <tr>
+                                <th scope="row">
+                                    메뉴명<span class="es">필수 입력</span>
+                                </th>
+                                <td style="text-align: left">
+                                    <input name="menuName" class="es" type="text">
+                                </td>
+                                <th scope="row">
+                                    메뉴코드<span class="es">필수 입력</span>
+                                </th>
+                                <td th:name="menuCode" style="text-align: left" th:text="*{menuCode}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    URL
+                                </th>
+                                <td colspan="3" style="text-align: left">
+                                    <input th:name="menuUrl" type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">메뉴설명<span class="es">필수 입력</span></th>
+                                <td colspan="3" style="text-align: left">
+                                    <input th:name="menuExplain" type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">사용여부</th>
+                                <td colspan="3" style="text-align: left">
+                                    <label for="use1"></label><input th:id="use1" th:name="isUse" type="radio"> 사용
+                                    <label for="use2"></label><input th:id="use2" th:name="isUse" type="radio" checked>
+                                    미사용
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">등록자</th>
+                                <td style="text-align: left" th:text="${session.loginId}"></td>
+                                <th scope="row">등록일</th>
+                                <td style="text-align: left;"
+                                    th:text="${#calendars.format(#calendars.createNow(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">최종 수정자</th>
+                                <td style="text-align: left" th:text="${session.loginId}"></td>
+                                <th scope="row">최종 수정일</th>
+                                <td style="text-align: left;"
+                                    th:text="${#calendars.format(#calendars.createNow(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                            </tr>
+                        </table>
+                        <p class="btn_set">
+                            <button type="button" class="btns btn_bdr3 btn_st3" th:onclick="registerMenu()"><span
+                                    class="icons icon_modify">저장</span>
+                            </button>
+                            <button type="button" class="btns btn_st2 btn_bdr2"
+                                    th:onclick="|layerPopClose2('menuRegisterPopup')|">
+                                <span class="icons icon_del">닫기</span>
+                            </button>
+                        </p>
+                    </form>
+                </div>
+            </section>
+        </div>
     </div>
 
 </th:block>
@@ -473,6 +522,13 @@
 
         function registerMenu() {
 
+        }
+
+        function menuPopupOpen(title) {
+            ajaxCmm('get',`/menu/registerMenu`,'text','','',function (data) {
+                $("#menuTable").replaceWith(data);
+                layerPop(title);
+            });
         }
 
     </script>

@@ -8,4 +8,5 @@ public interface MenuRepositoryCustom {
     List<Menu> findAllByParentIsNull();
     List<Menu> findAllWithQuerydsl();
     List<Menu> getMenus();
+    String findMaxMenuCode();
 }

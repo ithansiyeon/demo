@@ -135,11 +135,10 @@
                 </tbody>
             </table>
             <p class="btn_set">
-                <button type="button" id="commentUpdateBtn" class="btns btn_st2">수정</button>
+                <button type="button" id="commentUpdateBtn" class="btns btn_st3">수정</button>
                 <button type="button" class="btns btn_bdr2" onclick="closeCommentUpdatePopup();">취소</button>
             </p>
         </div>
-        <button type="button" class="btn_close" onclick="closeCommentUpdatePopup();"><span><i class="far fa-times-circle"></i></span></button>
     </div>
 </th:block>
 
@@ -173,9 +172,10 @@
             const contents = $('#contents');
             isValid(contents, '댓글');
             const boardIdx = [[${board.id}]];
+            const loginId = `[[${session.loginId}]]`;
             const params = {
                 content : contents.val(),
-                writer : '홍길동'
+                writer : loginId
             }
 
             ajaxCmm('post',`/board/${boardIdx}/comments`,'text',params,'',function () {

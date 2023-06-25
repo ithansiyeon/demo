@@ -37,4 +37,8 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     public List<Menu> getMenus() {
         return query.selectFrom(menu).fetch();
     }
+
+    public String findMaxMenuCode() {
+        return query.select(menu.menuCode.max()).from(menu).fetchOne();
+    }
 }

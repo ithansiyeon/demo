@@ -4,6 +4,7 @@ import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.repository.menu.MenuRepository;
+import com.example.demo.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +42,17 @@ public class MenuService {
                 Menu menu1 = Menu.builder().menuName(children.get(i).getName()).listOrder(i+1).authority(children.get(i).getAuthority()).depth(depth).build();
             }
         }
+    }
+
+    public MenuSaveForm autoMenuCode() {
+        MenuSaveForm menuSaveForm = new MenuSaveForm();
+        String maxMenuCode = menuRepository.findMaxMenuCode();
+        if(StringUtil.isEmpty(maxMenuCode)) {
+             menuSaveForm.setAutoMenuCode("001");
+        } else {
+            int num = Integer.parseInt(maxMenuCode);
+            menuSaveForm.setAutoMenuCode(String.format("%03d",num+1));
+        }
+        return menuSaveForm;
     }
 }
