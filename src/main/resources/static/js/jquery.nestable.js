@@ -41,8 +41,13 @@ var deleteFromMenuHelper = function (target) {
 var deleteFromMenu = function () {
     var targetId = $(this).data('owner-id');
     var target = $('[data-id="' + targetId + '"]');
+    var result;
+    if(target.find("li").length > 1) {
+        result = confirm("하위메뉴까지 모두 삭제됩니다. 삭제하시겠습니까?");
+    } else {
+        result = confirm("삭제하시겠습니까?");
+    }
 
-    var result = confirm("하위메뉴까지 모두 삭제됩니다. 삭제하시겠습니까?");
     if (!result) {
         return;
     }
