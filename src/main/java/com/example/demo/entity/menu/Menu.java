@@ -97,6 +97,8 @@ public class Menu {
         this.parent = menu;
     }
 
+    public void changeDepth(int depth) {this.depth = depth;}
+
     @Override
     public String toString() {
         return "Menu{" +

@@ -27,6 +27,7 @@ public class MenuController {
     public String menuList(Model model, @ModelAttribute MenuSearchCond menuSearchCond) {
         List<MenuResultDto> menuList = menuService.getMenuList(menuSearchCond);
         model.addAttribute("menuList",menuList);
+        model.addAttribute("menuSearchCond", menuSearchCond);
         return "menu/menuList";
     }
 

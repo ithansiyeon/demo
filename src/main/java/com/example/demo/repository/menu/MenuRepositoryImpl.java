@@ -27,23 +27,23 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     }
 
     public List<Menu> findAllWithQuerydsl(MenuSearchCond menuSearchCond) {
-        QMenu parent = new QMenu("parent");
         QMenu child = new QMenu("child");
 
-        return query.selectFrom(parent)
+        return query.selectFrom(menu)
                 .distinct()
-                .leftJoin(parent.children, child)
+                .leftJoin(menu.children, child)
                 .fetchJoin()
                 .where(
-                        parent.parent.isNull(),
+                        menu.parent.isNull(),
                         menuSearch(menuSearchCond),
                         isUseEq(menuSearchCond.getIsUse())
                 )
-                .orderBy(parent.sort.asc(),parent.modifyDate.asc(), child.sort.asc(), child.modifyDate.asc())
+                .orderBy(menu.sort.asc(),menu.modifyDate.asc(), child.sort.asc(), child.modifyDate.asc())
                 .fetch();
     }
 
     public BooleanExpression menuSearch(MenuSearchCond menuSearchCond) {
+        System.out.println("menuSearchCond.getSearchType() = " + menuSearchCond.getSearchType());
         if(hasText(menuSearchCond.getSearchType())) {
             String searchType = menuSearchCond.getSearchType();
             if(hasText(menuSearchCond.getKeyword())) {
