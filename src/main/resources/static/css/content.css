@@ -302,7 +302,7 @@ input[readonly], select[readonly], textarea[readonly], .readonly, input[disabled
 
 /* 레이어팝업 */
 .popupHeader {display:flex;justify-content: space-between;align-items:center;background-color:darkgray;width:100%;padding:5px;}
-.popupHeader .popupTitle {font-size:20px;padding-left:10px;}
+.popupHeader .popupTitle {font-size:20px;}
 .popupHeader .btn_close {border:0;cursor: pointer;position:absolute;right:5px;background-color:darkgray;}
 .overlay_t {position:fixed; top:0; right:0; bottom:0; left:0; width:100%; height:100%; overflow:auto; padding:15px; box-sizing:border-box; background-color:rgba(0,0,0,0.6); text-align:center; z-index:99;}
 .overlay_t::before {content:""; display:inline-block; height:100%; vertical-align:middle;}

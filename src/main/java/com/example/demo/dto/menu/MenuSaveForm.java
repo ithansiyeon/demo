@@ -1,44 +1,37 @@
 package com.example.demo.dto.menu;
 
-
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class MenuSaveForm {
-    private String name;
+    private Long id;
+    private String menuName;
     private String authority;
-    private String id;
-    private List<MenuSaveForm> children;
+    private List<MenuSaveForm> children = new ArrayList<>();
     private int depth;
     private String menuCode;
     private String isUse;
+    private String menuDescription;
 
-    public MenuSaveForm(String name, String authority, String id, List<MenuSaveForm> children, int depth, String menuCode, String isUse) {
-        this.name = name;
-        this.authority = authority;
+    public MenuSaveForm(Long id, String menuName, String authority, List<MenuSaveForm> children, int depth, String menuCode, String isUse, String menuDescription) {
         this.id = id;
+        this.menuName = menuName;
+        this.authority = authority;
         this.children = children;
         this.depth = depth;
         this.menuCode = menuCode;
         this.isUse = isUse;
-    }
-
-    public MenuSaveForm() {
-
-    }
-
-    public void setAutoMenuCode(String menuCode) {
-        this.menuCode = menuCode;
+        this.menuDescription = menuDescription;
     }
 
     @Override
     public String toString() {
         return "MenuSaveForm{" +
-                "name='" + name + '\'' +
+                "menuName='" + menuName + '\'' +
                 ", authority='" + authority + '\'' +
-                ", id='" + id + '\'' +
                 ", children=" + children +
                 ", depth=" + depth +
                 ", menuCode='" + menuCode + '\'' +

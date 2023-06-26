@@ -31,6 +31,8 @@ public class SecurityUser implements UserDetails {
 
     public String getUrl() { return user.getUrl(); }
 
+    public Long getUserIdx() {return user.getId();}
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

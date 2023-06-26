@@ -1,8 +1,10 @@
 package com.example.demo.entity.user;
 
+import com.example.demo.entity.menu.Menu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.apache.ibatis.annotations.Many;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
@@ -45,6 +47,10 @@ public class User {
     private List<UserLog> userLogs = new ArrayList<>();
     private String phoneNumber;
     private String isAlert;
+    @OneToMany(mappedBy = "regUserIdx")
+    private List<Menu> menus1;
+    @OneToMany(mappedBy = "modifyUserIdx")
+    private List<Menu> menus2;
 
     @Builder
     public User(String userName, String password, String userId, String isDel, String url, String authority, String phoneNumber, String isAlert) {

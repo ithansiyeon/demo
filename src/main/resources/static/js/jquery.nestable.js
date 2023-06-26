@@ -75,21 +75,6 @@ var editInputName = $("#editInputName");
 var editInputSlug = $("#editInputSlug");
 var currentEditName = $("#currentEditName");
 
-// Prepares and shows the Edit Form
-var prepareEdit = function () {
-    var targetId = $(this).data('owner-id');
-    var target = $('[data-id="' + targetId + '"]');
-
-    editInputName.val(target.data("name"));
-    editInputSlug.val(target.data("authority"));
-    currentEditName.html(target.data("name"));
-    editButton.data("owner-id", target.data("id"));
-
-    console.log("[INFO] Editing Menu Item " + editButton.data("owner-id"));
-
-    menuEditor.fadeIn();
-};
-
 // Edits the Menu item and hides the Edit Form
 var editMenuItem = function () {
     var targetId = $(this).data('owner-id');
@@ -146,7 +131,6 @@ var addToMenu = function () {
 
     // set events
     $("#nestable .button-delete").on("click", deleteFromMenu);
-    $("#nestable .button-edit").on("click", prepareEdit);
 };
 
 
@@ -163,9 +147,7 @@ $(function () {
     // set onclick events
     editButton.on("click", editMenuItem);
 
-    $("#nestable .button-delete").on("click", deleteFromMenu);
-
-    $("#nestable .button-edit").on("click", prepareEdit);
+    //$("#nestable .button-delete").on("click", deleteFromMenu);
 
     $("#menu-editor").submit(function (e) {
         e.preventDefault();

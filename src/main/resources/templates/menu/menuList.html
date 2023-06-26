@@ -328,40 +328,85 @@
 
     <div class="content">
         <section>
+            <div class="search_box">
+                <form id="searchForm">
+                    <div class="sch_group fl">
+                        <span>통합검색 </span>
+                        <select name="searchType" id="searchType" title="검색 유형 선택">
+                            <option value="menuName">메뉴명</option>
+                            <option value="menuCode">메뉴코드</option>
+                        </select>
+                        <input type="text" id="keyword" name="keyword">
+                        <span class="mgl10">조건</span>
+                        <select name="searchIsUse" id="searchIsUse" title="검색 유형 선택">
+                            <option value="">사용여부</option>
+                            <option value="Y">사용</option>
+                            <option value="N">미사용</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <p class="btn_set">
+                <button class="btns btn_st3 btn_bdr3 btn_mid mgr3" type="button" th:onclick="searchMenuList()">검색</button>
+                <button class="btns btn_st3 btn_bdr3 btn_mid" type="button">초기화</button>
+            </p>
+
             <div class="container" style="height: 100vh;">
                 <div class="row">
                     <div class="col-md-9">
                         <h3>Menu</h3>
                         <p class="btn_set mgt3 mgr3">
-                            <button type="button" class="btns btn_bdr4 btn_mid fl mgr3" th:attr="onclick=|menuPopupOpen('menuRegisterPopup')|">메뉴등록</button>
-                            <button type="button" class="btns btn_bdr4 btn_mid fl" th:onclick="saveMenu()">저장</button>
+                            <button type="button" class="btns btn_bdr4 btn_mid fl mgr3" th:onclick="|menuPopupOpen('A','')|">메뉴등록</button>
+                            <button type="button" class="btns btn_bdr4 btn_mid fl mgr3" th:onclick="saveMenu()">저장</button>
+                            <button type="button" class="btns btn_bdr4 btn_mid fl" th:onclick="|location.href='@{/menu/menuList}'|">취소</button>
                         </p>
                         <div class="dd nestable" id="nestable">
                             <ol class="dd-list">
                                 <li th:each="menu : ${menuList}" class="dd-item" th:data-id="${menu.id}" th:data-name="${menu.menuName}" th:data-authority="${menu.authority}" data-new="0" data-deleted="0">
-                                    <div class="dd-handle" th:text="${menu.menuName}"></div>
-                                    <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${menu.id}">
+                                    <div class="dd-handle">
+                                        <span th:text="${menu.menuName}"></span>
+                                        <span style="font-weight: normal"> | </span>
+                                        <span style="font-weight: normal" th:text="${menu.authority}"></span>
+                                        <th:block th:if="${menu.isUse == 'N'}">
+                                            <span style="color:red;font-weight: normal;"> (미사용)</span>
+                                        </th:block>
+                                    </div>
+                                    <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${menu.id}" th:onclick="|deleteMenu(this, [[${menu.id}]])|">
                                         <i class="fa fa-times" aria-hidden="true"></i>
                                     </span>
-                                    <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${menu.id}">
+                                    <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${menu.id}" th:onclick="|menuPopupOpen('E', [[${menu.id}]])|">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>
                                     </span>
                                     <ol class="dd-list" th:if="${!menu.children.isEmpty()}">
                                         <li class="dd-item" th:each="child1 : ${menu.children}" th:data-id="${child1.id}" th:data-name="${child1.menuName}" th:data-authority="${child1.authority}" data-new="0" data-deleted="0">
-                                            <div class="dd-handle" th:text="${child1.menuName}"></div>
-                                            <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child1.id}">
+                                            <div class="dd-handle">
+                                                <span th:text="${child1.menuName}"></span>
+                                                <span style="font-weight: normal"> | </span>
+                                                <span style="font-weight: normal" th:text="${child1.authority}"></span>
+                                                <th:block th:if="${child1.isUse == 'N'}">
+                                                    <span style="color:red;font-weight: normal;"> (미사용)</span>
+                                                </th:block>
+                                            </div>
+                                            <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child1.id}" th:onclick="|deleteMenu(this, [[${child1.id}]])|">
                                                 <i class="fa fa-times" aria-hidden="true"></i>
                                             </span>
-                                            <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child1.id}">
+                                            <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child1.id}" th:onclick="|menuPopupOpen('E', [[${child1.id}]])|">
                                                 <i class="fa fa-pencil" aria-hidden="true"></i>
                                             </span>
                                             <ol class="dd-list" th:if="${!child1.children.isEmpty()}">
                                                 <li class="dd-item" th:each="child2 : ${child1.children}" th:data-id="${child2.id}" th:data-name="${child2.menuName}" th:data-authority="${child2.authority}" data-new="0" data-deleted="0">
-                                                    <div class="dd-handle" th:text="${child2.menuName}"></div>
-                                                    <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child2.id}">
+                                                    <div class="dd-handle">
+                                                        <span th:text="${child2.menuName}"></span>
+                                                        <span style="font-weight: normal"> | </span>
+                                                        <span style="font-weight: normal" th:text="${child2.authority}"></span>
+                                                        <th:block th:if="${child2.isUse == 'N'}">
+                                                            <span style="color:red;font-weight: normal;"> (미사용)</span>
+                                                        </th:block>
+                                                    </div>
+                                                    <span class="button-delete btn btn-danger btn-xs pull-right" th:data-owner-id="${child2.id}" th:onclick="|deleteMenu(this, [[${child2.id}]])|">
                                                         <i class="fa fa-times" aria-hidden="true"></i>
                                                     </span>
-                                                    <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child2.id}">
+                                                    <span class="button-edit btn btn-success btn-xs pull-right" th:data-owner-id="${child2.id}" th:onclick="|menuPopupOpen('E', [[${child2.id}]])|">
                                                         <i class="fa fa-pencil" aria-hidden="true"></i>
                                                     </span>
                                                 </li>
@@ -379,31 +424,40 @@
 
     <div id="menuRegisterPopup" class="popLayer">
         <div class="popupHeader">
-            <span style="color: #ffffff;" th:name="popupTitle">메뉴 등록</span>
+            <span style="color: #ffffff; padding: 5px 10px;" th:name="popupTitle" id="popupTitle">메뉴 등록</span>
             <button class="btn_close" th:onclick="|layerPopClose2('menuRegisterPopup')|">X</button>
         </div>
         <div class="pop_container">
             <section>
                 <div id="menuTable">
-                    <form method="post" th:if="${menuForm != null}" th:object="${menuForm}">
+                    <form method="post" th:if="${menuForm != null}" th:object="${menuForm}" th:action="@{/menu/registerMenu}">
                         <table class="tb tb_row">
                             <colgroup>
                                 <col style="width:20%;"/>
-                                <col style="width:30%;"/>
-                                <col style="width:20%;"/>
                                 <col style="width:*;"/>
+                                <col style="width:20%;"/>
+                                <col style="width:25%;"/>
                             </colgroup>
+                            <tr hidden>
+                                <th scope="row">
+                                    아이디
+                                </th>
+                                <td>
+                                    <input type="text" th:field="*{menuIdx}">
+                                </td>
+                            </tr>
                             <tr>
                                 <th scope="row">
                                     메뉴명<span class="es">필수 입력</span>
                                 </th>
                                 <td style="text-align: left">
-                                    <input name="menuName" class="es" type="text">
+                                    <input th:errorclass="field-error" type="text" th:field="*{menuName}">
+                                    <div class="field-error" th:errors="*{menuName}">제목 오류</div>
                                 </td>
                                 <th scope="row">
                                     메뉴코드<span class="es">필수 입력</span>
                                 </th>
-                                <td th:name="menuCode" style="text-align: left" th:text="*{menuCode}">
+                                <td style="text-align: left" th:text="*{menuCode}" th:field="*{menuCode}">
                                 </td>
                             </tr>
                             <tr>
@@ -411,44 +465,45 @@
                                     URL
                                 </th>
                                 <td colspan="3" style="text-align: left">
-                                    <input th:name="menuUrl" type="text">
+                                    <input type="text" th:field="*{authority}">
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row">메뉴설명<span class="es">필수 입력</span></th>
                                 <td colspan="3" style="text-align: left">
-                                    <input th:name="menuExplain" type="text">
+                                    <input th:errorclass="field-error"  th:field="*{menuDescription}" type="text">
+                                    <div class="field-error" th:errors="*{menuDescription}">제목 오류</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row">사용여부</th>
                                 <td colspan="3" style="text-align: left">
-                                    <label for="use1"></label><input th:id="use1" th:name="isUse" type="radio"> 사용
-                                    <label for="use2"></label><input th:id="use2" th:name="isUse" type="radio" checked>
+                                    <label for="use1"></label><input th:id="use1" th:name="isUse" type="radio" th:value="Y" th:checked="*{isUse == 'Y' ? true:false}"> 사용
+                                    <label for="use2"></label><input th:id="use2" th:name="isUse" type="radio" th:value="N" checked th:checked="*{isUse == 'N' || isUse == null ? true:false}">
                                     미사용
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row">등록자</th>
-                                <td style="text-align: left" th:text="${session.loginId}"></td>
+                                <td style="text-align: left" th:text="*{registerUserName}"></td>
                                 <th scope="row">등록일</th>
-                                <td style="text-align: left;"
-                                    th:text="${#calendars.format(#calendars.createNow(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td style="text-align: left;" th:text="${#temporals.format(menuForm.registerDate,'yyyy-MM-dd HH:mm:ss')}"></td>
                             </tr>
                             <tr>
                                 <th scope="row">최종 수정자</th>
-                                <td style="text-align: left" th:text="${session.loginId}"></td>
+                                <td style="text-align: left" th:text="*{modifyUserName}"></td>
                                 <th scope="row">최종 수정일</th>
-                                <td style="text-align: left;"
-                                    th:text="${#calendars.format(#calendars.createNow(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td style="text-align: left;" th:text="${#temporals.format(menuForm.modifyDate,'yyyy-MM-dd HH:mm:ss')}"></td>
                             </tr>
                         </table>
                         <p class="btn_set">
-                            <button type="button" class="btns btn_bdr3 btn_st3" th:onclick="registerMenu()"><span
-                                    class="icons icon_modify">저장</span>
+                            <button id="btnSave" type="submit" class="btns btn_bdr3 btn_st3">
+                                <span class="icons icon_save">저장</span>
                             </button>
-                            <button type="button" class="btns btn_st2 btn_bdr2"
-                                    th:onclick="|layerPopClose2('menuRegisterPopup')|">
+                            <button id="btnModify" type="submit" class="btns btn_bdr3 btn_st3" hidden>
+                                <span class="icons icon_modify">수정</span>
+                            </button>
+                            <button type="button" class="btns btn_st2 btn_bdr2" th:onclick="|layerPopClose2('menuRegisterPopup')|">
                                 <span class="icons icon_del">닫기</span>
                             </button>
                         </p>
@@ -469,66 +524,62 @@
             .on('change', updateOutput);
 
         function saveMenu() {
-            // var menuForm = $("#nestable").find('.dd-item');
-            var menuForm = document.getElementsByClassName('dd-item');
-            var params = [];
-            /*for(var i=0 ; i<menuForm.length;i++) {
-                var depth = 1;
-                var data = {};
-                data['depth'] = depth;
-                data['name'] = menuForm[i].getAttribute('data-name');
-                // data['authority'] = menuForm[i].getAttribute('data-authority');
-                data['authority'] = menuForm[i].getAttribute('data-authority');
-                data['id'] = menuForm[i].getAttribute('data-id');
-                data['parent'] = null;
-                var parentId = data['id'];
-                params.push(data);
-                var depth2 = menuForm[i].getElementsByTagName('ol');
-                var cnt = 0;
-                for(var j=0; j < depth2.length; j++) {
-                    if(j == 0) depth = 2;
-                    else depth = 3;
-                    var depth3 = depth2[j].children;
-                    for(var k=0; k < depth3.length; k++) {
-                        if(j > 0) parentId = depth2[0].children[j-1].getAttribute("data-id");
-                        cnt++;
-                        data = {};
-                        data['depth'] = depth;
-                        data['name'] = depth3[k].getAttribute('data-name');
-                        data['authority'] = depth3[k].getAttribute('data-authority');
-                        data['id'] = depth3[k].getAttribute("data-id");
-                        data['parent'] = parentId;
-                        data['children'] = [];
-                        params.push(data);
-                    }
-                }
-                i+=cnt;
-            }
-            var filterParams = params.filter( o => o.parent == null);
-            for(var i=0;i<filterParams.length;i++) {
-                var itemList = params.filter( o => o.parent == filterParams[i].id);
-                filterParams[i]['children'] = itemList;
-                for(var j=0;j<itemList.length;j++) {
-                    filterParams[i][j]['children'] = params.filter(o=>o.parent == itemList[j].id)
-                }
-            }*/
-            // var params = JSON.stringify(updateOutput($('#nestable').data('output', $('#json-output'))));
-            console.log($("#nestable").nestable('serialize'));
             ajaxCmm('post',`/menu/menuSave`,'text',JSON.stringify(updateOutput($('#nestable').data('output', $('#json-output')))),'application/json',function () {
-
+                location.href = "/menu/menuList";
             });
-            
         }
 
-        function registerMenu() {
-
+        function menuPopupOpen(gubun,menuIdx) {
+            if(gubun == 'A') {
+                ajaxCmm('get',`/menu/registerMenu`,'text','','',function (data) {
+                    $("#menuTable").replaceWith(data);
+                    layerPop('menuRegisterPopup');
+                    $("#popupTitle").text("메뉴 등록");
+                    $("#btnSave").attr("hidden",false);
+                    $("#btnModify").attr("hidden",true);
+                });
+            } else {
+                ajaxCmm('get',`/menu/editMenu/${menuIdx}`,'text','','',function (data) {
+                    $("#menuTable").replaceWith(data);
+                    layerPop('menuRegisterPopup');
+                    $("#popupTitle").text("메뉴 수정");
+                    $("#btnSave").attr("hidden",true);
+                    $("#btnModify").attr("hidden",false);
+                });
+            }
         }
 
-        function menuPopupOpen(title) {
-            ajaxCmm('get',`/menu/registerMenu`,'text','','',function (data) {
-                $("#menuTable").replaceWith(data);
-                layerPop(title);
+        function deleteMenu(e, menuIdx) {
+            console.log(e);
+            var targetId = $(e).data('owner-id');
+            var target = $('[data-id="' + targetId + '"]');
+            var result;
+            if(target.find("li").length > 1) {
+                result = confirm("하위메뉴까지 모두 삭제됩니다. 삭제하시겠습니까?");
+            } else {
+                result = confirm("삭제하시겠습니까?");
+            }
+
+            if (!result) {
+                return;
+            }
+
+            ajaxCmm('get',`/menu/deleteMenu/${menuIdx}`,'text','','',function (data) {
+                location.href = "/menu/menuList";
             });
+        }
+
+        function searchMenuList() {
+
+            const form = document.getElementById('searchForm');
+
+            const queryParams = {
+                searchType:form.searchType.value,
+                keyword:form.keyword.value,
+                isUse:form.searchIsUse.value
+            };
+            console.log(queryParams);
+            location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
         }
 
     </script>

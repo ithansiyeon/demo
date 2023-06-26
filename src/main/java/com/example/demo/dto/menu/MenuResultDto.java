@@ -16,13 +16,15 @@ public class MenuResultDto {
     private int listOrder;
     private String authority;
     private List<MenuResultDto> children;
+    private String isUse;
     private int num;
 
     public MenuResultDto(Menu menu) {
         this.id = menu.getId();
         this.menuName = menu.getMenuName();
-        this.listOrder = menu.getListOrder();
+        this.listOrder = menu.getSort();
         this.authority = menu.getAuthority();
+        this.isUse = menu.getIsUse();
         this.children = menu.getChildren().stream().map(MenuResultDto::new).collect(Collectors.toList());
     }
 

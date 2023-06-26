@@ -4,6 +4,7 @@ import com.example.demo.entity.board.Board;
 import com.example.demo.entity.board.Comment;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.user.User;
+import com.example.demo.repository.user.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -11,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
 import java.util.Random;
 
 @Profile("local")
@@ -52,53 +54,75 @@ public class InitBoard {
                 User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").isDel("N").authority("관리자").phoneNumber("010-"+numStr).isAlert(is_top).build();
                 em.persist(user);
             }
+            User user = em.find(User.class,1L);
             Menu m =  Menu.builder()
                     .menuName("1. 메뉴")
                     .authority("/aaa")
-                    .listOrder(1)
+                    .sort(1)
                     .parent(null)
+                    .isUse("Y")
+                    .menuCode("001")
+                    .regUserIdx(user)
                     .build();
             em.persist(m);
             Menu m2 = Menu.builder()
                     .menuName("2. 메뉴")
                     .authority("/bbb")
-                    .listOrder(2)
+                    .sort(2)
                     .parent(null)
+                    .isUse("Y")
+                    .menuCode("002")
+                    .regUserIdx(user)
                     .build();
             em.persist(m2);
             Menu m3 = Menu.builder()
                     .menuName("3. 메뉴")
                     .authority("/ccc")
-                    .listOrder(3)
+                    .sort(3)
                     .parent(null)
+                    .isUse("Y")
+                    .menuCode("003")
+                    .regUserIdx(user)
                     .build();
             em.persist(m3);
             Menu m4 = Menu.builder()
                     .menuName("1-1. 하위메뉴")
                     .authority("/fff")
-                    .listOrder(1)
+                    .sort(1)
                     .parent(m)
+                    .isUse("Y")
+                    .menuCode("004")
+                    .regUserIdx(user)
                     .build();
             em.persist(m4);
             Menu m5 = Menu.builder()
                     .menuName("1-2. 하위메뉴")
                     .authority("/ggg")
-                    .listOrder(2)
+                    .sort(2)
                     .parent(m)
+                    .isUse("Y")
+                    .menuCode("005")
+                    .regUserIdx(user)
                     .build();
             em.persist(m5);
             Menu m6 = Menu.builder()
                     .menuName("2-1. 하위메뉴")
                     .authority("/hhh")
-                    .listOrder(1)
+                    .sort(1)
                     .parent(m2)
+                    .isUse("Y")
+                    .menuCode("006")
+                    .regUserIdx(user)
                     .build();
             em.persist(m6);
             Menu m7 = Menu.builder()
                     .menuName("1-1. 1. 하위메뉴")
                     .authority("/ggg")
-                    .listOrder(1)
+                    .sort(1)
                     .parent(m4)
+                    .isUse("Y")
+                    .menuCode("007")
+                    .regUserIdx(user)
                     .build();
             em.persist(m7);
         }

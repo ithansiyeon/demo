@@ -1,11 +1,18 @@
 package com.example.demo.service.menu;
 
+import com.example.demo.dto.menu.MenuAddForm;
 import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
+import com.example.demo.dto.menu.MenuSearchCond;
 import com.example.demo.entity.menu.Menu;
+import com.example.demo.entity.user.User;
 import com.example.demo.repository.menu.MenuRepository;
+import com.example.demo.repository.user.UserRepository;
+import com.example.demo.springsecurity.SecurityUser;
 import com.example.demo.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,40 +26,80 @@ import java.util.stream.Collectors;
 public class MenuService {
 
     private final MenuRepository menuRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper mapper;
 
     public List<Menu> getMenuTree() {
         List<Menu> menus = menuRepository.getMenus();
         return menus;
     }
 
-    public List<MenuResultDto> getMenuList() {
-        List<Menu> menuList = menuRepository.findAllWithQuerydsl();
+    public List<MenuResultDto> getMenuList(MenuSearchCond menuSearchCond) {
+        List<Menu> menuList = menuRepository.findAllWithQuerydsl(menuSearchCond);
         return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
     }
 
-    public void createMenuList(ArrayList<MenuSaveForm> menuSaveForms) {
-        menuRepository.deleteAll();
-        for (MenuSaveForm menuSaveForm : menuSaveForms) {
-            int listOrder = 1;
-            int depth = 1;
-            Menu menu = Menu.builder().menuName(menuSaveForm.getName()).listOrder(listOrder).authority(menuSaveForm.getAuthority()).depth(depth).build();
-            menuRepository.save(menu);
-            List<MenuSaveForm> children = menuSaveForm.getChildren();
-            for(int i=0; i<children.size();i++) {
-                Menu menu1 = Menu.builder().menuName(children.get(i).getName()).listOrder(i+1).authority(children.get(i).getAuthority()).depth(depth).build();
-            }
-        }
+    @Transactional(readOnly = false)
+    public void createMenuList(MenuAddForm menuAddForm) {
+        autoMenuCode(menuAddForm);
+        User user = getUser();
+        menuRepository.save(Menu.builder().menuName(menuAddForm.getMenuName()).menuCode(menuAddForm.getMenuCode()).authority(menuAddForm.getAuthority()).isUse(menuAddForm.getIsUse()).regUserIdx(user).modifyUserIdx(user).build());
     }
 
-    public MenuSaveForm autoMenuCode() {
-        MenuSaveForm menuSaveForm = new MenuSaveForm();
+    public MenuAddForm autoMenuCode(MenuAddForm menuAddForm) {
         String maxMenuCode = menuRepository.findMaxMenuCode();
         if(StringUtil.isEmpty(maxMenuCode)) {
-             menuSaveForm.setAutoMenuCode("001");
+            menuAddForm.setAutoMenuCode("001");
         } else {
             int num = Integer.parseInt(maxMenuCode);
-            menuSaveForm.setAutoMenuCode(String.format("%03d",num+1));
+            menuAddForm.setAutoMenuCode(String.format("%03d",num+1));
         }
-        return menuSaveForm;
+        return menuAddForm;
+    }
+
+    public MenuAddForm findMenuById(Long menuIdx) {
+        return mapper.map(menuRepository.findByMenuIdx(menuIdx),MenuAddForm.class);
+    }
+
+    @Transactional(readOnly = false)
+    public void updateMenuList(MenuAddForm menuAddForm) {
+        Menu findMenu = menuRepository.findById(menuAddForm.getMenuIdx()).get();
+        findMenu.updateMenu(menuAddForm, getUser());
+        menuRepository.save(findMenu);
+    }
+
+    private User getUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityUser userDetails = (SecurityUser)principal;
+        User user = userRepository.findById(userDetails.getUserIdx()).get();
+        return user;
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteMenu(Long menuIdx) {
+        menuRepository.deleteById(menuIdx);
+    }
+
+    @Transactional(readOnly = false)
+    public void saveMenuList(ArrayList<MenuSaveForm> menuSaveForms) {
+        for(int i=0;i<menuSaveForms.size();i++) {
+            Menu menu = menuRepository.findById(menuSaveForms.get(i).getId()).get();
+            menu.changeSort(i+1);
+            menu.changeParent(null);
+            if(menuSaveForms.get(i).getChildren() != null) {
+                for(int j=0;j<menuSaveForms.get(i).getChildren().size();j++) {
+                    Menu subMenu1 = menuRepository.findById(menuSaveForms.get(i).getChildren().get(j).getId()).get();
+                    subMenu1.changeSort(j+1);
+                    subMenu1.changeParent(menu);
+                    if(menuSaveForms.get(i).getChildren().get(j).getChildren() != null) {
+                        for(int k=0;k<menuSaveForms.get(i).getChildren().get(j).getChildren().size();k++) {
+                            Menu subMenu2 = menuRepository.findById(menuSaveForms.get(i).getChildren().get(j).getChildren().get(k).getId()).get();
+                            subMenu2.changeSort(k+1);
+                            subMenu2.changeParent(subMenu1);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

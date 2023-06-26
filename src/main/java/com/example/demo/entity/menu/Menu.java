@@ -1,7 +1,18 @@
 package com.example.demo.entity.menu;
 
+import com.example.demo.dto.menu.MenuAddForm;
+import com.example.demo.entity.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,7 +21,9 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id","name","listOrder"})
+@EntityListeners(AuditingEntityListener.class)
+@DynamicInsert
+@DynamicUpdate
 public class Menu {
 
     @Id
@@ -24,40 +37,81 @@ public class Menu {
 
     private String menuName;
 
-    private int listOrder;
+    private int sort;
     private String authority;
-    @OneToMany(mappedBy = "parent")
-    @OrderBy("listOrder asc")
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OrderBy("sort asc")
     private List<Menu> children = new ArrayList<>();
     @OneToMany(mappedBy = "menu")
     private List<MenuAuth> menuAuths = new ArrayList<>();
     private int depth;
     private String menuCode;
-    private String menuExplain;
+    private String menuDescription;
+    @Column(nullable = false, updatable = false)
+    @CreatedDate
     private LocalDateTime registerDate;
+    @LastModifiedDate
     private LocalDateTime modifyDate;
-    private String registerUserName;
-    private String modifyUserName;
     private String isUse;
-    private String isDel;
+    @ColumnDefault("'N'")
+    private String isDelete;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reg_user_idx")
+    private User regUserIdx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modify_user_idx")
+    private User modifyUserIdx;
 
     @Builder
-    public Menu(Long id, Menu parent, String menuName, int listOrder, String authority, List<Menu> children, List<MenuAuth> menuAuths, int depth, String menuCode, String menuExplain, LocalDateTime registerDate, LocalDateTime modifyDate, String registerUserName, String modifyUserName, String isUse, String isDel) {
-        this.id = id;
+    public Menu(Menu parent, String menuName, int sort, String authority, List<Menu> children, List<MenuAuth> menuAuths, int depth, String menuCode, String menuDescription, LocalDateTime registerDate, LocalDateTime modifyDate, String isUse, String isDelete, User regUserIdx, User modifyUserIdx) {
         this.parent = parent;
         this.menuName = menuName;
-        this.listOrder = listOrder;
+        this.sort = sort;
         this.authority = authority;
         this.children = children;
         this.menuAuths = menuAuths;
         this.depth = depth;
         this.menuCode = menuCode;
-        this.menuExplain = menuExplain;
+        this.menuDescription = menuDescription;
         this.registerDate = registerDate;
         this.modifyDate = modifyDate;
-        this.registerUserName = registerUserName;
-        this.modifyUserName = modifyUserName;
         this.isUse = isUse;
-        this.isDel = isDel;
+        this.isDelete = isDelete;
+        this.regUserIdx = regUserIdx;
+        this.modifyUserIdx = modifyUserIdx;
+    }
+
+    public void updateMenu(MenuAddForm menuAddForm, User user) {
+        this.menuName = menuAddForm.getMenuName();
+        this.authority = menuAddForm.getAuthority();
+        this.isUse = menuAddForm.getIsUse();
+        this.menuDescription = menuAddForm.getMenuDescription();
+        this.modifyUserIdx = user;
+    }
+
+    public void changeSort(int sort) {
+        this.sort = sort;
+    }
+
+    public void changeParent(Menu menu) {
+        this.parent = menu;
+    }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "id=" + id +
+                ", parent=" + parent +
+                ", menuName='" + menuName + '\'' +
+                ", sort=" + sort +
+                ", authority='" + authority + '\'' +
+                ", depth=" + depth +
+                ", menuCode='" + menuCode + '\'' +
+                ", menuDescription='" + menuDescription + '\'' +
+                ", registerDate=" + registerDate +
+                ", modifyDate=" + modifyDate +
+                ", isUse='" + isUse + '\'' +
+                ", isDelete='" + isDelete + '\'' +
+                '}';
     }
 }

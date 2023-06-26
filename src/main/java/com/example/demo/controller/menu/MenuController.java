@@ -1,16 +1,18 @@
 package com.example.demo.controller.menu;
 
+import com.example.demo.dto.menu.MenuAddForm;
 import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
+import com.example.demo.dto.menu.MenuSearchCond;
 import com.example.demo.service.menu.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +24,49 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping("/menu/menuList")
-    public String menuList(Model model) {
-        List<MenuResultDto> menuList = menuService.getMenuList();
+    public String menuList(Model model, @ModelAttribute MenuSearchCond menuSearchCond) {
+        List<MenuResultDto> menuList = menuService.getMenuList(menuSearchCond);
         model.addAttribute("menuList",menuList);
         return "menu/menuList";
     }
 
     @GetMapping("/menu/registerMenu")
-    public String registerMenu(Model model) {
-        MenuSaveForm menuSaveForm = menuService.autoMenuCode();
-        model.addAttribute("menuForm",menuSaveForm);
-        System.out.println("menuSaveForm.toString() = " + menuSaveForm.toString());
+    public String registerMenuForm(Model model) {
+        MenuAddForm menuAddForm = new MenuAddForm();
+        menuAddForm = menuService.autoMenuCode(menuAddForm);
+        model.addAttribute("menuForm",menuAddForm);
+        return "menu/menuList :: #menuTable";
+    }
+
+    @PostMapping("/menu/registerMenu")
+    public String registerMenu(@Validated @ModelAttribute("menuForm") MenuAddForm menuAddForm, BindingResult bindingResult) {
+        /*if (bindingResult.hasErrors()) {
+            return "menu/menuList :: #menuTable";
+        }*/
+        if(menuAddForm.getMenuIdx() == null) {
+            menuService.createMenuList(menuAddForm);
+        } else {
+            menuService.updateMenuList(menuAddForm);
+        }
+        return "redirect:/menu/menuList";
+    }
+
+    @GetMapping("/menu/editMenu/{menuIdx}")
+    public String editMenu(@PathVariable Long menuIdx, Model model) {
+        MenuAddForm menuAddForm = menuService.findMenuById(menuIdx);
+        model.addAttribute("menuForm",menuAddForm);
         return "menu/menuList :: #menuTable";
     }
 
     @PostMapping("/menu/menuSave")
-    public ResponseEntity meunSave(@RequestBody ArrayList<MenuSaveForm> menuSaveForms) {
-        System.out.println("menuSaveForms.toString() = " + menuSaveForms.toString());
-        menuService.createMenuList(menuSaveForms);
+    public ResponseEntity menuSave(@RequestBody ArrayList<MenuSaveForm> menuSaveForms) {
+        menuService.saveMenuList(menuSaveForms);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @GetMapping("/menu/deleteMenu/{menuIdx}")
+    public ResponseEntity menuDelete(@PathVariable Long menuIdx) {
+        menuService.deleteMenu(menuIdx);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }
