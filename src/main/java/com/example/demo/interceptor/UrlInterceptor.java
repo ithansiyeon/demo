@@ -13,8 +13,8 @@ public class UrlInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         System.out.println("apple");
         System.out.println(requestURI);
-        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AntPathMatcher matcher = new AntPathMatcher();
+//        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        AntPathMatcher matcher = new AntPathMatcher();
        /* if(matcher.match(securityUser.getUrl(), requestURI)) {
             return true;
         }*/

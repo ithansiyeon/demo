@@ -168,7 +168,9 @@
 </th:block>
 <th:block layout:fragment="script">
     <script>
-
+        $(document).ready(
+            authorityMenu()
+        );
         // 페이지 이동
         function movePage(page) {
 

@@ -84,25 +84,24 @@ public class MenuService {
     public void saveMenuList(ArrayList<MenuSaveForm> menuSaveForms) {
         for(int i=0;i<menuSaveForms.size();i++) {
             Menu menu = menuRepository.findById(menuSaveForms.get(i).getId()).get();
-            menu.changeSort(i+1);
-            menu.changeParent(null);
-            menu.changeDepth(1);
+            menu.changeOrder(i+1,null,1);
             if(menuSaveForms.get(i).getChildren() != null) {
                 for(int j=0;j<menuSaveForms.get(i).getChildren().size();j++) {
                     Menu subMenu1 = menuRepository.findById(menuSaveForms.get(i).getChildren().get(j).getId()).get();
-                    subMenu1.changeSort(j+1);
-                    subMenu1.changeParent(menu);
-                    subMenu1.changeDepth(2);
+                    subMenu1.changeOrder(j+1, menu, 2);
                     if(menuSaveForms.get(i).getChildren().get(j).getChildren() != null) {
                         for(int k=0;k<menuSaveForms.get(i).getChildren().get(j).getChildren().size();k++) {
                             Menu subMenu2 = menuRepository.findById(menuSaveForms.get(i).getChildren().get(j).getChildren().get(k).getId()).get();
-                            subMenu2.changeSort(k+1);
-                            subMenu2.changeParent(subMenu1);
-                            subMenu2.changeDepth(3);
+                            subMenu2.changeOrder(k+1, subMenu1, 3);
                         }
                     }
                 }
             }
         }
+    }
+
+    public List<MenuResultDto> getAuthorityMenuList(String loginId) {
+        List<Menu> menuList = menuRepository.findByLoginId(loginId);
+         return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
     }
 }

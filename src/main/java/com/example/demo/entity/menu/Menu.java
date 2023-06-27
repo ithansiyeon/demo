@@ -89,15 +89,11 @@ public class Menu {
         this.modifyUserIdx = user;
     }
 
-    public void changeSort(int sort) {
+    public void changeOrder(int sort, Menu menu, int depth) {
         this.sort = sort;
-    }
-
-    public void changeParent(Menu menu) {
         this.parent = menu;
+        this.depth = depth;
     }
-
-    public void changeDepth(int depth) {this.depth = depth;}
 
     @Override
     public String toString() {

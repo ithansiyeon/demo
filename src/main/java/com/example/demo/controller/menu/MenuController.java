@@ -23,6 +23,14 @@ public class MenuController {
 
     private final MenuService menuService;
 
+    @GetMapping("/menu/authorityMenuList")
+    public String authorityMenuList(Model model) {
+        String loginId = "";
+        List<MenuResultDto> menuList = menuService.getAuthorityMenuList(loginId);
+        model.addAttribute("commonMenuList",menuList);
+        return "fragments/body :: #commonMenuTable";
+    }
+
     @GetMapping("/menu/menuList")
     public String menuList(Model model, @ModelAttribute MenuSearchCond menuSearchCond) {
         List<MenuResultDto> menuList = menuService.getMenuList(menuSearchCond);

@@ -2,96 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body th:fragment="main-body">
 <div id="adm_wrap">
-    <header>
-        <div class="head">
-            <h1>유니스터디 프로젝트</h1>
-            <div class="top_menu">
-                <!--가로형 3단 드롭다운 메뉴-->
-                <!--<div id="menu">
-                    <ul class="main1">
-                        <li>
-                            <a href="#">메뉴1</a>
-                            <ul class="main2">
-                                <li>
-                                    <a href="#">소메뉴1</a>
-                                    <ul class="main3">
-                                        <li><a href="#">2단소메뉴1</a></li>
-                                        <li><a href="#">2단소메뉴2</a></li>
-                                        <li><a href="#">2단소메뉴3</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="#">소메뉴2</a>
-                                    <ul class="main3">
-                                        <li><a href="#">2단소메뉴4</a></li>
-                                        <li><a href="#">2단소메뉴5</a></li>
-                                        <li><a href="#">2단소메뉴6</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">메뉴2</a>
-                            <ul class="main2">
-                                <li>
-                                    <a href="#">소메뉴1</a>
-                                    <ul class="main3">
-                                        <li><a href="#">2단소메뉴7</a></li>
-                                        <li><a href="#">2단소메뉴8</a></li>
-                                        <li><a href="#">2단소메뉴9</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="#">소메뉴2</a>
-                                    <ul class="main3">
-                                        <li><a href="#">2단소메뉴10</a></li>
-                                        <li><a href="#">2단소메뉴11</a></li>
-                                        <li><a href="#">2단소메뉴12</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="#">소메뉴3</a>
-                                    <ul class="main3">
-                                        <li><a href="#">2단소메뉴13</a></li>
-                                        <li><a href="#">2단소메뉴14</a></li>
-                                        <li><a href="#">2단소메뉴15</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">메뉴3</a>
-                            <ul class="main2">
-                                <li><a href="#">소메뉴1</a></li>
-                                <li><a href="#">소메뉴2</a></li>
-                                <li>
-                                    <a href="#">소메뉴3</a>
-                                    <ul class="main3">
-                                        <li><a href="#">2단소메뉴16</a></li>
-                                        <li><a href="#">2단소메뉴17</a></li>
-                                        <li><a href="#">2단소메뉴18</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>-->
-                <div class="login_user"><strong><i class="far fa-user-circle"></i>
-                    <span th:text="${#authentication.getName()}"></span></strong>님
-                    <th:block th:each="authority: ${#authentication.authorities}">
-                        <span th:text="|[${authority.getAuthority()}]|"></span>
-                    </th:block>
-                </div>
-                <div class="logout">
-                    <button type="button" th:onclick="|location.href='@{/logout}'|"><span class="skip_info">로그아웃</span><i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
     <div id="container">
-        <div class="menu_toggle"><span></span></div>
         <!--/* 좌측 영역 */-->
         <div class="lcontent">
             <!--/* 메뉴 */-->
@@ -114,13 +25,41 @@
                 </ul>
             </nav>
         </div>
-
+        <header>
+            <div class="head">
+                <div class="top_menu">
+                    <div class="login_user"><strong><i class="far fa-user-circle"></i>
+                        <span th:text="${#authentication.getName()}"></span></strong>님
+                        <th:block th:each="authority: ${#authentication.authorities}">
+                            <span th:text="|[${authority.getAuthority()}]|"></span>
+                        </th:block>
+                    </div>
+                    <div class="logout">
+                        <button type="button" th:onclick="|location.href='@{/logout}'|"><span class="skip_info">로그아웃</span><i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="commonMenuTable" style="margin-bottom: 30px;">
+                <ul class="main1">
+                    <li th:each="menu : ${commonMenuList}">
+                        <a th:href="${menu.authority}" th:text="${menu.menuName}"></a> <!--메뉴1-->
+                        <ul class="main2" th:if="${!menu.children.isEmpty()}">
+                            <li th:each="child1: ${menu.children}">
+                                <a th:href="${child1.authority}" th:text="${child1.menuName}"></a> <!-- 소메뉴1 -->
+                                <ul class="main3" th:if="${!child1.children.isEmpty()}">
+                                    <li  th:each="child2 : ${child1.children}"><a th:href="${child2.authority}" th:text="${child2.menuName}"></a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </header>
         <!--/* 우측 영역 */-->
         <div class="rcontent">
-
             <!--/* 페이지별 컨텐츠 */-->
             <th:block layout:fragment="content"></th:block>
-
         </div>
     </div> <!--/* // #container */-->
     <footer>Copyright(c) 유니스터디.All rights reserved.</footer>
@@ -134,6 +73,9 @@
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 
 <th:block layout:fragment="script">
+    <script>
+
+    </script>
 </th:block>
 </body>
 </html>

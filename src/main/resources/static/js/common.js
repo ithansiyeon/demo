@@ -116,3 +116,9 @@ function ajaxUpload(type, url, param, callback) {
 		}
 	});
 }
+
+function authorityMenu() {
+		ajaxCmm('get', `/menu/authorityMenuList`, 'text', '', '', function (data) {
+			$("#commonMenuTable").replaceWith(data);
+		});
+}

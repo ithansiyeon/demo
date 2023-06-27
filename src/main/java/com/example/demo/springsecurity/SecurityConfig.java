@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .headers().frameOptions().disable()
                 .and()
                 .addFilterBefore(new MyFilter1(), UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/login", "/loginError","/css/**","/images/**","/jquery/**","/js/**","/index", "/board").permitAll()
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/fragments/**","/login", "/loginError","/css/**","/images/**","/jquery/**","/js/**","/index", "/board", "/menu/authorityMenuList").permitAll()
                         .anyRequest().authenticated())
                 .formLogin()
                 .loginPage("/login")

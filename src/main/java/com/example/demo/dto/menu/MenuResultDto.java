@@ -13,7 +13,7 @@ public class MenuResultDto {
 
     private Long id;
     private String menuName;
-    private int listOrder;
+    private int sort;
     private String authority;
     private List<MenuResultDto> children;
     private String isUse;
@@ -22,7 +22,7 @@ public class MenuResultDto {
     public MenuResultDto(Menu menu) {
         this.id = menu.getId();
         this.menuName = menu.getMenuName();
-        this.listOrder = menu.getSort();
+        this.sort = menu.getSort();
         this.authority = menu.getAuthority();
         this.isUse = menu.getIsUse();
         this.children = menu.getChildren().stream().map(MenuResultDto::new).collect(Collectors.toList());
@@ -33,7 +33,7 @@ public class MenuResultDto {
         return "MenuResultDto{" +
                 "id=" + id +
                 ", menuName='" + menuName + '\'' +
-                ", listOrder=" + listOrder +
+                ", sort=" + sort +
                 ", authority='" + authority + '\'' +
                 ", children=" + children +
                 '}';

@@ -6,6 +6,7 @@ import com.example.demo.dto.menu.QMenuAddForm;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.menu.QMenu;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,6 +22,23 @@ import static org.springframework.util.StringUtils.hasText;
 public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
     private final JPAQueryFactory query;
+
+    @Override
+    public List<Menu> findByLoginId(String loginId) {
+        QMenu child = new QMenu("child");
+
+        return query.selectFrom(menu)
+                .distinct()
+                .leftJoin(menu.children, child)
+                .fetchJoin()
+                .where(
+                        menu.parent.isNull(),
+                        menu.isUse.eq("Y")
+                )
+                .orderBy(menu.sort.asc(),menu.modifyDate.asc(), child.sort.asc(), child.modifyDate.asc())
+                .fetch();
+    }
+
     public List<Menu> findAllByParentIsNull() {
         List<Menu> results = query.select(menu).from(menu).where(menu.parent.isNull()).fetch();
         return results;
@@ -69,6 +87,17 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     }
 
     private BooleanExpression menuNameEq(String keyword) {
+        return hasText(keyword) ? menu.menuName.contains(keyword) : null;
+    }
+
+    private BooleanExpression childMenuCodeEq(String keyword) {
+        for(Integer i=0;i < menu.children.size();i++) {
+            menu.children.get(i).menuName.contains(keyword);
+        }
+        return hasText(keyword) ? menu.children.get(0).menuName : null;
+    }
+
+    private BooleanExpression childMenuNameEq(String keyword) {
         return hasText(keyword) ? menu.menuName.contains(keyword) : null;
     }
 

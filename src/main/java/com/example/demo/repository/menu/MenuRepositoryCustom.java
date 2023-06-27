@@ -12,4 +12,5 @@ public interface MenuRepositoryCustom {
     List<Menu> getMenus();
     String findMaxMenuCode();
     MenuAddForm findByMenuIdx(Long menuIdx);
+    List<Menu> findByLoginId(String loginId);
 }

@@ -360,6 +360,9 @@
                             <button type="button" class="btns btn_bdr4 btn_mid fl mgr3" th:onclick="saveMenu()">저장</button>
                             <button type="button" class="btns btn_bdr4 btn_mid fl" th:onclick="|location.href='@{/menu/menuList}'|">취소</button>
                         </p>
+                        <div style="height:500px;" th:if="${menuList.size() == 0}">
+                            <p style="text-align: center;vertical-align: center;">조건에 맞는 메뉴가 없습니다.</p>
+                        </div>
                         <div class="dd nestable" id="nestable">
                             <ol class="dd-list">
                                 <li th:each="menu : ${menuList}" class="dd-item" th:data-id="${menu.id}" th:data-name="${menu.menuName}" th:data-authority="${menu.authority}" data-new="0" data-deleted="0">
@@ -518,6 +521,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="../js/jquery.nestable.js"></script>
     <script>
+        $(document).ready(
+            authorityMenu()
+        );
+
         $('#nestable').nestable({
             maxDepth: 3
         })

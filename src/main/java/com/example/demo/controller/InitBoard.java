@@ -57,7 +57,7 @@ public class InitBoard {
             User user = em.find(User.class,1L);
             Menu m =  Menu.builder()
                     .menuName("1. 메뉴")
-                    .authority("/aaa")
+                    .authority("/menu/menuList")
                     .sort(1)
                     .parent(null)
                     .isUse("Y")
