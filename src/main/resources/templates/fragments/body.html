@@ -46,9 +46,9 @@
                         <a th:href="${menu.authority}" th:text="${menu.menuName}"></a> <!--메뉴1-->
                         <ul class="main2" th:if="${!menu.children.isEmpty()}">
                             <li th:each="child1: ${menu.children}">
-                                <a th:href="${child1.authority}" th:text="${child1.menuName}"></a> <!-- 소메뉴1 -->
+                                <a th:href="${child1.authority}" th:text="${child1.menuName}" th:if="${child1.isUse == 'Y'}"></a> <!-- 소메뉴1 -->
                                 <ul class="main3" th:if="${!child1.children.isEmpty()}">
-                                    <li  th:each="child2 : ${child1.children}"><a th:href="${child2.authority}" th:text="${child2.menuName}"></a></li>
+                                    <li th:each="child2 : ${child1.children}"><a th:href="${child2.authority}" th:text="${child2.menuName}" th:if="${child2.isUse == 'Y'}"></a></li>
                                 </ul>
                             </li>
                         </ul>

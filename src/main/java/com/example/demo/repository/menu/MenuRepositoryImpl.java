@@ -1,25 +1,24 @@
 package com.example.demo.repository.menu;
 
-import com.example.demo.dto.menu.MenuAddForm;
-import com.example.demo.dto.menu.MenuSearchCond;
-import com.example.demo.dto.menu.QMenuAddForm;
+import com.example.demo.dto.menu.*;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.menu.QMenu;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
 
 import static com.example.demo.entity.menu.QMenu.menu;
 import static com.example.demo.entity.user.QUser.user;
+import static com.querydsl.jpa.JPAExpressions.select;
 import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class MenuRepositoryImpl implements MenuRepositoryCustom {
-
+    private final SqlSession sqlSession;
     private final JPAQueryFactory query;
 
     @Override
@@ -34,33 +33,25 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
                         menu.parent.isNull(),
                         menu.isUse.eq("Y")
                 )
-                .orderBy(menu.sort.asc(),menu.modifyDate.asc(), child.sort.asc(), child.modifyDate.asc())
+                .orderBy(menu.sort.asc(),menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
                 .fetch();
-    }
-
-    public List<Menu> findAllByParentIsNull() {
-        List<Menu> results = query.select(menu).from(menu).where(menu.parent.isNull()).fetch();
-        return results;
     }
 
     public List<Menu> findAllWithQuerydsl(MenuSearchCond menuSearchCond) {
         QMenu child = new QMenu("child");
-
         return query.selectFrom(menu)
                 .distinct()
                 .leftJoin(menu.children, child)
                 .fetchJoin()
                 .where(
                         menu.parent.isNull(),
-                        menuSearch(menuSearchCond),
                         isUseEq(menuSearchCond.getIsUse())
                 )
-                .orderBy(menu.sort.asc(),menu.modifyDate.asc(), child.sort.asc(), child.modifyDate.asc())
+                .orderBy(menu.sort.asc(),menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
                 .fetch();
     }
 
     public BooleanExpression menuSearch(MenuSearchCond menuSearchCond) {
-        System.out.println("menuSearchCond.getSearchType() = " + menuSearchCond.getSearchType());
         if(hasText(menuSearchCond.getSearchType())) {
             String searchType = menuSearchCond.getSearchType();
             if(hasText(menuSearchCond.getKeyword())) {
@@ -89,10 +80,6 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
         return hasText(keyword) ? menu.menuName.contains(keyword) : null;
     }
 
-    public List<Menu> getMenus() {
-        return query.selectFrom(menu).fetch();
-    }
-
     public String findMaxMenuCode() {
         return query.select(menu.menuCode.max()).from(menu).fetchOne();
     }
@@ -107,11 +94,31 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
                                       menu.menuCode,
                                       menu.isUse,
                                       menu.menuDescription,
-                                      ExpressionUtils.as(JPAExpressions.select(user.userName).from(user).where(user.id.eq(menu.regUserIdx.id)),"registerUserName"),
-                                      ExpressionUtils.as(JPAExpressions.select(user.userName).from(user).where(user.id.eq(menu.modifyUserIdx.id)),"modifyUserName"),
+                                      ExpressionUtils.as(select(user.userName).from(user).where(user.id.eq(menu.regUserIdx.id)),"registerUserName"),
+                                      ExpressionUtils.as(select(user.userName).from(user).where(user.id.eq(menu.modifyUserIdx.id)),"modifyUserName"),
                                       menu.registerDate,
                                       menu.modifyDate))
                 .from(menu)
                 .where(menu.id.eq(menuIdx)).fetchOne();
+    }
+
+    @Override
+    public List<MenuDto> findMenuList() {
+        return sqlSession.selectList("mapper.menu.menuList");
+    }
+
+    @Override
+    public List<Menu> findByUrl(String requestURI) {
+        QMenu child = new QMenu("child");
+        return query.selectFrom(menu)
+                .distinct()
+                .leftJoin(menu.children, child)
+                .fetchJoin()
+                .where(
+                        menu.parent.isNull(),
+                        menu.authority.eq(requestURI)
+                )
+                .orderBy(menu.sort.asc(),menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
+                .fetch();
     }
 }

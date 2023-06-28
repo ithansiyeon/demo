@@ -5,6 +5,7 @@ import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
 import com.example.demo.dto.menu.MenuSearchCond;
 import com.example.demo.service.menu.MenuService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,10 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping("/menu/authorityMenuList")
-    public String authorityMenuList(Model model) {
+    public String authorityMenuList(Model model, HttpServletRequest request) {
         String loginId = "";
         List<MenuResultDto> menuList = menuService.getAuthorityMenuList(loginId);
+        menuService.getMenuPathFullName(request.getRequestURI());
         model.addAttribute("commonMenuList",menuList);
         return "fragments/body :: #commonMenuTable";
     }

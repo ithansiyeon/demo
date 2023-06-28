@@ -557,7 +557,6 @@
         }
 
         function deleteMenu(e, menuIdx) {
-            console.log(e);
             var targetId = $(e).data('owner-id');
             var target = $('[data-id="' + targetId + '"]');
             var result;
@@ -585,7 +584,6 @@
                 keyword:form.keyword.value,
                 isUse:form.searchIsUse.value
             };
-            console.log(queryParams);
             location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
         }
 

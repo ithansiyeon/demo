@@ -1,9 +1,6 @@
 package com.example.demo.service.menu;
 
-import com.example.demo.dto.menu.MenuAddForm;
-import com.example.demo.dto.menu.MenuResultDto;
-import com.example.demo.dto.menu.MenuSaveForm;
-import com.example.demo.dto.menu.MenuSearchCond;
+import com.example.demo.dto.menu.*;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.user.User;
 import com.example.demo.repository.menu.MenuRepository;
@@ -20,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -29,13 +28,15 @@ public class MenuService {
     private final UserRepository userRepository;
     private final ModelMapper mapper;
 
-    public List<Menu> getMenuTree() {
-        List<Menu> menus = menuRepository.getMenus();
-        return menus;
-    }
-
     public List<MenuResultDto> getMenuList(MenuSearchCond menuSearchCond) {
         List<Menu> menuList = menuRepository.findAllWithQuerydsl(menuSearchCond);
+
+        for(int i=0; i< menuList.size(); i++) {
+            if(hasText(menuSearchCond.getSearchType())) {
+                String searchType = menuSearchCond.getSearchType();
+
+            }
+        }
         return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
     }
 
@@ -102,6 +103,12 @@ public class MenuService {
 
     public List<MenuResultDto> getAuthorityMenuList(String loginId) {
         List<Menu> menuList = menuRepository.findByLoginId(loginId);
-         return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
+        return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
+    }
+
+    public void getMenuPathFullName(String requestURI) {
+        System.out.println("requestURI = " + requestURI);
+        List<Menu> menuList = menuRepository.findByUrl(requestURI);
+        System.out.println("menuList.toString() = " + menuList.toString());
     }
 }
