@@ -3,8 +3,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.menu">
 
-    <select id="menuList" resultType="com.example.demo.dto.menu.MenuDto">
-        select * from menu
+    <select id="menuList" parameterType="com.example.demo.dto.menu.MenuSearchCond" resultType="com.example.demo.entity.menu.Menu">
+        select a.*, b.*
+            from menu as a
+            left join
+                (select * from menu
+                    where 1=1
+                        <if test="searchType == 'menuName'">
+                           and menu_name like '%' || #{keyword} || '%'
+                        </if>
+                        <if test="searchType == 'menuCode'">
+                           and menu_code like '%' || #{keyword} || '%'
+                        </if>
+                        <if test="isUse != '' and isUse != null">
+                           and is_use = #{isUse}
+                        </if>) as b
+            on a.menu_idx = b.parent_id
+            and a.parent_id is null
     </select>
 
 </mapper>

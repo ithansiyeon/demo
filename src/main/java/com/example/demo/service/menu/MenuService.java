@@ -29,7 +29,7 @@ public class MenuService {
     private final ModelMapper mapper;
 
     public List<MenuResultDto> getMenuList(MenuSearchCond menuSearchCond) {
-        List<Menu> menuList = menuRepository.findAllWithQuerydsl(menuSearchCond);
+        List<Menu> menuList = menuRepository.findMenuList(menuSearchCond);
 
         for(int i=0; i< menuList.size(); i++) {
             if(hasText(menuSearchCond.getSearchType())) {

@@ -1,6 +1,8 @@
 package com.example.demo.repository.menu;
 
-import com.example.demo.dto.menu.*;
+import com.example.demo.dto.menu.MenuAddForm;
+import com.example.demo.dto.menu.MenuSearchCond;
+import com.example.demo.dto.menu.QMenuAddForm;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.menu.QMenu;
 import com.querydsl.core.types.ExpressionUtils;
@@ -39,16 +41,23 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
     public List<Menu> findAllWithQuerydsl(MenuSearchCond menuSearchCond) {
         QMenu child = new QMenu("child");
-        return query.selectFrom(menu)
-                .distinct()
-                .leftJoin(menu.children, child)
-                .fetchJoin()
-                .where(
-                        menu.parent.isNull(),
-                        isUseEq(menuSearchCond.getIsUse())
-                )
-                .orderBy(menu.sort.asc(),menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
-                .fetch();
+        return sqlSession.selectList("mapper.menu.menuList");
+//        SubQueryExpression<?> childSubquery = JPAExpressions.selectFrom(child)
+//                .where(
+//                        child.parent.eq(menu),
+//                        isUseEq(menuSearchCond.getIsUse())
+//                );
+//
+//        return query.selectFrom(menu)
+//                .distinct()
+//                .leftJoin(childSubquery, child)
+//                .fetchJoin()
+//                .where(
+//                        menu.parent.isNull(),
+//                        isUseEq(menuSearchCond.getIsUse())
+//                )
+//                .orderBy(menu.sort.asc(), menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
+//                .fetch();
     }
 
     public BooleanExpression menuSearch(MenuSearchCond menuSearchCond) {
@@ -103,7 +112,7 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     }
 
     @Override
-    public List<MenuDto> findMenuList() {
+    public List<Menu> findMenuList(MenuSearchCond menuSearchCond) {
         return sqlSession.selectList("mapper.menu.menuList");
     }
 
