@@ -1,18 +1,25 @@
 package com.example.demo.interceptor;
 
-import com.example.demo.springsecurity.SecurityUser;
+import com.example.demo.service.menu.MenuService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.AntPathMatcher;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@RequiredArgsConstructor
 public class UrlInterceptor implements HandlerInterceptor {
+
+    private final MenuService menuService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         System.out.println("apple");
         System.out.println(requestURI);
+        String byUrl = menuService.findByUrl(request.getRequestURI());
+        HttpSession session = request.getSession();
+        session.setAttribute("fullPathName", byUrl);
 //        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        AntPathMatcher matcher = new AntPathMatcher();
        /* if(matcher.match(securityUser.getUrl(), requestURI)) {

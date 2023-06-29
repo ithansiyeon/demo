@@ -39,25 +39,18 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
                 .fetch();
     }
 
-    public List<Menu> findAllWithQuerydsl(MenuSearchCond menuSearchCond) {
+    public List<Menu> findAllWithQuerydsl() {
         QMenu child = new QMenu("child");
-        return sqlSession.selectList("mapper.menu.menuList");
-//        SubQueryExpression<?> childSubquery = JPAExpressions.selectFrom(child)
-//                .where(
-//                        child.parent.eq(menu),
-//                        isUseEq(menuSearchCond.getIsUse())
-//                );
-//
-//        return query.selectFrom(menu)
-//                .distinct()
-//                .leftJoin(childSubquery, child)
-//                .fetchJoin()
-//                .where(
-//                        menu.parent.isNull(),
-//                        isUseEq(menuSearchCond.getIsUse())
-//                )
-//                .orderBy(menu.sort.asc(), menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
-//                .fetch();
+
+        return query.selectFrom(menu)
+                .distinct()
+                .leftJoin(menu.children, child)
+                .fetchJoin()
+                .where(
+                        menu.parent.isNull()
+                )
+                .orderBy(menu.sort.asc(),menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
+                .fetch();
     }
 
     public BooleanExpression menuSearch(MenuSearchCond menuSearchCond) {
@@ -113,21 +106,11 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
     @Override
     public List<Menu> findMenuList(MenuSearchCond menuSearchCond) {
-        return sqlSession.selectList("mapper.menu.menuList");
+        return sqlSession.selectList("mapper.menu.menuList", menuSearchCond);
     }
 
     @Override
-    public List<Menu> findByUrl(String requestURI) {
-        QMenu child = new QMenu("child");
-        return query.selectFrom(menu)
-                .distinct()
-                .leftJoin(menu.children, child)
-                .fetchJoin()
-                .where(
-                        menu.parent.isNull(),
-                        menu.authority.eq(requestURI)
-                )
-                .orderBy(menu.sort.asc(),menu.modifyDate.desc(), child.sort.asc(), child.modifyDate.desc())
-                .fetch();
+    public String findByUrl(String requestURI) {
+        return sqlSession.selectOne("mapper.menu.findByUrl", requestURI);
     }
 }

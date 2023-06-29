@@ -56,8 +56,8 @@ public class InitBoard {
             }
             User user = em.find(User.class,1L);
             Menu m =  Menu.builder()
-                    .menuName("1. 메뉴")
-                    .authority("/menu/menuList")
+                    .menuName("관리자운영관리")
+                    .authority("/aaa")
                     .sort(1)
                     .parent(null)
                     .isUse("Y")
@@ -66,8 +66,8 @@ public class InitBoard {
                     .build();
             em.persist(m);
             Menu m2 = Menu.builder()
-                    .menuName("2. 메뉴")
-                    .authority("/bbb")
+                    .menuName("스프링 부트 게시판")
+                    .authority("/board")
                     .sort(2)
                     .parent(null)
                     .isUse("Y")
@@ -86,7 +86,7 @@ public class InitBoard {
                     .build();
             em.persist(m3);
             Menu m4 = Menu.builder()
-                    .menuName("1-1. 하위메뉴")
+                    .menuName("공통관리")
                     .authority("/fff")
                     .sort(1)
                     .parent(m)
@@ -96,8 +96,8 @@ public class InitBoard {
                     .build();
             em.persist(m4);
             Menu m5 = Menu.builder()
-                    .menuName("1-2. 하위메뉴")
-                    .authority("/ggg")
+                    .menuName("운영자접속관리")
+                    .authority("/userLog")
                     .sort(2)
                     .parent(m)
                     .isUse("Y")
@@ -116,8 +116,8 @@ public class InitBoard {
                     .build();
             em.persist(m6);
             Menu m7 = Menu.builder()
-                    .menuName("1-1. 1. 하위메뉴")
-                    .authority("/ggg")
+                    .menuName("관리자메뉴관리_List")
+                    .authority("/menu/menuList")
                     .sort(1)
                     .parent(m4)
                     .isUse("Y")

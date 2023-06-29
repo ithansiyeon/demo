@@ -1,6 +1,7 @@
 package com.example.demo.dto.menu;
 
 import com.querydsl.core.annotations.QueryProjection;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,13 +13,13 @@ import java.util.List;
 @Setter
 public class MenuAddForm {
     private Long menuIdx;
-    @NotNull
+    @NotEmpty
     private String menuName;
     private String authority;
     private int depth;
     private String menuCode;
     private String isUse;
-    @NotNull
+    @NotEmpty
     private String menuDescription;
     private String registerUserName;
     private String modifyUserName;

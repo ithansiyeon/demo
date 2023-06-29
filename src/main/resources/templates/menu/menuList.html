@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layout/basic">
-<th:block layout:fragment="title">
-    <title>관리자메뉴관리_List</title>
-</th:block>
 <th:block layout:fragment="add-css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -285,7 +282,6 @@
             background: #ddd;
         }
 
-
         /*
         * Nestable++
         */
@@ -301,56 +297,11 @@
             right: -52px;
         }
 
-        #menu-editor {
-            margin-top: 40px;
-        }
-
-        #saveButton {
-            padding-right: 30px;
-            padding-left: 30px;
-        }
-
-        .output-container {
-            margin-top: 20px;
-        }
-
-        #json-output {
-            margin-top: 20px;
-        }
-
     </style>
 </th:block>
 <th:block layout:fragment="content">
-    <div class="page_tits">
-        <h3>관리자메뉴관리_List</h3>
-        <p class="path"><strong>현재 위치 :</strong> <span>관리자운영관리</span> <span>공통관리</span> <span>관리자메뉴관리_List</span></p>
-    </div>
-
     <div class="content">
         <section>
-            <div class="search_box">
-                <form id="searchForm" th:object="${menuSearchCond}">
-                    <div class="sch_group fl">
-                        <span>통합검색 </span>
-                        <select name="searchType" id="searchType" title="검색 유형 선택">
-                            <option value="menuName" th:selected="*{searchType} == 'menuName'">메뉴명</option>
-                            <option value="menuCode" th:selected="*{searchType} == 'menuCode'">메뉴코드</option>
-                        </select>
-                        <input type="text" id="keyword" name="keyword" th:field="*{keyword}">
-                        <span class="mgl10">조건</span>
-                        <select name="searchIsUse" id="searchIsUse" title="검색 유형 선택">
-                            <option value="">사용여부</option>
-                            <option value="Y" th:selected="*{isUse} == 'Y'">사용</option>
-                            <option value="N" th:selected="*{isUse} == 'N'">미사용</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <p class="btn_set">
-                <button class="btns btn_st3 btn_bdr3 btn_mid mgr3" type="button" th:onclick="searchMenuList()">검색</button>
-                <button class="btns btn_st3 btn_bdr3 btn_mid" type="button" th:onclick="reset()">초기화</button>
-            </p>
-
             <div class="container" style="height: 100vh;">
                 <div class="row">
                     <div class="col-md-9">
@@ -433,6 +384,7 @@
         <div class="pop_container">
             <section>
                 <div id="menuTable">
+                    <p style="float:right;"><span style="color: red;">* </span>표시된 항목은 필수 입력 항목입니다.</p>
                     <form method="post" th:if="${menuForm != null}" th:object="${menuForm}" th:action="@{/menu/registerMenu}">
                         <table class="tb tb_row">
                             <colgroup>
@@ -481,8 +433,8 @@
                             <tr>
                                 <th scope="row">사용여부</th>
                                 <td colspan="3" style="text-align: left">
-                                    <label for="use1"></label><input th:id="use1" th:name="isUse" type="radio" th:value="Y" th:checked="*{isUse == 'Y' ? true:false}"> 사용
-                                    <label for="use2"></label><input th:id="use2" th:name="isUse" type="radio" th:value="N" checked th:checked="*{isUse == 'N' || isUse == null ? true:false}">
+                                    <label th:for="use1"></label><input th:id="use1" th:name="isUse" type="radio" th:value="Y" th:checked="*{isUse == 'Y' ? true:false}"> 사용
+                                    <label th:for="use2"></label><input th:id="use2" th:name="isUse" type="radio" th:value="N" checked th:checked="*{isUse == 'N' || isUse == null ? true:false}">
                                     미사용
                                 </td>
                             </tr>
@@ -575,22 +527,8 @@
             });
         }
 
-        function searchMenuList() {
+        function registerMenu() {
 
-            const form = document.getElementById('searchForm');
-
-            const queryParams = {
-                searchType:form.searchType.value,
-                keyword:form.keyword.value,
-                isUse:form.searchIsUse.value
-            };
-            location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
-        }
-
-        function reset() {
-            $("#searchType").val("menuName");
-            $("#keyword").val("");
-            $("#searchIsUse").val("");
         }
 
     </script>

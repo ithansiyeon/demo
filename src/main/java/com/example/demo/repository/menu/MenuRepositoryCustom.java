@@ -7,11 +7,11 @@ import com.example.demo.entity.menu.Menu;
 import java.util.List;
 
 public interface MenuRepositoryCustom {
-    List<Menu> findAllWithQuerydsl(MenuSearchCond menuSearchCond);
+    List<Menu> findAllWithQuerydsl();
     String findMaxMenuCode();
     MenuAddForm findByMenuIdx(Long menuIdx);
     List<Menu> findByLoginId(String loginId);
     List<Menu> findMenuList(MenuSearchCond menuSearchCond);
 
-    List<Menu> findByUrl(String requestURI);
+    String findByUrl(String requestURI);
 }

@@ -7,16 +7,16 @@ import com.example.demo.repository.menu.MenuRepository;
 import com.example.demo.repository.user.UserRepository;
 import com.example.demo.springsecurity.SecurityUser;
 import com.example.demo.utils.StringUtil;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
@@ -28,15 +28,8 @@ public class MenuService {
     private final UserRepository userRepository;
     private final ModelMapper mapper;
 
-    public List<MenuResultDto> getMenuList(MenuSearchCond menuSearchCond) {
-        List<Menu> menuList = menuRepository.findMenuList(menuSearchCond);
-
-        for(int i=0; i< menuList.size(); i++) {
-            if(hasText(menuSearchCond.getSearchType())) {
-                String searchType = menuSearchCond.getSearchType();
-
-            }
-        }
+    public List<MenuResultDto> getMenuList() {
+        List<Menu> menuList = menuRepository.findAllWithQuerydsl();
         return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
     }
 
@@ -59,12 +52,15 @@ public class MenuService {
     }
 
     public MenuAddForm findMenuById(Long menuIdx) {
-        return mapper.map(menuRepository.findByMenuIdx(menuIdx),MenuAddForm.class);
+        return menuRepository.findByMenuIdx(menuIdx);
     }
 
     @Transactional(readOnly = false)
-    public void updateMenuList(MenuAddForm menuAddForm) {
-        Menu findMenu = menuRepository.findById(menuAddForm.getMenuIdx()).get();
+    public void updateMenuList(MenuAddForm menuAddForm) throws Exception {
+        Menu findMenu = menuRepository.findById(menuAddForm.getMenuIdx()).orElse(null);
+        if(findMenu == null) {
+            throw new NotFoundException("해당 데이터가 존재하지 않습니다.");
+        }
         findMenu.updateMenu(menuAddForm, getUser());
         menuRepository.save(findMenu);
     }
@@ -106,9 +102,7 @@ public class MenuService {
         return menuList.stream().map(MenuResultDto::new).collect(Collectors.toList());
     }
 
-    public void getMenuPathFullName(String requestURI) {
-        System.out.println("requestURI = " + requestURI);
-        List<Menu> menuList = menuRepository.findByUrl(requestURI);
-        System.out.println("menuList.toString() = " + menuList.toString());
+    public String findByUrl(String requestURI) {
+        return menuRepository.findByUrl(requestURI);
     }
 }

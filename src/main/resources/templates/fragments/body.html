@@ -59,6 +59,12 @@
         <!--/* 우측 영역 */-->
         <div class="rcontent">
             <!--/* 페이지별 컨텐츠 */-->
+            <div>
+                <p class="path">
+                    <span style="font-weight: bold;">현재 위치: </span>
+                    <span th:text="${session.fullPathName}"></span>
+                </p>
+            </div>
             <th:block layout:fragment="content"></th:block>
         </div>
     </div> <!--/* // #container */-->

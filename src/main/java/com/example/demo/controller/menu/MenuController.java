@@ -3,10 +3,11 @@ package com.example.demo.controller.menu;
 import com.example.demo.dto.menu.MenuAddForm;
 import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
-import com.example.demo.dto.menu.MenuSearchCond;
 import com.example.demo.service.menu.MenuService;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,23 +25,30 @@ public class MenuController {
 
     private final MenuService menuService;
 
+    /*
+     메뉴 상단 리스트 조회
+     */
     @GetMapping("/menu/authorityMenuList")
-    public String authorityMenuList(Model model, HttpServletRequest request) {
+    public String authorityMenuList(Model model) {
         String loginId = "";
         List<MenuResultDto> menuList = menuService.getAuthorityMenuList(loginId);
-        menuService.getMenuPathFullName(request.getRequestURI());
         model.addAttribute("commonMenuList",menuList);
         return "fragments/body :: #commonMenuTable";
     }
 
+    /*
+     관리자 메뉴 관리 리스트 조회
+     */
     @GetMapping("/menu/menuList")
-    public String menuList(Model model, @ModelAttribute MenuSearchCond menuSearchCond) {
-        List<MenuResultDto> menuList = menuService.getMenuList(menuSearchCond);
+    public String menuList(Model model) {
+        List<MenuResultDto> menuList = menuService.getMenuList();
         model.addAttribute("menuList",menuList);
-        model.addAttribute("menuSearchCond", menuSearchCond);
         return "menu/menuList";
     }
 
+    /*
+     메뉴 등록 폼 조회
+     */
     @GetMapping("/menu/registerMenu")
     public String registerMenuForm(Model model) {
         MenuAddForm menuAddForm = new MenuAddForm();
@@ -49,11 +57,14 @@ public class MenuController {
         return "menu/menuList :: #menuTable";
     }
 
+    /*
+     메뉴 등록 및 수정
+     */
     @PostMapping("/menu/registerMenu")
-    public String registerMenu(@Validated @ModelAttribute("menuForm") MenuAddForm menuAddForm, BindingResult bindingResult) {
-        /*if (bindingResult.hasErrors()) {
+    public String registerMenu(@Valid @ModelAttribute("menuForm") MenuAddForm menuAddForm, BindingResult bindingResult, Model model) throws Exception {
+        if (bindingResult.hasErrors()) {
             return "menu/menuList :: #menuTable";
-        }*/
+        }
         if(menuAddForm.getMenuIdx() == null) {
             menuService.createMenuList(menuAddForm);
         } else {
@@ -62,19 +73,32 @@ public class MenuController {
         return "redirect:/menu/menuList";
     }
 
+    /*
+     메뉴 수정 폼 조회
+     */
     @GetMapping("/menu/editMenu/{menuIdx}")
-    public String editMenu(@PathVariable Long menuIdx, Model model) {
+    public String editMenu(@PathVariable Long menuIdx, Model model) throws Exception {
         MenuAddForm menuAddForm = menuService.findMenuById(menuIdx);
+        if(menuAddForm == null) {
+            NotFoundException error = new NotFoundException("데이터가 존재하지 않습니다.");
+            throw new Exception(error);
+        }
         model.addAttribute("menuForm",menuAddForm);
         return "menu/menuList :: #menuTable";
     }
 
+    /*
+    메뉴 순서 저장
+     */
     @PostMapping("/menu/menuSave")
     public ResponseEntity menuSave(@RequestBody ArrayList<MenuSaveForm> menuSaveForms) {
         menuService.saveMenuList(menuSaveForms);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    /*
+    메뉴 삭제
+     */
     @GetMapping("/menu/deleteMenu/{menuIdx}")
     public ResponseEntity menuDelete(@PathVariable Long menuIdx) {
         menuService.deleteMenu(menuIdx);

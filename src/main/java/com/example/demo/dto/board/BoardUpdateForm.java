@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,5 +19,6 @@ public class BoardUpdateForm {
     private List<Long> fileId = new ArrayList<>();
     private List<String> fileName = new ArrayList<>();
     private List<MultipartFile> file = new ArrayList<>();
-
+    private LocalDateTime registerDate;
+    private String writer;
 }

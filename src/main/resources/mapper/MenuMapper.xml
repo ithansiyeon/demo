@@ -19,7 +19,35 @@
                            and is_use = #{isUse}
                         </if>) as b
             on a.menu_idx = b.parent_id
-            and a.parent_id is null
+            where a.parent_id is null
+            and a.is_use = 'Y'
+    </select>
+
+    <select id="findByUrl" parameterType="java.lang.String" resultType="java.lang.String">
+         select menuName from (
+            (select c.menu_name || ' > ' || d.menuName2 ||  ' > '  || d.menuName3 as menuName, 1 as sort
+                from menu c inner join
+                    (select a.parent_id as parent2,
+                            a.menu_name as menuName2,
+                            b.menu_name as menuName3
+                        from menu as a
+                        inner join
+                            (select * from menu where authority =  #{requestURI, jdbcType=VARCHAR} and is_use = 'Y') as b
+                            on a.menu_idx = b.parent_id
+                        where
+                            a.is_use = 'Y') d on c.menu_idx = d.parent2
+            where c.is_use = 'Y' limit 1 )
+            union
+                ( select a.menu_name || ' > ' || b.menu_name as menuName, 2 as sort
+                    from menu a
+                        inner join (select * from menu where authority = #{requestURI, jdbcType=VARCHAR} and is_use = 'Y') b
+                        on a.menu_idx = b.parent_id
+                        where a.is_use = 'Y' limit 1 )
+            union
+                ( select menu_name as menuName, 3 as sort from menu
+                                 where authority = #{requestURI, jdbcType=VARCHAR}
+                                   and is_use = 'Y'
+                                   and parent_id is null limit 1 ) ) where menuName is not null order by sort limit 1
     </select>
 
 </mapper>

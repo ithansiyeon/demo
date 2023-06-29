@@ -41,13 +41,15 @@
                         <th scope="row">
                             작성일
                         </th>
-                        <td th:text="${#temporals.format(board.registerDate,'yyyy-MM-dd HH:mm:ss')}" colspan="3"></td>
+                        <td th:field="*{registerDate}" th:text="${#temporals.format(board.registerDate,'yyyy-MM-dd HH:mm:ss')}" colspan="3">
+                            <input type="text" th:field="*{registerDate}" th:value="${#temporals.format(board.registerDate,'yyyy-MM-dd HH:mm:ss')}">
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row">
                             작성자
                         </th>
-                        <td th:name="writer" th:field="*{writer}" th:text="*{writer}" colspan="3"></td>
+                        <td th:field="*{writer}" th:text="*{writer}" colspan="3"></td>
                     </tr>
                     <tr>
                         <th scope="row">상단 여부</th>
