@@ -385,7 +385,7 @@
             <section>
                 <div id="menuTable">
                     <p style="float:right;"><span style="color: red;">* </span>표시된 항목은 필수 입력 항목입니다.</p>
-                    <form method="post" th:if="${menuForm != null}" th:object="${menuForm}" th:action="@{/menu/registerMenu}">
+                    <form id="menuForm" th:if="${menuForm != null}" th:object="${menuForm}">
                         <table class="tb tb_row">
                             <colgroup>
                                 <col style="width:20%;"/>
@@ -407,7 +407,6 @@
                                 </th>
                                 <td style="text-align: left">
                                     <input th:errorclass="field-error" type="text" th:field="*{menuName}">
-                                    <div class="field-error" th:errors="*{menuName}">제목 오류</div>
                                 </td>
                                 <th scope="row">
                                     메뉴코드<span class="es">필수 입력</span>
@@ -426,8 +425,7 @@
                             <tr>
                                 <th scope="row">메뉴설명<span class="es">필수 입력</span></th>
                                 <td colspan="3" style="text-align: left">
-                                    <input th:errorclass="field-error"  th:field="*{menuDescription}" type="text">
-                                    <div class="field-error" th:errors="*{menuDescription}">제목 오류</div>
+                                    <input th:errorclass="field-error" th:field="*{menuDescription}" type="text">
                                 </td>
                             </tr>
                             <tr>
@@ -452,10 +450,10 @@
                             </tr>
                         </table>
                         <p class="btn_set">
-                            <button id="btnSave" type="submit" class="btns btn_bdr3 btn_st3">
+                            <button id="btnSave" type="button" class="btns btn_bdr3 btn_st3" th:onclick="|registerMenu()|">
                                 <span class="icons icon_save">저장</span>
                             </button>
-                            <button id="btnModify" type="submit" class="btns btn_bdr3 btn_st3" hidden>
+                            <button id="btnModify" type="button" class="btns btn_bdr3 btn_st3" th:onclick="|registerMenu()|" hidden>
                                 <span class="icons icon_modify">수정</span>
                             </button>
                             <button type="button" class="btns btn_st2 btn_bdr2" th:onclick="|layerPopClose2('menuRegisterPopup')|">
@@ -528,7 +526,18 @@
         }
 
         function registerMenu() {
-
+            if($("#menuForm #menuName").val() == "") {
+                alert("메뉴명을 입력해주세요.");
+                return;
+            }
+            if($("#menuForm #menuDescription").val() == "") {
+                alert("메뉴설명을 입력해주세요.");
+                return;
+            }
+            var form = $('#menuForm').serialize();
+            ajaxCmm('post',`/menu/registerMenu`,'text',form,'',function (data) {
+                location.href = "/menu/menuList";
+            });
         }
 
     </script>

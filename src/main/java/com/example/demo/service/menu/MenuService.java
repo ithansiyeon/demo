@@ -1,6 +1,8 @@
 package com.example.demo.service.menu;
 
-import com.example.demo.dto.menu.*;
+import com.example.demo.dto.menu.MenuAddForm;
+import com.example.demo.dto.menu.MenuResultDto;
+import com.example.demo.dto.menu.MenuSaveForm;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.user.User;
 import com.example.demo.repository.menu.MenuRepository;
@@ -13,11 +15,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import static org.springframework.util.StringUtils.hasText;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,7 +38,7 @@ public class MenuService {
     public void createMenuList(MenuAddForm menuAddForm) {
         autoMenuCode(menuAddForm);
         User user = getUser();
-        menuRepository.save(Menu.builder().menuName(menuAddForm.getMenuName()).menuCode(menuAddForm.getMenuCode()).authority(menuAddForm.getAuthority()).isUse(menuAddForm.getIsUse()).regUserIdx(user).modifyUserIdx(user).build());
+        menuRepository.save(Menu.builder().menuName(menuAddForm.getMenuName()).menuCode(menuAddForm.getMenuCode()).menuDescription(menuAddForm.getMenuDescription()).authority(menuAddForm.getAuthority()).isUse(menuAddForm.getIsUse()).regUserIdx(user).modifyUserIdx(user).build());
     }
 
     public MenuAddForm autoMenuCode(MenuAddForm menuAddForm) {
@@ -77,10 +78,14 @@ public class MenuService {
         menuRepository.deleteById(menuIdx);
     }
 
-    @Transactional(readOnly = false)
-    public void saveMenuList(ArrayList<MenuSaveForm> menuSaveForms) {
+    @Transactional(readOnly = false, rollbackFor = Exception.class) // 트랜잭션 설정
+    public void saveMenuList(ArrayList<MenuSaveForm> menuSaveForms) throws Exception {
         for(int i=0;i<menuSaveForms.size();i++) {
-            Menu menu = menuRepository.findById(menuSaveForms.get(i).getId()).get();
+            Menu menu = menuRepository.findById(menuSaveForms.get(i).getId()).orElse(null);
+            if(menu == null) {
+                NotFoundException error = new NotFoundException("데이터가 존재하지 않습니다.");
+                throw new Exception(error);
+            }
             menu.changeOrder(i+1,null,1);
             if(menuSaveForms.get(i).getChildren() != null) {
                 for(int j=0;j<menuSaveForms.get(i).getChildren().size();j++) {

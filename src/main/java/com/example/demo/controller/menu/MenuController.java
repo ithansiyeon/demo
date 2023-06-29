@@ -7,13 +7,10 @@ import com.example.demo.service.menu.MenuService;
 import jakarta.validation.Valid;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -61,16 +58,13 @@ public class MenuController {
      메뉴 등록 및 수정
      */
     @PostMapping("/menu/registerMenu")
-    public String registerMenu(@Valid @ModelAttribute("menuForm") MenuAddForm menuAddForm, BindingResult bindingResult, Model model) throws Exception {
-        if (bindingResult.hasErrors()) {
-            return "menu/menuList :: #menuTable";
-        }
+    public ResponseEntity<String> registerMenu(@Valid @ModelAttribute("menuForm") MenuAddForm menuAddForm) throws Exception {
         if(menuAddForm.getMenuIdx() == null) {
             menuService.createMenuList(menuAddForm);
         } else {
             menuService.updateMenuList(menuAddForm);
         }
-        return "redirect:/menu/menuList";
+        return new ResponseEntity<>("ok",HttpStatus.OK);
     }
 
     /*
@@ -91,7 +85,7 @@ public class MenuController {
     메뉴 순서 저장
      */
     @PostMapping("/menu/menuSave")
-    public ResponseEntity menuSave(@RequestBody ArrayList<MenuSaveForm> menuSaveForms) {
+    public ResponseEntity menuSave(@RequestBody ArrayList<MenuSaveForm> menuSaveForms) throws Exception {
         menuService.saveMenuList(menuSaveForms);
         return ResponseEntity.ok(HttpStatus.OK);
     }
