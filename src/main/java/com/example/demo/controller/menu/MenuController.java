@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class MenuController {
         String loginId = "";
         List<MenuResultDto> menuList = menuService.getAuthorityMenuList(loginId);
         model.addAttribute("commonMenuList",menuList);
-        return "fragments/body :: #commonMenuTable";
+        return "fragments/body :: .sideMenuTable";
     }
 
     /*

@@ -10,7 +10,7 @@
 #adm_wrap {padding-bottom:40px; min-height:100%; min-width:1200px; position:relative; box-sizing:border-box;}
 .innerwrap {max-width:1200px; margin:0 auto;}
 
-nav > ul > li.has_sub > a::after, .menu_toggle > span,
+nav > ul > li.has_sub > a::after,
 .chkbox input:checked+i::before,
 .file_list > div > button > span::before, .file_upload label i::after,
 .paging .page_bt::after, .es, .wr_cm_txt span::before, .cm_list > div .cm_answer::before, .rating_star, .rating_star_per {content:''; background-image:url(../images/icons.png); background-repeat:no-repeat;}

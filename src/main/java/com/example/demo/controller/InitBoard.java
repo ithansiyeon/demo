@@ -106,8 +106,8 @@ public class InitBoard {
                     .build();
             em.persist(m5);
             Menu m6 = Menu.builder()
-                    .menuName("2-1. 하위메뉴")
-                    .authority("/hhh")
+                    .menuName("운영자정보관리")
+                    .authority("/user/userRegister")
                     .sort(1)
                     .parent(m2)
                     .isUse("Y")
