@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>관리자메뉴관리_List</title>
+</th:block>
 <th:block layout:fragment="add-css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -471,10 +474,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="../js/jquery.nestable.js"></script>
     <script>
-        $(document).ready(
-            authorityMenu()
-        );
-
         $('#nestable').nestable({
             maxDepth: 3
         })

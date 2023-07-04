@@ -8,22 +8,24 @@
         <div class="sideMenuTable">
             <div class="lcontent">
                 <!--/* 메뉴 */-->
-                <nav class="lnb">
+                <nav>
                     <ul>
-                        <li th:each="menu : ${commonMenuList}">
-                            <a th:href="${menu.authority}"><span th:text="${menu.menuName}"></span></a>
+                        <li class="has_sub" th:each="menu : ${commonMenuList}">
+                            <a th:href="${menu.authority}">
+                                <th:span th:text="${menu.menuName}"></th:span>
+                            </a>
                             <ul th:if="${!menu.children.isEmpty()}">
                                 <li th:each="child1: ${menu.children}">
                                     <a th:href="${child1.authority}" th:if="${child1.isUse == 'Y'}">
-                                        <span th:text="${child1.menuName}"></span>
+                                        <th:block th:text="${child1.menuName}"></th:block>
                                     </a>
-                                    <ul th:if="${!child1.children.isEmpty()}">
-                                        <li th:each="child2 : ${child1.children}" th:if="${child2.isUse == 'Y'}">
-                                            <a th:href="${child2.authority}">
-                                                <span th:text="${child2.menuName}"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
+                                    <!-- <ul th:if="${!child1.children.isEmpty()}">
+                                         <li th:each="child2 : ${child1.children}" th:if="${child2.isUse == 'Y'}">
+                                             <a th:href="${child2.authority}">
+                                                 <th:block th:text="${child2.menuName}"></th:block>
+                                             </a>
+                                         </li>
+                                     </ul>-->
                                 </li>
                             </ul>
                         </li>
@@ -56,7 +58,8 @@
                                        th:if="${child1.isUse == 'Y'}"></a> <!-- 소메뉴1 -->
                                     <ul class="main3" th:if="${!child1.children.isEmpty()}">
                                         <li th:each="child2 : ${child1.children}">
-                                            <a th:href="${child2.authority}" th:text="${child2.menuName}" th:if="${child2.isUse == 'Y'}"></a>
+                                            <a th:href="${child2.authority}" th:text="${child2.menuName}"
+                                               th:if="${child2.isUse == 'Y'}"></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -80,7 +83,6 @@
     </div> <!--/* // #container */-->
     <footer>Copyright(c) 유니스터디.All rights reserved.</footer>
 </div>
-
 <script th:src="@{/js/function.js}"></script>
 <script th:src="@{/js/jquery-3.7.0.min.js}"></script>
 <script th:src="@{/js/common.js}"></script>

@@ -4,13 +4,12 @@
 <th:block layout:fragment="title">
     <title>리스트 페이지</title>
 </th:block>
-
+<th:block layout:fragment="add-css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+</th:block>
 <th:block layout:fragment="content">
     <div class="content">
         <section>
-            <div class="py-5 text-center">
-                <h2>스프링 부트 게시판</h2>
-            </div>
             <div class="search_box">
                 <form id="searchForm">
                     <div class="sch_group">
@@ -82,12 +81,12 @@
 
             <table class="tb tb_col" id="boardTable">
                 <tr style="text-align: center; background-color: cornflowerblue;">
-                    <th style="color: white;" scope="col">글 번호</th>
-                    <th style="color: white;" scope="col">글쓴이</th>
-                    <th style="color: white;" scope="col">글 제목</th>
-                    <th style="color: white;" scope="col">등록일</th>
-                    <th style="color: white;" scope="col">조회수</th>
-                    <th style="color: white;" scope="col">상단고정</th>
+                    <th style="color: white;text-align: center;" scope="col">글쓴이</th>
+                    <th style="color: white;text-align: center;" scope="col">글 번호</th>
+                    <th style="color: white;text-align: center;" scope="col">글 제목</th>
+                    <th style="color: white;text-align: center;" scope="col">등록일</th>
+                    <th style="color: white;text-align: center;" scope="col">조회수</th>
+                    <th style="color: white;text-align: center;" scope="col">상단고정</th>
                 </tr>
                 <tr th:each="board: ${boardList}">
                     <td style="text-align: center"><a href="#" th:href="@{/board/view/{boardId}(boardId=${board.id})}"
@@ -168,9 +167,6 @@
 </th:block>
 <th:block layout:fragment="script">
     <script>
-        $(document).ready(
-            authorityMenu()
-        );
         // 페이지 이동
         function movePage(page) {
 
