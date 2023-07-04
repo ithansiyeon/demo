@@ -10,6 +10,7 @@
                 <!--/* 메뉴 */-->
                 <nav>
                     <ul>
+                        <li><a href="#">유니스터디</a></li>
                         <li class="has_sub" th:each="menu : ${commonMenuList}">
                             <a th:href="${menu.authority}">
                                 <th:span th:text="${menu.menuName}"></th:span>

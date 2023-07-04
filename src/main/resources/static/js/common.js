@@ -3,7 +3,6 @@ $(document).ready(function(){
 
 	$(document).on("click", "li.has_sub > a", function(e) {
 		e.preventDefault();
-
 		var $parentLi = $(this).parent();
 		var $subMenu = $parentLi.find(" > ul");
 
