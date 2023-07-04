@@ -15,17 +15,17 @@
                                 <th:span th:text="${menu.menuName}"></th:span>
                             </a>
                             <ul th:if="${!menu.children.isEmpty()}">
-                                <li th:each="child1: ${menu.children}">
+                                <li class="has_sub" th:each="child1: ${menu.children}">
                                     <a th:href="${child1.authority}" th:if="${child1.isUse == 'Y'}">
                                         <th:block th:text="${child1.menuName}"></th:block>
                                     </a>
-                                    <!-- <ul th:if="${!child1.children.isEmpty()}">
+                                    <ul th:if="${!child1.children.isEmpty()}">
                                          <li th:each="child2 : ${child1.children}" th:if="${child2.isUse == 'Y'}">
                                              <a th:href="${child2.authority}">
                                                  <th:block th:text="${child2.menuName}"></th:block>
                                              </a>
                                          </li>
-                                     </ul>-->
+                                     </ul>
                                 </li>
                             </ul>
                         </li>

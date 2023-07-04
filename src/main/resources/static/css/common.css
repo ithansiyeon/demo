@@ -48,6 +48,17 @@ nav > ul > li > ul ul > li > a {padding:5px 15px; font-size:13px;}
 nav > ul > li.has_sub > a::after {content:''; display:inline-block; background-position:0 0; position:absolute; top:50%; right:15px; margin-top:-3px; width:10px; height:6px; z-index:1; transition:all 0.1s; transform-origin:50% 50%;}
 nav > ul > li.has_sub > a.on::after {transform:rotate(180deg); opacity:1;}
 
+/* 3rd Depth Styles */
+nav > ul > li > ul > li > ul {display:none; padding:10px 0;}
+nav > ul > li > ul > li > ul > li > a {padding:5px 15px 5px 35px; position:relative;}
+nav > ul > li > ul > li > ul > li > a::before {content:''; background:#aaa; width:3px; height:2px; position:absolute; top:14px; left:35px;}
+nav > ul > li > ul > li > ul > li > a.on {color:#75e0e6;}
+nav > ul > li > ul > li > ul > li > a.on::before {background:#75e0e6;}
+nav > ul > li > ul > li > ul ul {background:rgba(255,255,255,0.07); border-radius:6px; padding:5px 0; margin:5px 15px;}
+nav > ul > li > ul > li > ul ul > li > a {padding:5px 15px; font-size:13px;}
+nav > ul > li > ul > li.has_sub > a::after {top: 50%; right: 5px; margin-top: -3px; width: 6px; height: 10px;}
+nav > ul > li > ul > li.has_sub > a.on::after {transform: rotate(90deg);}
+
 footer {background:#fff; box-shadow:0 0 20px rgba(80,80,80,0.1); height:40px; line-height:40px; font-size:12px; color:#999; text-align:center; letter-spacing:0; position:absolute; bottom:0; left:0; width:100%;}
 
 /* 로그인 ------------------------------- */

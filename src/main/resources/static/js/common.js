@@ -1,20 +1,19 @@
 $(document).ready(function(){
 	authorityMenu();
 
-	// gnb
-	$("nav > ul > li.has_sub > a").click(function(e){
-		alert("aaaaa");
-		if($(this).parent().has("> ul")) {
-			e.preventDefault();
-		}
+	$(document).on("click", "li.has_sub > a", function(e) {
+		e.preventDefault();
 
-		if(!$(this).hasClass("on")) {
-			$(this).next("ul").stop().slideDown(200);
-			$(this).addClass("on");
-			$(this).parent().siblings().find(" > a").removeClass("on").end().find(" > ul").stop().slideUp(200);
-		}else if($(this).hasClass("on")) {
-			$(this).removeClass("on");
-			$(this).next("ul").stop().slideUp(200);
+		var $parentLi = $(this).parent();
+		var $subMenu = $parentLi.find(" > ul");
+
+		if (!$parentLi.hasClass("on")) {
+			$subMenu.stop().slideDown(200);
+			$parentLi.addClass("on");
+			$parentLi.siblings().removeClass("on").find("ul").stop().slideUp(200);
+		} else {
+			$subMenu.stop().slideUp(200);
+			$parentLi.removeClass("on");
 		}
 	});
 
