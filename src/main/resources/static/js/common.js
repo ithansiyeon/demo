@@ -90,9 +90,7 @@ function ajaxCmm(type, url, dataType, param, contentType, callback) {
 			return callback(data);
 		},
 		error: function(xhr, status, error) {
-			console.log(error);
 			var msg = JSON.parse(xhr.responseText);
-			console.log(msg);
 			alert(msg['message'].split(":")[1]);
 			location.reload();
 		}
