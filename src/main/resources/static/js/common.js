@@ -93,7 +93,7 @@ function ajaxCmm(type, url, dataType, param, contentType, callback) {
 			console.log(error);
 			var msg = JSON.parse(xhr.responseText);
 			console.log(msg);
-			alert(msg['message'].split(":")[1]);
+			alert(msg['message']);
 			location.reload();
 		}
 	});

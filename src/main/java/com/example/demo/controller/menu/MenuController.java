@@ -4,14 +4,17 @@ import com.example.demo.dto.menu.MenuAddForm;
 import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.dto.menu.MenuSaveForm;
 import com.example.demo.service.menu.MenuService;
+import com.example.demo.springsecurity.SecurityUser;
 import jakarta.validation.Valid;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +29,13 @@ public class MenuController {
      */
     @GetMapping("/menu/authorityMenuList")
     public String authorityMenuList(Model model) {
-        String loginId = "";
-        List<MenuResultDto> menuList = menuService.getAuthorityMenuList(loginId);
-        model.addAttribute("commonMenuList",menuList);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<MenuResultDto> menuList = null;
+        if(principal instanceof SecurityUser) {
+            SecurityUser userDetails = (SecurityUser) principal;
+            menuList = userDetails.getMenuList();
+        }
+        model.addAttribute("commonMenuList", menuList);
         return "fragments/body :: .sideMenuTable";
     }
 

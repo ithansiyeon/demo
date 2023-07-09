@@ -1,5 +1,6 @@
 package com.example.demo.springsecurity;
 
+import com.example.demo.dto.menu.MenuResultDto;
 import com.example.demo.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,10 +9,16 @@ import java.util.Collection;
 import java.util.List;
 
 public class SecurityUser implements UserDetails {
-    private final User user;
+    private User user;
+    private final List<MenuResultDto> menuList;
 
-    public SecurityUser(User user) {
+    public SecurityUser(User user, List<MenuResultDto> menuList) {
         this.user = user;
+        this.menuList = menuList;
+    }
+
+    public List<MenuResultDto> getMenuList() {
+        return menuList;
     }
 
     @Override
