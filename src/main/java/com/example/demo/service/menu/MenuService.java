@@ -68,6 +68,7 @@ public class MenuService {
 
     private User getUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
         SecurityUser userDetails = (SecurityUser)principal;
         User user = userRepository.findById(userDetails.getUserIdx()).get();
         return user;
