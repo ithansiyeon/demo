@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Objects;
+
 import static com.example.demo.utils.CoreUtil.getClientIP;
 
 @Component
@@ -26,13 +28,12 @@ public class AuthProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String loginId = authentication.getName(); // 인증 요청의 principal을 가져옴
         String password = authentication.getCredentials().toString(); // 인증 요청의 credentials를 가져옴
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String ip = getClientIP(request);
         // UserDetailsService를 사용하여 사용자 정보 조회
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
 
         PasswordEncoder passwordEncoder = userDetailsService.getPasswordEncoder();
-
         if (userDetails != null && passwordEncoder.matches(password, userDetails.getPassword())) {
             userDetailsService.insertUserLog(ip, true, loginId);
             userDetailsService.updateLastLoginDate(loginId);

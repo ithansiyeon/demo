@@ -31,7 +31,7 @@ public class User {
     private String password;
     @NotNull
     private String userId;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
     @LastModifiedDate

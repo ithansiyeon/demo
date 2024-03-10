@@ -2,7 +2,6 @@ package com.example.demo.entity.user;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +23,7 @@ public class UserLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_log_idx")
     private Long id;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
     private String ip;

@@ -1,7 +1,6 @@
 package com.example.demo.entity.board;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -21,6 +20,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicInsert
 @DynamicUpdate
+@Builder
+@AllArgsConstructor
 public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="board_idx")
@@ -29,7 +30,7 @@ public class Board {
     private String writer;
     @Lob
     private String content;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
     @LastModifiedDate
@@ -42,15 +43,6 @@ public class Board {
     private List<BoardFile> boardFiles = new ArrayList<>();
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
-
-    @Builder
-    public Board(String name, String writer, String content, Long id, String is_top) {
-        this.name = name;
-        this.writer = writer;
-        this.content = content;
-        this.id = id;
-        this.is_top = is_top;
-    }
 
     public void viewCountUp(Board board) {
         board.views++;

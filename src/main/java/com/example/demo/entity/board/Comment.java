@@ -29,7 +29,7 @@ public class Comment {
     @JoinColumn(name = "board_idx")
     private Board board;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
     @LastModifiedDate

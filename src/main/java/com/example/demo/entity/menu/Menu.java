@@ -47,7 +47,7 @@ public class Menu {
     private int depth;
     private String menuCode;
     private String menuDescription;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @CreatedDate
     private LocalDateTime registerDate;
     @LastModifiedDate

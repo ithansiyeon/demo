@@ -80,7 +80,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
     }
 
     public BooleanExpression isTopEq(Boolean is_top) {
-        return is_top != null ? board.is_top.eq(is_top == true ? "Y":"N"): null;
+        return is_top != null ? board.is_top.eq(is_top ? "Y":"N"): null;
     }
 
 }

@@ -4,7 +4,6 @@ import com.example.demo.entity.board.Board;
 import com.example.demo.entity.board.Comment;
 import com.example.demo.entity.menu.Menu;
 import com.example.demo.entity.user.User;
-import com.example.demo.repository.user.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Random;
 
 @Profile("local")
@@ -46,12 +46,12 @@ public class InitBoard {
                 em.persist(board);
                 Comment comment = Comment.builder().content("댓글 구현 테스트 " + i).writer("홍길동"+i).board(board).build();
                 em.persist(comment);
-                String numStr = "";
+                StringBuilder numStr = new StringBuilder();
                 for(int j=0;j<8;j++) {
-                    if(j==4) numStr+="-";
-                    numStr += rm.nextInt(9);
+                    if(j==4) numStr.append("-");
+                    numStr.append(rm.nextInt(9));
                 }
-                User user = User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$3A58XScJ40dXdqKu0bBnFeqrjZHvNLaWfwehtnjD.WrQC8aVfTHvK").url("/board").isDel("N").authority("관리자").phoneNumber("010-"+numStr).isAlert(is_top).build();
+                User user = Objects.requireNonNull(User.builder().userId("test" + i).userName("홍길동" + i).password("$2a$10$TDZwAe142fAe2jLvfMCGhOCqT7PYWFyTGUWZYDRb7iAm2ml0F/x/y").url("/board").isDel("N").authority("관리자").phoneNumber("010-" + numStr).isAlert(is_top)).build();
                 em.persist(user);
             }
             User user = em.find(User.class,1L);
