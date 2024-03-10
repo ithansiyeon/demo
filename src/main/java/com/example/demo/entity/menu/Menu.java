@@ -25,7 +25,6 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 public class Menu {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_idx")
