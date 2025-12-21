@@ -51,22 +51,39 @@ Spring Boot, Spring Batch, Spring Security, JPA, Querydsl, Thymeleaf를 이용�
         <th>게시판 작성</th>
     </tr>
     <tr>
-        <td>로그인 화면 이미지 준비 중</td>
-        <td>게시판 리스트 이미지 준비 중</td>
-        <td>게시판 작성 이미지 준비 중</td>
+        <td align="center">
+            <img width="300" src="./images/login.png" alt="로그인 화면">
+        </td>
+        <td align="center">
+            <img width="300" src="./images/board.png" alt="게시판 리스트">
+        </td>
+        <td align="center">
+            <img width="300" src="./images/addBoard.png" alt="게시판 작성">
+        </td>
     </tr>
     <tr>
         <th>게시판 뷰 페이지</th>
-        <th>관리자 메뉴관리</th>
-        <th>운영자접속관리</th>
+        <th>관리자 메뉴 관리</th>
+        <th>운영자 접속 관리</th>
     </tr>
     <tr>
-        <td>게시판 뷰 페이지 이미지 준비 중</td>
-        <td>관리자 메뉴관리 이미지 준비 중</td>
-        <td>운영자접속관리 이미지 준비 중</td>
+        <td align="center">
+            <img width="300" src="./images/viewBoard.png" alt="게시판 뷰 페이지">
+        </td>
+        <td align="center">
+            <img width="300" src="./images/menu.png" alt="관리자 메뉴 관리">
+        </td>
+        <td align="center">
+            <img width="300" src="./images/admin.png" alt="운영자 접속 관리">
+        </td>
     </tr>
-    <tr><th colspan="3">운영자 기본 정보 등록</th></tr>
     <tr>
-        <td colspan="3">운영자 기본 정보 등록 이미지 준비 중</td>
+        <th colspan="3">운영자 기본 정보 등록</th>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">
+            <img width="900" src="./images/addAdmin.png" alt="운영자 기본 정보 등록">
+        </td>
     </tr>
 </table>
+
